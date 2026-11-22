@@ -2,6 +2,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createTranslator } from "next-intl";
+import { parse, type MessageFormatElement } from "@formatjs/icu-messageformat-parser";
 import { LOCALES } from "./locales";
 
 type Messages = { [key: string]: string | Messages };
@@ -14,10 +15,23 @@ function flatten(messages: Messages, prefix = ""): Record<string, string> {
   }));
 }
 const read = (locale: string, file: string): Messages => JSON.parse(readFileSync(join(root, locale, file), "utf8"));
+function placeholders(text: string): string[] {
+  const names = new Set<string>();
+  function visit(nodes: MessageFormatElement[]) {
+    for (const node of nodes) {
+      if ("value" in node && node.type >= 1 && node.type <= 6) names.add(node.value);
+      if ("options" in node) for (const option of Object.values(node.options)) visit(option.value);
+      if ("children" in node) visit(node.children);
+    }
+  }
+  visit(parse(text));
+  return Array.from(names).sort();
+}
 
 describe("translation catalog contract", () => {
   it("checks the server-only email namespace alongside portal catalogs", () => {
     expect(files).toContain("email.json");
+    expect(files).toContain("wizard.json");
   });
   for (const locale of LOCALES) {
     it(`${locale} has exactly the English namespaces and keys, with plain text messages`, () => {
@@ -29,7 +43,6 @@ describe("translation catalog contract", () => {
         for (const [key, value] of Object.entries(translated)) {
           expect(value, `${locale}/${file}:${key}`).not.toMatch(/<\/?[a-z][^>]*>/i);
           // Unique names: an ICU select legitimately repeats a placeholder across branches.
-          const placeholders = (text: string) => Array.from(new Set(Array.from(text.matchAll(/\{(\w+)(?:\}|,)/g)).map((m) => m[1]))).sort();
           expect(placeholders(value), `${locale}/${file}:${key} placeholders`).toEqual(placeholders(english[key]));
         }
       }
@@ -40,7 +53,7 @@ describe("translation catalog contract", () => {
         const errors: unknown[] = [];
         const t = createTranslator({ locale, messages, onError: (error: unknown) => errors.push(error) });
         for (const [key, value] of Object.entries(flatten(messages))) {
-          const args = Object.fromEntries(Array.from(value.matchAll(/\{(\w+)(?:\}|,)/g)).map((m) => [m[1], m[1] === "count" ? 2 : "example"]));
+          const args = Object.fromEntries(placeholders(value).map((name) => [name, name === "count" ? 2 : "example"]));
           t(key, args);
           const english = flatten(read("en", file))[key];
           for (const name of ["Form 5472", "Form 1120", "pro forma", "EIN", "ITIN", "IRS", "PTIN", "Form 7004", "LLC", "Part V", "Form5472 Prep"]) {

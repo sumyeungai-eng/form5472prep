@@ -5,7 +5,7 @@ import { deepMerge, type Messages } from "./merge";
 export { deepMerge } from "./merge";
 
 // Email catalogs are loaded statically by server.ts, never sent to the portal.
-export const MESSAGE_NAMESPACES = ["common", "domain", "portal"] as const;
+export const MESSAGE_NAMESPACES = ["common", "domain", "portal", "wizard"] as const;
 
 export default getRequestConfig(async () => {
   const cookie = cookies().get("NEXT_LOCALE");

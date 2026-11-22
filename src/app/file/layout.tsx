@@ -1,3 +1,4 @@
+import { WizardStaticProvider } from "@/components/wizard/WizardStaticProvider";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
@@ -8,6 +9,7 @@ export const metadata: Metadata = {
 
 export default function FileFunnelLayout({ children }: { children: React.ReactNode }) {
   return (
+    <WizardStaticProvider>
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 via-white to-accent-50/30">
       <header className="border-b border-slate-200/60 bg-white/80 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-2xl mx-auto px-6 h-14 flex items-center justify-center">
@@ -25,5 +27,6 @@ export default function FileFunnelLayout({ children }: { children: React.ReactNo
         <Link href="/privacy" className="hover:text-slate-600 underline underline-offset-2">Privacy</Link>
       </footer>
     </div>
+    </WizardStaticProvider>
   );
 }

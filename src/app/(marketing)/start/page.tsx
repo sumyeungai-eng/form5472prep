@@ -1,3 +1,5 @@
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
 import { Suspense } from "react";
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -20,6 +22,9 @@ export const metadata: Metadata = {
 
 export default async function StartPage() {
   const user = await getCurrentUser();
+  const locale = await getLocale();
+  const messages = await getMessages();
+  const clientMessages = Object.fromEntries(["common", "domain", "wizard"].map((key) => [key, messages[key]]));
 
   // Signed-in visitors land here both from the header "Start filing" CTA
   // (may already have filings) and from the January/March renewal reminder
@@ -87,7 +92,9 @@ export default async function StartPage() {
             </p>
             {/* Suspense boundary required by useSearchParams inside StartForm. */}
             <Suspense fallback={<div className="mt-6 h-[380px]" aria-hidden />}>
-              <StartForm />
+              <NextIntlClientProvider locale={locale} messages={clientMessages}>
+                <StartForm />
+              </NextIntlClientProvider>
             </Suspense>
             <p className="mt-6 text-xs text-slate-500 text-center">
               Already started a filing?{" "}

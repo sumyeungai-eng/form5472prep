@@ -14,7 +14,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const locale = await getLocale();
   const messages = await getMessages();
   const t = await getTranslations("portal.layout");
-  const clientMessages = pick(messages, ["common", "domain", "portal"]);
+  const clientMessages = pick(messages, ["common", "domain", "portal", "wizard"]);
   const authoritative = locale !== "en" ? (
     <footer className="px-6 py-4 text-center text-xs text-slate-500">{t("authoritative")}</footer>
   ) : null;
