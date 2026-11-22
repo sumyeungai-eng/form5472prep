@@ -32,7 +32,7 @@ export async function GET(req: Request) {
     }
     try {
       const filing = await prisma.filing.findFirst({
-        where: { status },
+        where: { status, partnerId: null },
         orderBy: { updatedAt: "desc" },
         select: { id: true, userId: true, sessionId: true },
       });

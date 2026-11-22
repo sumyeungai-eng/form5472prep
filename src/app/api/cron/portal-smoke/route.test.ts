@@ -49,7 +49,7 @@ describe("GET /api/cron/portal-smoke", () => {
     expect(fetch).not.toHaveBeenCalled();
   });
 
-  it("checks the most recently updated filing for all six statuses with real customer sessions", async () => {
+  it("checks the most recently updated retail filing for all six statuses with real customer sessions", async () => {
     mocks.findFirst.mockImplementation(async ({ where }) => ({
       ...filing, id: `filing-${where.status}`, userId: `user-${where.status}`,
     }));
@@ -69,7 +69,9 @@ describe("GET /api/cron/portal-smoke", () => {
     expect(response.status).toBe(200);
     expect(response.headers.get("set-cookie")).toBeNull();
     expect(await response.json()).toEqual({ checked: 6, failures: [] });
-    expect(mocks.findFirst.mock.calls.map(([query]) => query.where.status)).toEqual(statuses);
+    expect(mocks.findFirst.mock.calls.map(([query]) => query.where)).toEqual(
+      statuses.map((status) => ({ status, partnerId: null })),
+    );
     for (const [query] of mocks.findFirst.mock.calls) {
       expect(query).toMatchObject({ orderBy: { updatedAt: "desc" }, select: { id: true, userId: true, sessionId: true } });
     }
