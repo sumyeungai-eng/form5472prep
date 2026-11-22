@@ -18,6 +18,10 @@
       "schedule": "17 * * * *"
     },
     {
+      "path": "/api/cron/portal-smoke",
+      "schedule": "30 2 * * *"
+    },
+    {
       "path": "/api/cron/traffic-retention",
       "schedule": "0 12 * * *"
     },
