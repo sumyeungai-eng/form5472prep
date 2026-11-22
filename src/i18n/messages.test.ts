@@ -28,7 +28,8 @@ describe("translation catalog contract", () => {
         expect(Object.keys(translated).sort(), `${locale}/${file}`).toEqual(Object.keys(english).sort());
         for (const [key, value] of Object.entries(translated)) {
           expect(value, `${locale}/${file}:${key}`).not.toMatch(/<\/?[a-z][^>]*>/i);
-          const placeholders = (text: string) => Array.from(text.matchAll(/\{(\w+)(?:\}|,)/g)).map((m) => m[1]).sort();
+          // Unique names: an ICU select legitimately repeats a placeholder across branches.
+          const placeholders = (text: string) => Array.from(new Set(Array.from(text.matchAll(/\{(\w+)(?:\}|,)/g)).map((m) => m[1]))).sort();
           expect(placeholders(value), `${locale}/${file}:${key} placeholders`).toEqual(placeholders(english[key]));
         }
       }

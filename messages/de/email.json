@@ -1,7 +1,7 @@
 {
   "magicLink": {
     "label": "Meine Einreichung öffnen",
-    "salutation": "Kundin, Kunde",
+    "salutation": "Kunde",
     "text": "Öffnen Sie Ihre Einreichung ({v0}) über diesen sicheren Link:\n\n{v1}\n\nDieser Link ist 7 Tage gültig. Falls Sie ihn nicht angefordert haben, können Sie diese E-Mail ignorieren.",
     "subject": "Ihre Einreichung bei {v0} — Zugangslink",
     "bodyHtml": "\n      Öffnen Sie Ihre Einreichung ({tag0}{v1}{tag1}) über die Schaltfläche unten. Verfolgen Sie die Prüfung, kontrollieren und unterschreiben Sie die fertigen Unterlagen und verfolgen Sie die Faxzustellung an den IRS.\n    ",
@@ -60,7 +60,7 @@
     "reviewStepText": "Eine Steuerfachkraft mit IRS-PTIN prüft die Unterlagen und schreibt Ihnen, falls etwas zu klären ist.",
     "reviewStepText2": "Eine Steuerfachkraft mit IRS-PTIN prüft die Unterlagen. Sie stehen in weniger als 3 Tagen nach Bestellung zur Kontrolle und Unterschrift bereit. Falls etwas zu klären ist, schreiben wir Ihnen.",
     "expressReviewText": "Express-Bestellung: Ihre geprüften Unterlagen stehen in weniger als 3 Tagen nach Bestellung zur Kontrolle und Unterschrift bereit. Wir benachrichtigen Sie sofort per E-Mail.",
-    "salutation": "Kundin, Kunde",
+    "salutation": "Kunde",
     "intro": "Unser Team prüft Ihre Unterlagen. Sobald sie fertig sind, senden wir einen Link zur Kontrolle und Unterschrift per E-Mail.",
     "tier_standard": "Standard-Einreichung",
     "tier_express": "Express-Einreichung",
@@ -91,7 +91,7 @@
     "subject2": "Aktualisierte Formulare: Bitte erneut prüfen und unterschreiben",
     "yearsSuffix": ", Steuerjahr(e){v0} {v1}",
     "llcLine": "Ihre Einreichung",
-    "salutation": "Kundin, Kunde"
+    "salutation": "Kunde"
   },
   "ownerSsnRequest": {
     "label": "Meine SSN sicher hinzufügen",
@@ -104,7 +104,7 @@
     "intro2": "Für die Fertigstellung der Form 5472 für {v0}{v1} benötigen wir Ihre US-Sozialversicherungsnummer (SSN).  ",
     "yearsSuffix": "  (Steuerjahr(e){v0} {v1})",
     "llcLine": "Ihre LLC",
-    "salutation": "Kundin, Kunde"
+    "salutation": "Kunde"
   },
   "faxDelivered": {
     "label": "Ihre eingereichten Unterlagen herunterladen",
@@ -143,7 +143,7 @@
     "closingHtml5": "\n      Diese Einreichung war die letzte Erklärung einer aufgelösten Gesellschaft. Solange diese ihre Tätigkeit nicht wieder aufnimmt, ist keine weitere Form 5472 erforderlich. Bewahren Sie diese Nachricht, den IRS-Faxübertragungsbeleg und die eingereichten Unterlagen mindestens sechs Jahre dauerhaft auf.\n    ",
     "proofTable": "\nFaxnachweis\n",
     "llcLine": "Ihre Einreichung",
-    "salutation": "Kundin, Kunde"
+    "salutation": "Kunde"
   },
   "newMessageToCustomer": {
     "label": "Mein Portal öffnen",
@@ -154,7 +154,7 @@
     "bodyHtml": "\n      Sie haben eine neue Nachricht von unserem Team zu {tag0}{v1}{tag1} (Steuerjahr(e){v2} {v3}).\n    ",
     "bodyHtml2": "\n      Öffnen Sie Ihr Portal, um die vollständige Nachricht zu lesen und zu antworten.\n    ",
     "llcLine": "Ihre Einreichung",
-    "salutation": "Kundin, Kunde"
+    "salutation": "Kunde"
   },
   "newApplicationMessageCustomer": {
     "label": "Mein Portal öffnen",
@@ -164,11 +164,11 @@
     "subject": "Neue Nachricht zu Ihrem {v0}-Antrag",
     "bodyHtml": "\n      Sie haben eine neue Nachricht von unserem Team zu Ihrem {tag0}{v1}{tag1}-Antrag für {tag2}{v2}{tag3}.\n    ",
     "bodyHtml2": "\n      Öffnen Sie Ihr Portal, um die vollständige Nachricht zu lesen und zu antworten.\n    ",
-    "salutation": "Kundin, Kunde"
+    "salutation": "Kunde"
   },
   "januaryReminder": {
     "label": "Meine Erklärung für {v0} einreichen",
-    "salutation": "Kundin, Kunde",
+    "salutation": "Kunde",
     "heading": "Zeit für Ihre Form 5472 für {v0}",
     "text": "Erinnerungen zur Einreichung abbestellen: {v0}",
     "text2": "Vielen Dank,\nDas Team von Form5472 Prep\n\n",
@@ -183,7 +183,7 @@
   },
   "marchReminder": {
     "label": "Meine Erklärung für {v0} jetzt einreichen",
-    "salutation": "Kundin, Kunde",
+    "salutation": "Kunde",
     "heading": "Ihre Frist für Form 5472 für {v0} endet in 30 Tagen",
     "text": "Erinnerungen zur Einreichung abbestellen: {v0}",
     "text2": "Vielen Dank,\nDas Team von Form5472 Prep\n\n",
@@ -216,7 +216,7 @@
     "subject": "Ihre Einreichung von Form 5472 abschließen — Fortschritt gespeichert",
     "subject2": "Noch Zeit für Form 5472 — Ihr Entwurf ist gespeichert",
     "llcPlain": "Ihre ausländisch gehaltene LLC",
-    "salutation": "Kundin, Kunde"
+    "salutation": "Kunde"
   },
   "einApplicationConfirmation": {
     "footnoteHtml": "Bei Fragen antworten Sie auf diese E-Mail oder schreiben Sie an support@form5472prep.com.",
@@ -279,7 +279,7 @@
     "deadlineText": "Bitte teilen Sie uns per Antwort das Steuerjahr mit. Form 7004 muss bis zur ursprünglichen Erklärungsfrist eingereicht werden, bei einer LLC mit Kalenderjahr am 15. April. Die Verlängerung betrifft die Einreichung, nicht die Zahlung.",
     "deadlineText2": "Für das Steuerjahr {v0} muss Form 7004 bis zum {v1} eingereicht werden. Eine gültige Verlängerung verschiebt die Frist für Form 5472 und pro forma Form 1120 auf den {v2}. Sie verlängert die Einreichungsfrist, nicht die Zahlungsfrist.",
     "llc": "Ihre LLC",
-    "salutation": "Kundin, Kunde"
+    "salutation": "Kunde"
   },
   "extensionFaxed": {
     "footnoteHtml": "Bei Fragen antworten Sie auf diese E-Mail oder schreiben Sie an support@form5472prep.com.",
@@ -293,7 +293,7 @@
     "paragraphs6": "  (Steuerjahr {v0})",
     "paragraphs7": "Wir haben Form 7004 für {v0}{v1} an die IRS Ogden PIN Unit gefaxt. Das Fax wurde am {v2} zugestellt.",
     "llc": "Ihre LLC",
-    "salutation": "Kundin, Kunde"
+    "salutation": "Kunde"
   },
   "applicationSignatureRequest": {
     "footnoteHtml": "Falls etwas nicht stimmt, antworten Sie vor der Unterschrift auf diese E-Mail.",
@@ -310,11 +310,11 @@
     "text": "{v0}\n\nIhre Frage ({v1}):\n{v2}",
     "subject": "Antwort auf Ihre Frage an Form5472 Prep",
     "quoted": "Ihre Frage ({v3}):",
-    "salutation": "Kundin, Kunde"
+    "salutation": "Kunde"
   },
   "clientIntake": {
     "label": "Meine Einreichung öffnen",
-    "salutation": "Kundin, Kunde",
+    "salutation": "Kunde",
     "text": "{v0} hat die Einreichung für {v1} begonnen. Bitte beantworten Sie die übrigen Fragen und laden Sie Ihre Dokumente hoch.\n\nIhre Einreichung öffnen:\n\n{v2}\n\nDieser Link ist 7 Tage gültig. Falls Sie diese Nachricht nicht erwartet haben, können Sie sie ignorieren.",
     "subject": "Ihre Angaben für {v0} ergänzen",
     "bodyHtml": "\n      {v1} hat die Einreichung für {tag0}{v2}{tag1} begonnen. Bitte beantworten Sie die übrigen Fragen und laden Sie Ihre Dokumente hoch.\n    ",
@@ -323,7 +323,7 @@
   },
   "resumeFiling": {
     "label": "Meine Einreichung fortsetzen",
-    "salutation": "Kundin, Kunde",
+    "salutation": "Kunde",
     "text": "Ihre bisherigen Antworten für {v0} sind gespeichert. Öffnen Sie Ihre Einreichung über diesen sicheren Link und schließen Sie sie ab, sobald Sie bereit sind:\n\n{v1}\n\nDieser Link ist 7 Tage gültig. Falls Sie ihn nicht angefordert haben, können Sie diese E-Mail ignorieren.",
     "subject": "Ihre Einreichung von Form 5472 fortsetzen",
     "bodyHtml": "\n      Ihre bisherigen Antworten für {tag0}{v1}{tag1} sind gespeichert. Öffnen Sie Ihre Einreichung über die Schaltfläche unten und schließen Sie sie ab, sobald Sie bereit sind.\n    ",
@@ -334,7 +334,7 @@
     "processedBy": "Sichere Bearbeitung der Einreichung durch Form5472 Prep.",
     "questions": "Fragen? Antworten Sie auf diese E-Mail oder schreiben Sie an",
     "unsubscribe": "Erinnerungen zur Einreichung abbestellen",
-    "greeting": "Guten Tag {name},",
+    "greeting": "{name, select, Kunde {Guten Tag,} other {Guten Tag {name},}}",
     "thanks": "Vielen Dank,",
     "team": "Das Team von {name}",
     "faxNumber": "IRS-Faxnummer",
