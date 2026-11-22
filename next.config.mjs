@@ -23,6 +23,7 @@ const nextConfig = {
   async redirects() {
     return [
       // 2026-11-03: November blog slugs shortened to the 75-char URL limit (blog-slug-length.test.ts).
+      { source: "/blog/form-1120x-foreign-owned-llc-amended-return", destination: "/blog/form-1120x-foreign-owned-llc", permanent: true },
       { source: "/blog/delaware-llc-annual-tax-2027-foreign-owner", destination: "/blog/delaware-llc-annual-tax-2027", permanent: true },
       { source: "/blog/foreign-owned-llc-1099-nec-deadline-january-2027", destination: "/blog/1099-nec-deadline-2027-foreign-llc", permanent: true },
       { source: "/blog/foreign-owned-llc-year-end-checklist-december-2026", destination: "/blog/foreign-llc-year-end-checklist-2026", permanent: true },

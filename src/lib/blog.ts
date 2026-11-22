@@ -142,7 +142,7 @@ async function readFile(slug: string): Promise<Post | null> {
 const ARTWORK_ALTS: Record<string, string> = {
   "is-it-safe-to-use-an-ein-service":
     "An identity document and an SS-4 application beside a ticked checklist illustrate what an EIN service collects and what happens to it",
-  "form-1120x-foreign-owned-llc-amended-return":
+  "form-1120x-foreign-owned-llc":
     "A filed return beside a corrected copy with its changed lines marked illustrates amending a pro forma Form 1120 and its Form 5472",
   "form-7004-line-by-line-foreign-owned-llc":
     "A blank extension form with marked lines and a signing pen illustrates completing Form 7004 line by line",
