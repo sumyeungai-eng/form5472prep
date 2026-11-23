@@ -43,7 +43,7 @@ export default async function SignInPage({
         )}
         <SignInForm />
         <p className="mt-6 text-xs text-slate-500 text-center">
-          No password — we email a one-time link each time.{" "}
+          No password — we email a sign-in link, reusable until it expires after 7 days.{" "}
           <br />
           Don&apos;t have a filing yet?{" "}
           <a className="text-accent hover:underline" href="/start">

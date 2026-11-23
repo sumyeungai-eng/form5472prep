@@ -14,7 +14,7 @@ export const metadata = {
 
 export default function PrivacyPage() {
   return (
-    <LegalLayout title="Privacy Policy" lastUpdated="2026-09-21">
+    <LegalLayout title="Privacy Policy" lastUpdated="2026-11-24">
       <h2>1. Who we are</h2>
       <p>
         Form5472 Prep is the data controller for personal information you submit through the
@@ -106,12 +106,16 @@ export default function PrivacyPage() {
         third party other than as needed to complete your filing.
       </p>
       <p>
-        <strong>Your control:</strong> you can revoke the Plaid connection at any time from
-        your dashboard or by emailing{" "}
-        <a href="mailto:support@form5472prep.com">support@form5472prep.com</a>. Revoking
-        access invalidates our access token and stops any future data access. You may also
+        <strong>What we store:</strong> the Plaid connection record and its access token
+        are stored. Transactions are fetched for review; only rows you confirm are saved
+        with your filing. Kept with your filing records; deleted on request.
+      </p>
+      <p>
+        <strong>Your control:</strong> the connection is not revoked automatically after
+        import. You can request deletion of the stored connection by emailing{" "}
+        <a href="mailto:support@form5472prep.com">support@form5472prep.com</a>. You may also
         request deletion of the imported transaction data at any time; we will delete it within
-        30 days of the request and immediately purge the access token.
+        30 days of the request.
       </p>
       <p>
         <strong>Plaid&apos;s own privacy practices:</strong> Plaid&apos;s use of your data is

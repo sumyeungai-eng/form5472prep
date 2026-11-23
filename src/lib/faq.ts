@@ -538,7 +538,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "how-our-service-works",
     question: "Do you store my bank statements or signed forms?",
     answer:
-      "Bank statements are processed in memory to extract transaction totals and discarded. Your signed forms, the exact PDF we fax to the IRS, and the fax receipt are kept in your account for up to 7 years so you can download them; ask us and we delete them sooner.",
+      "Yes, with your filing. The bank statement files you upload and the transactions taken from them are stored so we can prepare and review your return. Your signed forms, the exact PDF we fax to the IRS and the fax receipt are kept in your account for up to 7 years so you can download them. Ask us and we delete them sooner.",
     learnMore: { href: "/data-retention", label: "Read the data retention policy" },
     source: "src/app/(marketing)/page.tsx:72",
   },

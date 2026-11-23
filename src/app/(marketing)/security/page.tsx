@@ -14,7 +14,7 @@ export const metadata = {
 
 export default function SecurityPage() {
   return (
-    <LegalLayout title="Information Security Policy" lastUpdated="2026-09-21">
+    <LegalLayout title="Information Security Policy" lastUpdated="2026-11-24">
       <h2>Is it safe to upload my passport and LLC documents?</h2>
       <p>
         Yes. We protect the passport details and LLC documents you submit with encryption
@@ -25,8 +25,9 @@ export default function SecurityPage() {
       <ul>
         <li>
           <strong>What is stored:</strong> identity and passport details, LLC and owner
-          information, uploaded supporting documents, signature records, prepared forms,
-          fax records and payment metadata, according to the record type.
+          information, uploaded bank statements and every categorized transaction row,
+          supporting documents, signature records, prepared forms, fax records and payment
+          metadata, according to the record type.
         </li>
         <li>
           <strong>Where:</strong> encrypted infrastructure operated by Vercel, our managed
@@ -42,8 +43,10 @@ export default function SecurityPage() {
           <strong>How long:</strong> entity and owner identification data is retained for
           7 years from the last filing. Your signed forms, the exact PDF we fax to the IRS,
           and the fax receipt are kept in your account for up to 7 years so you can download
-          them; ask us and we delete them sooner. Uploaded dissolution certificates and
-          extension proof are stored with your filing for review; ask us to delete them. See the{" "}
+          them; ask us and we delete them sooner. Bank statements and their transaction
+          rows, supporting documents, other uploads, signature images and signing records
+          (IP address, browser and consent version) are kept with your filing records;
+          deleted on request. See the{" "}
           <a href="/data-retention">Data Retention Policy</a> for the full schedule.
         </li>
         <li>
@@ -142,8 +145,10 @@ export default function SecurityPage() {
       <h2>7. Data Retention &amp; Deletion</h2>
       <p>
         See our <a href="/data-retention">Data Retention Policy</a> for the full schedule.
-        Bank transaction data pulled via Plaid is used solely to prepare the customer&apos;s
-        filing and may be deleted on customer request. Customers may request deletion of their
+        Plaid connections and access tokens are stored; connections are not revoked
+        automatically after import. Transactions are fetched for review; only rows the
+        customer confirms are saved with the filing. Kept with your filing records; deleted
+        on request. Customers may request deletion of their
         account and data at any time via the customer portal or by emailing{" "}
         <a href="mailto:support@form5472prep.com">support@form5472prep.com</a>.
       </p>

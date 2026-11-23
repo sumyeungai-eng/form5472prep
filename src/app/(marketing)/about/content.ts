@@ -187,10 +187,10 @@ export const SECTIONS: AboutSection[] = [
     question: "How is my data protected?",
     answer: "Data is encrypted in transit with TLS 1.2 or higher, and encrypted at rest in our managed database and file storage. Card details are entered with Stripe and never reach our servers. Production systems and data are accessible only to authorized personnel.",
     points: [
-      "Bank statement files are processed in memory and not stored, and we never store banking credentials.",
+      "Uploaded bank statement files and every categorized transaction row are kept with your filing records; deleted on request. We never store banking credentials.",
       "An owner's SSN is encrypted as soon as it is saved. We never ask for an SSN, ITIN or bank details by email.",
       "Vendor consoles require two-factor authentication.",
-      "Fax receipts and signature records are kept for 7 years from the filing date as proof of filing.",
+      "Fax receipts are kept for up to 7 years; ask us and we delete them sooner. Signature images and signing records are kept with your filing records; deleted on request.",
       "Deletion requests are processed within 30 days.",
       "If a data breach is confirmed, affected customers are notified by email within 72 hours.",
     ],

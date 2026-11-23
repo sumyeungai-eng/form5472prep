@@ -14,7 +14,7 @@ export const metadata = {
 
 export default function TermsPage() {
   return (
-    <LegalLayout title="Terms of Service" lastUpdated="2026-09-21">
+    <LegalLayout title="Terms of Service" lastUpdated="2026-11-24">
       <h2>1. What this service is</h2>
       <p>
         Form5472 Prep (the &quot;Service&quot;) is a self-service tool for preparing IRS Form 5472
@@ -113,8 +113,10 @@ export default function TermsPage() {
         <a href="https://plaid.com/legal/#end-user-privacy-policy" target="_blank" rel="noopener noreferrer">
           Plaid&apos;s End User Privacy Policy
         </a>{" "}
-        in addition to our own <a href="/privacy">Privacy Policy</a>. You may revoke the
-        Plaid connection at any time from your account dashboard. The feature is provided
+        in addition to our own <a href="/privacy">Privacy Policy</a>. The connection and
+        access token are stored; the connection is not revoked automatically after import.
+        Only transaction rows you confirm are saved with your filing. To request deletion,
+        email <a href="mailto:support@form5472prep.com">support@form5472prep.com</a>. The feature is provided
         for your convenience; you remain responsible for verifying that the imported and
         categorized transactions are accurate and complete before authorizing submission.
       </p>

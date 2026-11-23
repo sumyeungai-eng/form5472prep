@@ -75,7 +75,7 @@
     "s009": "Gibt es versteckte Gebühren?",
     "s010": "Nein. Sie zahlen den angezeigten Preis. Keine Einrichtungsgebühr, kein Monatsabo und kein Faxaufschlag pro Seite. Jedes weitere frühere Steuerjahr kostet pauschal {value1}. Das wird vorab offengelegt und vor der Zahlung in der Bestellübersicht angezeigt.",
     "s011": "Speichern Sie Kontoauszüge oder unterschriebene Formulare?",
-    "s012": "Nein. Wir verarbeiten Kontoauszüge im Arbeitsspeicher, um Transaktionssummen zu ermitteln, und verwerfen sie danach ohne dauerhafte Speicherung. Ihre unterschriebenen Formulare, die genaue PDF-Datei, die wir an den IRS faxen, und der Faxbeleg werden bis zu 7 Jahre in Ihrem Konto aufbewahrt, damit Sie sie herunterladen können; auf Ihre Anfrage löschen wir sie früher. Wir behalten nur den Faxbeleg und die grundlegenden LLC- und Inhaberdaten für die nächste Einreichung.",
+    "s012": "Ja, zusammen mit Ihren Einreichungsunterlagen. Die von Ihnen hochgeladenen Kontoauszugsdateien und die daraus entnommenen Transaktionen werden gespeichert, damit wir Ihre Erklärung vorbereiten und prüfen können. Ihre unterschriebenen Formulare, die genaue PDF-Datei, die wir an den IRS faxen, und der Faxbeleg werden bis zu 7 Jahre in Ihrem Konto aufbewahrt, damit Sie sie herunterladen können. Auf Ihre Anfrage löschen wir sie früher.",
     "s013": "Welche Geld-zurück-Garantie bieten Sie?",
     "s014": "100 % Geld-zurück-Garantie, wenn wir Ihre Erklärung nicht an den IRS übermitteln können. Scheitert das erste Fax, versuchen wir es automatisch erneut. Scheitert es weiterhin, erhalten Sie den vollen Betrag zurück, ohne weitere Fragen. Verhängt der IRS wegen eines Fehlers bei unserer Erstellung ein Bußgeld, übernehmen wir die Antwort an den IRS ohne Zusatzkosten.",
     "s015": "Form 5472 und pro forma 1120 für eine ausländisch gehaltene US-LLC, ab {value1}. Erstellt, geprüft und per Fax bei der IRS Ogden PIN Unit eingereicht.",
@@ -641,7 +641,7 @@
       },
       "store-bank-statements-signed-forms": {
         "q": "Speichern Sie Kontoauszüge oder unterschriebene Formulare?",
-        "a": "Kontoauszüge werden im Arbeitsspeicher verarbeitet, um Transaktionssummen zu ermitteln, und anschließend verworfen. Ihre unterschriebenen Formulare, die genaue PDF-Datei, die wir an den IRS faxen, und der Faxbeleg werden bis zu 7 Jahre in Ihrem Konto aufbewahrt, damit Sie sie herunterladen können; auf Ihre Anfrage löschen wir sie früher.",
+        "a": "Ja, zusammen mit Ihren Einreichungsunterlagen. Die von Ihnen hochgeladenen Kontoauszugsdateien und die daraus entnommenen Transaktionen werden gespeichert, damit wir Ihre Erklärung vorbereiten und prüfen können. Ihre unterschriebenen Formulare, die genaue PDF-Datei, die wir an den IRS faxen, und der Faxbeleg werden bis zu 7 Jahre in Ihrem Konto aufbewahrt, damit Sie sie herunterladen können. Auf Ihre Anfrage löschen wir sie früher.",
         "learnMore": "Richtlinie zur Datenaufbewahrung lesen"
       },
       "message-reply-time": {

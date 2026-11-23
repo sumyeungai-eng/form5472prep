@@ -14,18 +14,18 @@ export const metadata = {
 
 export default function DataRetentionPage() {
   return (
-    <LegalLayout title="Data Retention Policy" lastUpdated="2026-09-21">
+    <LegalLayout title="Data Retention Policy" lastUpdated="2026-11-24">
       <h2>Our principle</h2>
       <p>
         We retain the minimum amount of data needed to (a) prove that your IRS filing was
         transmitted, (b) reproduce next year&apos;s filing without you re-entering everything,
-        and (c) meet our own records-retention obligations. We deliberately do not store
-        copies of bank statements after they have served their purpose. Your signed forms,
+        and (c) meet our own records-retention obligations. Uploaded bank statement files
+        and the transactions taken from them are stored with your filing records. Your signed forms,
         the exact PDF we fax to the IRS, and the fax receipt are kept in your account for
         up to 7 years; we delete them sooner if you ask.
       </p>
 
-      <h2>Discarded during normal processing</h2>
+      <h2>Bank statements and Plaid connections</h2>
       <div className="overflow-x-auto -mx-4 sm:mx-0">
       <table>
         <thead>
@@ -37,19 +37,24 @@ export default function DataRetentionPage() {
         </thead>
         <tbody>
           <tr>
-            <td>Uploaded bank statement files (CSV/PDF)</td>
-            <td>Processed in memory; not persisted</td>
-            <td>Parsed to extract totals, then dropped without being written to disk</td>
+            <td>Uploaded bank statement files (CSV or Excel only)</td>
+            <td>Kept with your filing records; deleted on request</td>
+            <td>Stored in Cloudflare R2; not deleted automatically. Removing a statement in the wizard deletes its database record, but not the stored file</td>
           </tr>
           <tr>
-            <td>Individual transaction rows (uploaded or imported via Plaid)</td>
-            <td>Lifetime of your review session</td>
-            <td>Used to display the categorization review; discarded when you confirm the totals</td>
+            <td>Categorized transaction rows from uploaded statements</td>
+            <td>Kept with your filing records; deleted on request</td>
+            <td>Every categorized row is stored in the statement&apos;s database record; there is no automatic deletion</td>
           </tr>
           <tr>
-            <td>Plaid access tokens</td>
-            <td>Revoked immediately after transaction import is complete, or on user request</td>
-            <td>No persistent bank connection is retained beyond the import session unless you opt to keep it</td>
+            <td>Confirmed transaction rows imported via Plaid</td>
+            <td>Kept with your filing records; deleted on request</td>
+            <td>Transactions are fetched for review; only rows you confirm are saved with your filing</td>
+          </tr>
+          <tr>
+            <td>Plaid connection and access token</td>
+            <td>Kept with your filing records; deleted on request</td>
+            <td>The connection record and access token are stored; the connection is not revoked automatically after import</td>
           </tr>
         </tbody>
       </table>
@@ -73,12 +78,17 @@ export default function DataRetentionPage() {
           </tr>
           <tr>
             <td>Uploaded dissolution certificates and extension proof</td>
-            <td>Stored with your filing</td>
-            <td>Kept for review of the related filing; ask us to delete these supporting documents</td>
+            <td>Kept with your filing records; deleted on request</td>
+            <td>Stored for review of the related filing; deleted only on request or manually</td>
+          </tr>
+          <tr>
+            <td>Other uploaded filing documents</td>
+            <td>Kept with your filing records; deleted on request</td>
+            <td>Stored with the filing; deleted only on request or manually</td>
           </tr>
           <tr>
             <td>Generated unsigned PDFs</td>
-            <td>Stored with your filing</td>
+            <td>Kept with your filing records; deleted on request</td>
             <td>Saved for staff review and release; downloading does not delete the PDF</td>
           </tr>
           <tr>
@@ -87,13 +97,13 @@ export default function DataRetentionPage() {
             <td>Proof of filing; matches IRS records retention (26 CFR section 1.6001-1)</td>
           </tr>
           <tr>
-            <td>Records of what was signed and when</td>
-            <td>7 years from filing date</td>
+            <td>Records of what was signed and when, including consent version</td>
+            <td>Kept with your filing records; deleted on request</td>
             <td>Proof of the signed authorization and the version of the wording agreed</td>
           </tr>
           <tr>
             <td>IP address and browser recorded at signing</td>
-            <td>7 years from filing date</td>
+            <td>Kept with your filing records; deleted on request</td>
             <td>Kept with the signature record to show how the electronic signature was completed</td>
           </tr>
           <tr>
@@ -117,14 +127,19 @@ export default function DataRetentionPage() {
             <td>To let you retrieve your receipts after a period of inactivity</td>
           </tr>
           <tr>
+            <td>Sign-in links</td>
+            <td>Links expire after 7 days</td>
+            <td>Reusable until they expire</td>
+          </tr>
+          <tr>
             <td>Signature images</td>
-            <td>Active + 12 months</td>
-            <td>Used to display and support your signed filing while your account is active</td>
+            <td>Kept with your filing records; deleted on request</td>
+            <td>Stored with the filing to support your signed return</td>
           </tr>
           <tr>
             <td>Support message attachments</td>
-            <td>Active + 12 months, unless needed for a retained filing record</td>
-            <td>Used to resolve support requests and preserve context for follow-up</td>
+            <td>Kept with your filing records; deleted on request</td>
+            <td>Stored with the filing to resolve support requests; deleted only on request or manually</td>
           </tr>
           <tr>
             <td>Payment records (Stripe metadata)</td>
@@ -144,7 +159,8 @@ export default function DataRetentionPage() {
       <p>
         Filing PDFs are not deleted after fax confirmation or download. If you delete a
         draft filing, we also attempt to remove its stored files. For other deletion
-        requests, contact us as described below.
+        requests, contact us as described below. Removing a bank statement in the wizard
+        deletes only its database record, not the uploaded file in R2.
       </p>
 
       <h2>Early deletion at your request</h2>
@@ -158,12 +174,9 @@ export default function DataRetentionPage() {
 
       <h2>What we do not retain</h2>
       <ul>
-        <li>Bank statement files; discarded immediately after parsing.</li>
-        <li>Individual line-item transactions; discarded after totals are confirmed.</li>
         <li>Payment card data; handled and stored exclusively by Stripe.</li>
-        <li>Passwords; we use passwordless customer authentication (one-time email magic-link or Google OAuth); no customer passwords are ever stored.</li>
+        <li>Passwords; we use passwordless customer authentication (email sign-in links that are reusable until they expire after 7 days, or Google OAuth); no customer passwords are ever stored.</li>
         <li>Bank login credentials; never seen or stored. Plaid handles authentication directly with your financial institution.</li>
-        <li>Raw transaction data from Plaid; only the contribution/distribution totals are retained for filing reproduction; individual line items are discarded after review.</li>
       </ul>
     </LegalLayout>
   );

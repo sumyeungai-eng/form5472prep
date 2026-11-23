@@ -69,7 +69,7 @@ Form5472 Prep's [privacy policy](/privacy) says we do not sell personal informat
 
 Our [security page](/security) describes encryption in transit and storage, processing in the United States and European Union, and these providers: Vercel (hosting), Cloudflare R2 (file storage), Stripe (payments), Resend (email), Telnyx (fax), and a managed database provider. Stripe handles and stores card data; we never see card details. Affected customers receive email notification within 72 hours of a confirmed breach. We deliver the EIN and completed SS-4 by email.
 
-Our [data-retention policy](/data-retention) keeps entity and owner identification data for 7 years from the last filing. Signing records, signing IP/browser information, fax receipts and IRS faxes stay for 7 years; fax receipts run from the filing date. Your signed forms, the exact PDF we fax to the IRS, and the fax receipt are kept in your account for up to 7 years so you can download them; ask us and we delete them sooner.
+Our [data-retention policy](/data-retention) keeps entity and owner identification data for 7 years from the last filing. Signature images and signing records, including IP, browser and consent version, are kept with your filing records; deleted on request. IRS faxes stay for 7 years from the filing date. Your signed forms, the exact PDF we fax to the IRS, and the fax receipt are kept in your account for up to 7 years so you can download them; ask us and we delete them sooner.
 
 Filing PDFs are not deleted after fax confirmation or download. Deleting a draft filing also attempts to remove its stored files. Email support@form5472prep.com from the account email for early deletion, processed within 30 days. A minimal deletion record may remain. We never see or store bank login credentials and do not store customer passwords.
 
@@ -81,7 +81,7 @@ We cannot make the IRS issue an EIN faster. Our EIN page's “typically 1-5 busi
 
 We are not a CPA firm and give no tax advice. Our Form 5472 filing service includes review before you sign by a tax accountant who holds an IRS PTIN. That review belongs to the Form 5472 filing service; we do not claim the same review for EIN applications.
 
-Retention is long: filing records stay for 7 years. Our retention page has no row specific to EIN applications. Entity and owner identification data and signing and fax records are the closest generic categories. Ask support in writing which period applies to each EIN record. Our privacy page says no internet transmission is 100% secure.
+Retention depends on the record type. Our retention page has no row specific to EIN applications. Entity and owner identification data and signing and fax records are the closest generic categories. Ask support in writing which period applies to each EIN record. Our privacy page says no internet transmission is 100% secure.
 
 Our EIN intake asks for the owner's date of birth, citizenship and country of residence. Form SS-4 has no line for any of those answers. Our privacy policy lists those answers under “owner details” used “where the IRS forms ask for owner identity data”. Ask support why an answer is needed before submitting; you may request deletion.
 

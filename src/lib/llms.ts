@@ -129,7 +129,10 @@ ${MONEY_BACK}`;
 
 const PRIVACY = `## Privacy
 
-- We do NOT permanently store uploaded bank statements — they are parsed in memory and discarded.
+- Uploaded bank statement files (CSV or Excel) are stored in R2, and every categorized transaction row is stored in the database. Kept with your filing records; deleted on request. Removing a statement in the wizard deletes its database record, not the stored file.
+- Plaid connections and access tokens are stored and are not revoked automatically after import. Transactions are fetched for review; only rows you confirm are saved with the filing. Kept with your filing records; deleted on request.
+- Supporting documents, other uploads, signature images and signing records (IP address, browser and consent version) are kept with your filing records; deleted on request.
+- Sign-in links are reusable until they expire after 7 days.
 - Your signed forms, the exact PDF we fax to the IRS, and the fax receipt are kept in your account for up to 7 years so you can download them; ask us and we delete them sooner.
 - We DO retain the fax confirmation receipt (proof of filing) and basic entity/owner data so next year's filing pre-fills. Retention: 7 years to match IRS records-retention guidance.
 - We do not sell customer data. Advertising measurement: the Google Ads conversion tag, and the Meta pixel only after marketing consent (see ${SITE_URL}/cookies). Site analytics: Vercel Analytics and Speed Insights.`;
@@ -205,7 +208,7 @@ const CORE_PAGES: readonly PageLink[] = [
   ["Press kit", "/press", "Short blurb, boilerplate, key facts, logo files, brand colours and press contact for describing Form5472 Prep accurately."],
   ["Editorial policy", "/editorial-policy", "How our guides are sourced, reviewed, and kept current."],
   ["Security", "/security", "How customer data is protected in transit and at rest."],
-  ["Privacy", "/privacy", "What we collect and what we discard."],
+  ["Privacy", "/privacy", "What we collect and how we store it."],
   ["Terms", "/terms", "Legal terms of service."],
   ["Data retention", "/data-retention", "Full retention schedule by data type."],
 ];
