@@ -148,7 +148,7 @@ export default function SecurityPage() {
       <p>
         See our <a href="/data-retention">Data Retention Policy</a> for the full schedule.
         For new imports, we use your Plaid connection once to import that year&apos;s
-        transactions, then disconnect it. We keep the bank&apos;s name and the transactions
+        transactions, then ask Plaid to disconnect it. We keep the bank&apos;s name and the transactions
         you confirm with your filing; we don&apos;t keep the access token. Customers may request deletion of their
         account and data at any time by emailing{" "}
         <a href="mailto:support@form5472prep.com">support@form5472prep.com</a>.

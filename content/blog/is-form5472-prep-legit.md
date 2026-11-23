@@ -42,7 +42,7 @@ Both tiers include the same filing, review and IRS fax delivery. Each additional
 
 Documents and filing data are encrypted in transit and at rest, with processing in the United States and the European Union. Access is limited to authorized personnel. The [security policy](/security) explains the safeguards, service providers and retention rules. You can request earlier deletion, although some records must remain for tax and accounting obligations.
 
-Our privacy policy describes the identity, company, transaction, signature and support information collected for your filing. We do not sell personal information. If you choose a bank connection, Plaid handles authentication with your financial institution; we never see or store your banking credentials. We use your Plaid connection once to import that year's transactions, then disconnect it; we don't keep the access token.
+Our privacy policy covers the information collected for your filing. We do not sell personal information. Plaid handles bank authentication; we never see or store your banking credentials. For new imports, we use your Plaid connection once to import that year's transactions, then ask Plaid to disconnect it. We keep the bank's name and the transactions you confirm with your filing; we don't keep the access token.
 
 ## What do customers say?
 

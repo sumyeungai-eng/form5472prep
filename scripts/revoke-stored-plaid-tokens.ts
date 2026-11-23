@@ -1,19 +1,21 @@
 /**
  * Revoke legacy stored Plaid tokens and clear them only after disconnection.
- * The owner must run this with production environment variables AFTER deploying
- * the migration: npx tsx scripts/revoke-stored-plaid-tokens.ts (dry run), then
- * npx tsx scripts/revoke-stored-plaid-tokens.ts --apply to revoke and clear.
+ * AFTER deploying the migration, from the repo root with a shell-compatible
+ * .env.production.local containing the intended database and Plaid credentials:
+ * Dry run: set -a; source .env.production.local; set +a; npx tsx scripts/revoke-stored-plaid-tokens.ts
+ * Apply:   set -a; source .env.production.local; set +a; npx tsx scripts/revoke-stored-plaid-tokens.ts --apply
+ * tsx does not load Next.js env files; export them explicitly as above.
  */
 import { pathToFileURL } from "node:url";
 import { prisma } from "../src/lib/prisma";
-import { plaid } from "../src/lib/plaid";
+import { plaid, plaidEnvName } from "../src/lib/plaid";
 
 type Dependencies = {
   prisma: {
     plaidConnection: {
       findMany(args: {
         where: { accessToken: { not: null } };
-        select: { id: true; itemId: true; accessToken: boolean };
+        select: { id: true; itemId: true; accessToken: true };
       }): Promise<{ id: string; itemId: string; accessToken?: string | null }[]>;
       update(args: {
         where: { id: string };
@@ -24,26 +26,48 @@ type Dependencies = {
   plaid: () => {
     itemRemove(args: { access_token: string }): Promise<unknown>;
   };
+  plaidEnvName?: typeof plaidEnvName;
+  databaseUrl?: string;
   log?: (message: string) => void;
 };
 
 export async function revokeStoredPlaidTokens(
-  { prisma, plaid, log = console.log }: Dependencies,
+  {
+    prisma, plaid, plaidEnvName: envName = plaidEnvName,
+    databaseUrl = process.env.DATABASE_URL, log = console.log,
+  }: Dependencies,
   apply = false,
 ) {
   const connections = await prisma.plaidConnection.findMany({
     where: { accessToken: { not: null } },
-    select: { id: true, itemId: true, accessToken: apply },
+    select: { id: true, itemId: true, accessToken: true },
   });
+  const environment = envName();
+  const prefix = (token: string | null | undefined) =>
+    token?.match(/^access-(sandbox|development|production)-/)?.[1] ?? "unknown";
+  let databaseHost = "missing";
+  if (databaseUrl) {
+    try { databaseHost = new URL(databaseUrl).host || "invalid"; }
+    catch { databaseHost = "invalid"; }
+  }
+  log(`PLAID_ENV: ${environment}`);
+  log(`Database host: ${databaseHost}`);
+  const counts = { sandbox: 0, development: 0, production: 0, unknown: 0 };
+  for (const connection of connections) counts[prefix(connection.accessToken) as keyof typeof counts]++;
+  log(`Token prefixes: sandbox=${counts.sandbox}, development=${counts.development}, production=${counts.production}, unknown=${counts.unknown}`);
   log(`${apply ? "APPLY" : "DRY RUN"}: ${connections.length} stored Plaid token(s)`);
+  for (const { itemId } of connections) log(itemId);
+  // Preflight the ENTIRE batch before any Plaid call or write. A wrong
+  // environment can return INVALID_ACCESS_TOKEN for a perfectly live item.
+  if (apply && connections.some(({ accessToken }) => prefix(accessToken) !== environment)) {
+    log(`ABORT: stored token prefixes do not all match PLAID_ENV=${environment}; no Plaid calls or writes; all rows unchanged`);
+    return { found: connections.length, cleared: 0, failed: connections.length };
+  }
   let cleared = 0;
   let failed = 0;
   for (const connection of connections) {
     const { id, itemId, accessToken } = connection;
-    if (!apply) {
-      log(itemId);
-      continue;
-    }
+    if (!apply) continue;
     if (accessToken == null) {
       failed++;
       log(`${itemId}: token unavailable; row unchanged`);
@@ -54,7 +78,9 @@ export async function revokeStoredPlaidTokens(
     } catch (error) {
       const code = (error as { response?: { data?: { error_code?: unknown } } } | null)
         ?.response?.data?.error_code;
-      if (code !== "ITEM_NOT_FOUND" && code !== "INVALID_ACCESS_TOKEN") {
+      const alreadyGone = (code === "ITEM_NOT_FOUND" || code === "INVALID_ACCESS_TOKEN") &&
+        accessToken.startsWith(`access-${environment}-`);
+      if (!alreadyGone) {
         failed++;
         // Raw Plaid errors include request config; report only a redacted code.
         const reason = typeof code === "string"

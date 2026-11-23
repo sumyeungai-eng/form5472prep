@@ -130,7 +130,7 @@ ${MONEY_BACK}`;
 const PRIVACY = `## Privacy
 
 - Uploaded bank statement files (CSV or Excel) are stored in R2, and every categorized transaction row is stored in the database. Kept with your filing records; deleted on request. Removing a statement in the wizard deletes its database record, not the stored file.
-- For new imports, we use your Plaid connection once to import that year's transactions, then disconnect it. We keep the bank's name and the transactions you confirm with your filing; we don't keep the access token. Kept with your filing records; deleted on request.
+- For new imports, we use your Plaid connection once to import that year's transactions, then ask Plaid to disconnect it. We keep the bank's name and the transactions you confirm with your filing; we don't keep the access token. Kept with your filing records; deleted on request.
 - Supporting documents, other uploads, signature images and signing records (IP address, browser and consent version) are kept with your filing records; deleted on request.
 - Sign-in links are reusable until they expire after 7 days.
 - Your signed forms, the exact PDF we fax to the IRS, and the fax receipt are kept in your account for up to 7 years so you can download them; ask us and we delete them sooner.

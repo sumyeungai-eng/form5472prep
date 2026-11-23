@@ -210,7 +210,7 @@ DATA HANDLING
   transaction row is stored in the database. Kept with your filing records; deleted
   on request. Removing a statement in the wizard deletes its database record, not the file.
 - For new imports, we use your Plaid connection once to import that year's transactions,
-  then disconnect it. We keep the bank's name and the transactions you confirm with your
+  then ask Plaid to disconnect it. We keep the bank's name and the transactions you confirm with your
   filing; we don't keep the access token. Kept with your filing records; deleted on request.
 - Supporting documents, other uploads, signature images and signing records (IP,
   browser and consent version): kept with your filing records; deleted on request.

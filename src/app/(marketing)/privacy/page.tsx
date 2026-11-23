@@ -107,11 +107,11 @@ export default function PrivacyPage() {
       </p>
       <p>
         <strong>What we store:</strong> For new imports, we use your Plaid connection once
-        to import that year&apos;s transactions, then disconnect it. We keep the bank&apos;s
+        to import that year&apos;s transactions, then ask Plaid to disconnect it. We keep the bank&apos;s
         name and the transactions you confirm with your filing; we don&apos;t keep the access token.
       </p>
       <p>
-        <strong>Your control:</strong> You can request deletion of the bank connection record by emailing{" "}
+        <strong>Your control:</strong> You can request deletion of the bank name and import record by emailing{" "}
         <a href="mailto:support@form5472prep.com">support@form5472prep.com</a>. You may also
         request deletion of the imported transaction data at any time; we will delete it within
         30 days of the request.

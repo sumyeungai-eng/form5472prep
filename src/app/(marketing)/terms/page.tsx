@@ -114,7 +114,7 @@ export default function TermsPage() {
           Plaid&apos;s End User Privacy Policy
         </a>{" "}
         in addition to our own <a href="/privacy">Privacy Policy</a>. For new imports, we use
-        your Plaid connection once to import that year&apos;s transactions, then disconnect it.
+        your Plaid connection once to import that year&apos;s transactions, then ask Plaid to disconnect it.
         We keep the bank&apos;s name and the transactions you confirm with your filing; we
         don&apos;t keep the access token. To request deletion,
         email <a href="mailto:support@form5472prep.com">support@form5472prep.com</a>. The feature is provided

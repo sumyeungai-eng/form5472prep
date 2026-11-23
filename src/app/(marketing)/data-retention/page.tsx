@@ -52,7 +52,7 @@ export default function DataRetentionPage() {
           <tr>
             <td>Plaid bank name and import record</td>
             <td>Kept with your filing records; deleted on request</td>
-            <td>For new imports, we use your Plaid connection once to import that year&apos;s transactions, then disconnect it. We keep the bank&apos;s name and the transactions you confirm with your filing; we don&apos;t keep the access token.</td>
+            <td>For new imports, we use your Plaid connection once to import that year&apos;s transactions, then ask Plaid to disconnect it. We keep the bank&apos;s name and the transactions you confirm with your filing; we don&apos;t keep the access token.</td>
           </tr>
         </tbody>
       </table>
