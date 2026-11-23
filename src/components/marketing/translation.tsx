@@ -1,13 +1,20 @@
 import type { Metadata } from "next";
 import { JsonLd } from "@/components/JsonLd";
 import type { MarketingTranslator } from "@/i18n/marketing";
-import { localizedPath, marketingLanguageAlternates, MARKETING_LOCALES_INDEXABLE, type MarketingLocale } from "@/i18n/marketing/config";
+import { localizedPath, MARKETING_LOCALES_INDEXABLE, type MarketingLocale } from "@/i18n/marketing/config";
+import { marketingLanguageAlternates } from "@/i18n/marketing/languageAlternates";
 import { messageFacts } from "@/i18n/marketing/facts";
 import { ORG_REF, SITE_URL } from "@/lib/seo";
 
 export function catalogText(locale: string, t: MarketingTranslator, key: string, english: string): string {
-  if (locale === "en" || !t.has(key)) return english;
-  return t(key, messageFacts(english).values);
+  if (locale === "en") return english;
+  try {
+    if (!t.has(key)) return english;
+    const translated = t(key, messageFacts(english).values);
+    return translated === key ? english : translated;
+  } catch {
+    return english;
+  }
 }
 
 export function translateData<T>(locale: string, t: MarketingTranslator, key: string, value: T): T {
@@ -25,7 +32,7 @@ export function localizedMetadata(locale: "en" | MarketingLocale, path: string, 
   return {
     ...metadata,
     alternates: { ...metadata.alternates, canonical, ...(languages ? { languages } : {}) },
-    ...(MARKETING_LOCALES_INDEXABLE ? { robots: undefined } : { robots: { index: false, follow: true } }),
+    ...(MARKETING_LOCALES_INDEXABLE ? {} : { robots: { index: false, follow: true } }),
     openGraph: { ...metadata.openGraph, url: canonical, locale: locale === "de" ? "de_DE" : "zh_CN" },
   };
 }

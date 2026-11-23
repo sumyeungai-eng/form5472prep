@@ -41,7 +41,7 @@ function createServices(locale: "en" | MarketingLocale, t: MarketingTranslator) 
       description: SERVICES_HUB.longDescription,
       path: SERVICES_HUB_PATH,
     }),
-    robots: { index: true, follow: true },
+    ...(locale === "en" ? { robots: { index: true, follow: true } } : {}),
   };
 
   const catId = (heading: string) => locale !== "en" ? `cat-${Array.from(heading).map(c => c.codePointAt(0)).join("-")}` : `cat-${heading.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}`;

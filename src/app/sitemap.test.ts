@@ -10,7 +10,7 @@ vi.mock("@/lib/blog", () => ({
 const gate = vi.hoisted(() => ({ enabled: false }));
 vi.mock("@/i18n/marketing/config", async (original) => {
   const actual = await original<typeof import("@/i18n/marketing/config")>();
-  return { ...actual, get MARKETING_LOCALES_INDEXABLE() { return gate.enabled; }, marketingLanguageAlternates: (path: string) => gate.enabled ? { en: "https://www.form5472prep.com" + path, de: "https://www.form5472prep.com" + actual.localizedPath("de", path), "zh-Hans": "https://www.form5472prep.com" + actual.localizedPath("zh-Hans", path), "x-default": "https://www.form5472prep.com" + path } : undefined };
+  return { ...actual, get MARKETING_LOCALES_INDEXABLE() { return gate.enabled; } };
 });
 import sitemap from "./sitemap";
 
@@ -74,7 +74,7 @@ describe("marketing indexing gate", () => {
         const row = rows.find(row => new URL(row.url).pathname === path)!;
         expect(!!row.alternates?.languages).toBe(enabled);
       }
-      for (const row of translated) expect(Object.keys(row.alternates!.languages!)).toEqual(["en", "de", "zh-Hans", "x-default"]);
+      for (const row of translated) expect(Object.keys(row.alternates!.languages!).sort()).toEqual(["de", "en", "x-default", "zh-Hans"]);
     } finally { gate.enabled = false; }
   });
 });

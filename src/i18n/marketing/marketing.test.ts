@@ -6,7 +6,8 @@ import en from "./en.json";
 import de from "./de.json";
 import zh from "./zh-Hans.json";
 import { getCalculatorMessages, getMarketingMessages, getMarketingTranslator } from "./index";
-import { localizedPath, marketingLanguageAlternates } from "./config";
+import { localizedPath } from "./config";
+import { marketingLanguageAlternates } from "./languageAlternates";
 import { TIERS, STANDARD_TURNAROUND, EXPRESS_TURNAROUND, MULTI_YEAR_ADDON_CENTS } from "@/lib/pricing";
 import { formatPrice } from "@/lib/utils";
 

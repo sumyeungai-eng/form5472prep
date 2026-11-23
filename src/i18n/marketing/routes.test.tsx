@@ -43,7 +43,7 @@ describe.each(["de", "zh-Hans"] as const)("%s public marketing routes", locale =
     const meta = metadata(locale);
     expect(meta.alternates?.canonical).toBe(SITE_URL + localizedPath(locale, path));
     expect(meta.alternates?.languages).toHaveProperty(locale, SITE_URL + localizedPath(locale, path));
-    expect(meta.robots).toBeUndefined();
+    expect("robots" in meta).toBe(false);
     expect(meta.openGraph).toHaveProperty("locale", locale === "de" ? "de_DE" : "zh_CN");
     if (path === "/form-5472-penalty-calculator") {
       expect(html).not.toContain("/embed/form-5472-penalty-calculator");

@@ -1,4 +1,5 @@
-import { MARKETING_LOCALES_INDEXABLE, MARKETING_LOCALES, LOCALIZED_MARKETING_PATHS, localizedPath, marketingLanguageAlternates } from "@/i18n/marketing/config";
+import { MARKETING_LOCALES_INDEXABLE, MARKETING_LOCALES, LOCALIZED_MARKETING_PATHS, localizedPath } from "@/i18n/marketing/config";
+import { marketingLanguageAlternates } from "@/i18n/marketing/languageAlternates";
 import type { MetadataRoute } from "next";
 import { env } from "@/lib/env";
 import { getAllPosts } from "@/lib/blog";

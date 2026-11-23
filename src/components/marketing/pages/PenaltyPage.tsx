@@ -76,7 +76,7 @@ function createPenalty(locale: "en" | MarketingLocale, t: MarketingTranslator) {
       description: PAGE_DESCRIPTION,
       path: PAGE_PATH,
     }),
-    robots: { index: true, follow: true },
+    ...(locale === "en" ? { robots: { index: true, follow: true } } : {}),
   };
 
   function Form5472PenaltyCalculatorPage() {

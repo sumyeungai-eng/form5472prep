@@ -460,7 +460,7 @@
       },
       "standard-vs-express": {
         "q": "What's the difference between Standard and Express?",
-        "a": "Standard and Express differ only by turnaround. Standard is ready in {days1} business days at {amount1}, while Express is ready for you to check and sign in under {days2} days from your order, {days3} days a week, at {amount2}, and adds priority email support. We fax Express filings once you sign, the same as Standard. Both include the same documents, accountant review, and IRS fax delivery."
+        "a": "Standard and Express differ only by turnaround. Standard is ready in {days1} business days at {amount1}, while Express is ready for you to check and sign in under {days2} days from your order, {days3} days a week, at {amount2} and adds priority email support. We fax Express filings once you sign, the same as Standard. Both include the same documents, accountant review, and IRS fax delivery."
       },
       "whats-included-for-the-price": {
         "q": "What's included for the price?",
