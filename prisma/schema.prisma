@@ -538,12 +538,11 @@ model PlaidConnection {
   id              String   @id @default(cuid())
   filingId        String
   filing          Filing   @relation(fields: [filingId], references: [id], onDelete: Cascade)
-  // Plaid access token — kept in the DB for simplicity. In production this
-  // should be encrypted at rest with a KMS key; for now we rely on Neon's
-  // at-rest encryption and the row-level filing ownership check.
-  accessToken     String
+  // Legacy tokens await revocation; new imports use request-only tokens and disconnect immediately.
+  accessToken     String?
   itemId          String
   institutionName String?
+  revokedAt       DateTime?
   createdAt       DateTime @default(now())
 }
 

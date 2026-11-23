@@ -113,9 +113,10 @@ export default function TermsPage() {
         <a href="https://plaid.com/legal/#end-user-privacy-policy" target="_blank" rel="noopener noreferrer">
           Plaid&apos;s End User Privacy Policy
         </a>{" "}
-        in addition to our own <a href="/privacy">Privacy Policy</a>. The connection and
-        access token are stored; the connection is not revoked automatically after import.
-        Only transaction rows you confirm are saved with your filing. To request deletion,
+        in addition to our own <a href="/privacy">Privacy Policy</a>. For new imports, we use
+        your Plaid connection once to import that year&apos;s transactions, then disconnect it.
+        We keep the bank&apos;s name and the transactions you confirm with your filing; we
+        don&apos;t keep the access token. To request deletion,
         email <a href="mailto:support@form5472prep.com">support@form5472prep.com</a>. The feature is provided
         for your convenience; you remain responsible for verifying that the imported and
         categorized transactions are accurate and complete before authorizing submission.

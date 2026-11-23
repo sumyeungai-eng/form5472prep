@@ -50,9 +50,9 @@ export default function DataRetentionPage() {
             <td>Transactions are fetched for review; only rows you confirm are saved with your filing</td>
           </tr>
           <tr>
-            <td>Plaid connection and access token</td>
+            <td>Plaid bank name and import record</td>
             <td>Kept with your filing records; deleted on request</td>
-            <td>The connection record and access token are stored; the connection is not revoked automatically after import</td>
+            <td>For new imports, we use your Plaid connection once to import that year&apos;s transactions, then disconnect it. We keep the bank&apos;s name and the transactions you confirm with your filing; we don&apos;t keep the access token.</td>
           </tr>
         </tbody>
       </table>

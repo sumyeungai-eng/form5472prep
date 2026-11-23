@@ -106,13 +106,12 @@ export default function PrivacyPage() {
         third party other than as needed to complete your filing.
       </p>
       <p>
-        <strong>What we store:</strong> the Plaid connection record and its access token
-        are stored. Transactions are fetched for review; only rows you confirm are saved
-        with your filing. Kept with your filing records; deleted on request.
+        <strong>What we store:</strong> For new imports, we use your Plaid connection once
+        to import that year&apos;s transactions, then disconnect it. We keep the bank&apos;s
+        name and the transactions you confirm with your filing; we don&apos;t keep the access token.
       </p>
       <p>
-        <strong>Your control:</strong> the connection is not revoked automatically after
-        import. You can request deletion of the stored connection by emailing{" "}
+        <strong>Your control:</strong> You can request deletion of the bank connection record by emailing{" "}
         <a href="mailto:support@form5472prep.com">support@form5472prep.com</a>. You may also
         request deletion of the imported transaction data at any time; we will delete it within
         30 days of the request.

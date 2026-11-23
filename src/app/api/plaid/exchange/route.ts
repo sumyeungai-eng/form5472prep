@@ -8,8 +8,8 @@ import type { ParsedTransaction } from "@/lib/bank/types";
 export const runtime = "nodejs";
 
 // Called from the client after Plaid Link succeeds. Exchanges the public_token
-// for a long-lived access_token, stores it, then immediately fetches the
-// tax-year's transactions and returns them categorized — same shape the
+// for a request-only access_token, fetches the tax-year's transactions, and
+// disconnects the item before returning them categorized — same shape the
 // CSV/PDF upload route returns so the wizard can plug them in.
 export async function POST(req: Request) {
   if (!plaidConfigured()) {
@@ -43,25 +43,44 @@ export async function POST(req: Request) {
     // Non-fatal — we still have the access token.
   }
 
-  // 3. Persist the connection.
+  // 3. Pull transactions once; always attempt to disconnect, even on failure.
+  const startDate = `${taxYear}-01-01`;
+  const endDate = `${taxYear}-12-31`;
+  let tx;
+  let revokedAt: Date | undefined;
+  try {
+    tx = await plaid().transactionsGet({
+      access_token: accessToken,
+      start_date: startDate,
+      end_date: endDate,
+      options: { count: 500 }, // good enough for a small-LLC year; paginate if needed
+    });
+  } catch {
+    // Do not propagate a Plaid/Axios error containing the request's token.
+    return NextResponse.json({ error: "Could not import transactions from Plaid" }, { status: 502 });
+  } finally {
+    try {
+      await plaid().itemRemove({ access_token: accessToken });
+      revokedAt = new Date();
+    } catch (error) {
+      const code = (error as { response?: { data?: { error_code?: unknown } } } | null)
+        ?.response?.data?.error_code;
+      // Never log the raw error: its request config can contain the token.
+      console.warn("Plaid item removal failed", {
+        itemId,
+        error: typeof code === "string" ? code.split(accessToken).join("[redacted]") : "Item removal failed",
+      });
+    }
+  }
+
+  // 4. Keep import metadata only, never the access token.
   await prisma.plaidConnection.create({
     data: {
       filingId: filing.id,
-      accessToken,
       itemId,
       institutionName,
+      ...(revokedAt ? { revokedAt } : {}),
     },
-  });
-
-  // 4. Pull transactions for the requested tax year and return them in our
-  //    canonical shape, ready for the wizard to display.
-  const startDate = `${taxYear}-01-01`;
-  const endDate = `${taxYear}-12-31`;
-  const tx = await plaid().transactionsGet({
-    access_token: accessToken,
-    start_date: startDate,
-    end_date: endDate,
-    options: { count: 500 }, // good enough for a small-LLC year; paginate if needed
   });
 
   const parsed: ParsedTransaction[] = tx.data.transactions.map((t) => ({

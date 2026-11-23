@@ -209,9 +209,9 @@ DATA HANDLING
 - Uploaded bank statement files (CSV or Excel) are stored in R2; every categorized
   transaction row is stored in the database. Kept with your filing records; deleted
   on request. Removing a statement in the wizard deletes its database record, not the file.
-- Plaid connections and access tokens are stored and are not revoked automatically
-  after import. Transactions are fetched for review; only rows the user confirms are
-  saved with the filing. Kept with your filing records; deleted on request.
+- For new imports, we use your Plaid connection once to import that year's transactions,
+  then disconnect it. We keep the bank's name and the transactions you confirm with your
+  filing; we don't keep the access token. Kept with your filing records; deleted on request.
 - Supporting documents, other uploads, signature images and signing records (IP,
   browser and consent version): kept with your filing records; deleted on request.
 - Sign-in links are reusable until they expire after 7 days.
