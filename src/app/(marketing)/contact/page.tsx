@@ -36,7 +36,7 @@ const CONTACT_FAQS: { q: string; a: string }[] = [
   },
   {
     q: "I've received an IRS notice — what do you need from me?",
-    a: "Send us the notice number (for example CP 215) and the tax year it covers. We'll tell you what a corrected or late filing involves before you pay anything.",
+    a: "For a CP 215 notice or §6038A penalty letter, we can't help with the penalty itself; contact a tax attorney or enrolled agent. For any other IRS letter about a filing we prepared, send us the notice number and tax year. If an error in our own preparation ever causes a penalty, we handle the IRS response at no charge.",
   },
 ];
 

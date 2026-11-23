@@ -65,7 +65,7 @@ The IRS doesn't have a standalone form to attach Form 5472 to for a [disregarded
 
 ## How much is the Form 5472 penalty?
 
-The penalty for failing to file Form 5472, or filing it late or incompletely, is **$25,000 per form, per year** under IRC § 6038A(d), as described in the [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472). The IRS assesses it automatically — you don't have to do anything special to trigger it.
+The penalty for failing to file Form 5472, or filing it late or submitting a substantially incomplete form, is **$25,000 per form, per year** under IRC § 6038A(d), as described in the [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472). The IRS can assess it systemically when a late Form 5472 is processed, without a person reviewing the case first.
 
 If you've missed prior years, there's a procedure called **DIIRSP** (Delinquent International Information Return Submission Procedure) that lets you catch up. You file the late returns with a written **[reasonable cause statement](/form-5472-reasonable-cause-statement)** explaining why you didn't file on time. If the IRS accepts the statement, the penalty may be abated.
 
@@ -114,7 +114,7 @@ Form 5472 is filed by a **US entity** (your US LLC) that has a foreign owner. Fo
 
 ### How much does it cost to file Form 5472?
 
-Doing it yourself costs $0 in IRS fees but takes hours and risks a $25,000 penalty for a missed or incomplete filing. Form5472 Prep prepares and faxes the package for **{{price.standard}}** Standard or **{{price.express}}** Express, with fax delivery included and +{{price.additionalYear}} per additional past year.
+Doing it yourself costs $0 in IRS fees but takes hours and risks a $25,000 penalty for a missed or substantially incomplete filing. Form5472 Prep prepares and faxes the package for **{{price.standard}}** Standard or **{{price.express}}** Express, with fax delivery included and +{{price.additionalYear}} per additional past year.
 
 ## What's next
 

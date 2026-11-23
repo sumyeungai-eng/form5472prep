@@ -8,7 +8,7 @@ tags: ["form-5472", "filing-guide", "diy", "pro-forma-1120", "foreign-owned-llc"
 draft: false
 ---
 
-**To complete Form 5472 as a foreign-owned US single-member LLC: fill Part I with the LLC's details and check the box on line 3, Part II with the foreign owner's details and foreign tax ID, Part III with the related party, Part IV with monetary transactions, and Part V with contributions and distributions on an attached statement. Attach it to a pro forma Form 1120 and fax to 855-887-7737. A missed or incomplete filing can trigger the $25,000 penalty under [IRC §6038A(d)](https://www.irs.gov/instructions/i5472).**
+**To complete Form 5472 as a foreign-owned US single-member LLC: fill Part I with the LLC's details and check the box on line 3, Part II with the foreign owner's details and foreign tax ID, Part III with the related party, Part IV with monetary transactions, and Part V with contributions and distributions on an attached statement. Attach it to a pro forma Form 1120 and fax to 855-887-7737. A missed or substantially incomplete filing can trigger the $25,000 penalty under [IRC §6038A(d)](https://www.irs.gov/instructions/i5472).**
 
 The current Form 5472 is three pages and has nine parts, most of which a small foreign-owned LLC leaves blank. The difficulty is not volume — it is knowing which parts apply to a [disregarded entity](/what-is-a-disregarded-entity), because the form was designed for foreign multinationals and only later extended to single-member LLCs. The instructions never quite say "here is the short version for you."
 
@@ -44,7 +44,7 @@ Then write **"Foreign-owned U.S. DE"** across the top of page 1. The instruction
 
 Items C (date incorporated) and D (total assets) are not in that express required-field list. Form 5472 line 1c still asks a domestic reporting corporation for total assets, but that does not make item D or Schedule L an express requirement for this special pro forma cover. See the [line 1c total-assets guide](/blog/form-5472-line-1c-total-assets) for the calculation and the distinction between the forms.
 
-Do not complete full corporate income, deduction, tax, or Schedule L sections merely because they appear on Form 1120. The special instruction does not require Schedule L. The Form 1120 does contain a signature block, but the special Form 5472 paragraph does not separately resolve signature method. Our conservative workflow is to sign the completed cover in ink and scan that page for the permitted fax route; see the [pro forma 1120 signature guide](/blog/form-5472-pro-forma-1120-signature) for the authority and limits.
+Do not complete full corporate income, deduction, tax, or Schedule L sections merely because they appear on Form 1120. The special instruction does not require Schedule L. The Form 1120 does contain a signature block, but the special Form 5472 paragraph does not separately resolve signature method. With our service, the owner draws their signature once in the browser, and we place it on the pro forma Form 1120. Form 5472 has no taxpayer signature block; we never sign for the owner. See the [pro forma 1120 signature guide](/blog/form-5472-pro-forma-1120-signature) for the authority and limits.
 
 ## Part I — Reporting Corporation
 
@@ -193,7 +193,7 @@ Use the official IRS PDF from irs.gov and check the revision date in the top-rig
 
 ### Can I fill out Form 5472 for free?
 
-Yes. The IRS publishes Form 5472 and Form 1120 as free fillable PDFs on irs.gov and charges no filing fee. A foreign-owned US LLC still has to print, sign and fax or mail the package, because it cannot e-file.
+Yes. The IRS publishes Form 5472 and Form 1120 as free fillable PDFs on irs.gov and charges no filing fee. A foreign-owned US LLC must fax or mail the package because it cannot e-file. With our service, the owner draws their signature once in the browser, we place it on the pro forma 1120, and we fax the package.
 
 ### What is written across the top of the Form 1120?
 

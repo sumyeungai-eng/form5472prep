@@ -72,7 +72,7 @@ const steps = [
     icon: Send,
     title: "Send the client the signing link",
     anchor: "#step-3",
-    body: "Copy the secure review-and-sign link from your dashboard and send it from your own email to the person authorized to sign for the client LLC; we never email your clients. They review the completed package and sign once in their browser; we embed the signature into every required signature box on the printable PDF, so nothing is printed or scanned in the standard flow. A wet-ink alternative — print, sign in pen, upload — is available if the client prefers it.",
+    body: "Copy the secure review-and-sign link from your dashboard and send it from your own email to the client LLC's owner; we never email your clients. They review the completed package and draw their signature once in the browser. We place it on the pro forma 1120; Form 5472 has no taxpayer signature block, and we never sign for the owner.",
   },
   {
     icon: LayoutDashboard,

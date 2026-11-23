@@ -146,7 +146,7 @@ const BACKGROUND = `## Background — Form 5472 without the jargon
 
 A foreign-owned US single-member LLC is treated as a "disregarded entity" by default for US federal income tax purposes. Under Treasury Regulation § 1.6038A-1, the LLC is treated as a domestic corporation separate from its owner solely for Form 5472 reporting. The LLC must file Form 5472 with an attached pro forma Form 1120 to report transactions between the LLC and its foreign owner (or any related foreign party).
 
-Failure to file Form 5472 (or the attached pro forma Form 1120), or filing late or incompletely, triggers a ${PENALTY}-per-form, per-year penalty under IRC § 6038A(d). If the failure continues more than ${CONTINUATION_GRACE_DAYS} days after the IRS mails a notice, an additional ${CONTINUATION} applies for each 30-day period (or fraction), with no maximum. The initial penalty may be assessed systemically when a late return is processed.
+Failure to file Form 5472 (or the attached pro forma Form 1120), or filing late or submitting a substantially incomplete form, triggers a ${PENALTY}-per-form, per-year penalty under IRC § 6038A(d). If the failure continues more than ${CONTINUATION_GRACE_DAYS} days after the IRS mails a notice, an additional ${CONTINUATION} applies for each 30-day period (or fraction), with no maximum. The initial penalty may be assessed systemically when a late return is processed.
 
 Foreign-owned US disregarded entities cannot e-file Form 5472 or the attached pro forma Form 1120. They are filed by fax to ${IRS_OGDEN_FAX} or by mail to ${IRS_OGDEN_MAIL_ADDRESS}.
 

@@ -83,6 +83,6 @@ Ask whether they mean an online intake, an electronic signature, an online fax, 
 
 ## Need help preparing the package?
 
-Form5472 Prep prepares Form 5472 and the pro forma Form 1120 from a guided questionnaire. [Start your filing](/start) or review [current service details](/pricing). For questions about an existing package, [contact us](/contact); a disputed signature or IRS notice may require advice or representation beyond routine preparation.
+Form5472 Prep prepares Form 5472 and the pro forma Form 1120 from a guided questionnaire. With our service, the owner draws their signature once in the browser, and we place it on the pro forma 1120; we never sign for the owner. [Start your filing](/start) or review [current service details](/pricing). For questions about an existing package, [contact us](/contact); a disputed signature or IRS notice may require advice or representation beyond routine preparation.
 
 This guide is educational information, not individualized tax or legal advice.

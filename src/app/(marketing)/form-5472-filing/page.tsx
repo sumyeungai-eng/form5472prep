@@ -25,6 +25,7 @@ import {
 } from "@/lib/pricing";
 import { ORG_EMAIL, pageMeta, TRUSTPILOT_PROFILE_URL } from "@/lib/seo";
 import { formatPrice } from "@/lib/utils";
+import { FAQ_ITEMS } from "@/lib/faq";
 
 // Google Ads funnel attribution for this list-price landing page.
 const ATTRIBUTION_SRC = "gads";
@@ -49,6 +50,8 @@ export const metadata: Metadata = {
   }),
 };
 
+const IRS_NOTICE_FAQ = FAQ_ITEMS.find((item) => item.id === "irs-notice-help")!;
+
 const FAQS = [
   {
     q: "What's included for the price?",
@@ -67,8 +70,8 @@ const FAQS = [
     a: `Additional past tax years are ${formatPrice(MULTI_YEAR_ADDON_CENTS)} each. All delinquent years go to the IRS together under DIIRSP, each with its own reasonable cause statement, and the exact totals are shown in the multi-year table above. If you're more than three years behind, email ${ORG_EMAIL} to scope it first.`,
   },
   {
-    q: "I already received an IRS notice — can you still help?",
-    a: "Yes. We help owners who received an IRS CP 215 penalty notice or §6038A letter and need a properly prepared late filing, including the required forms and a reasonable cause statement based on their circumstances.",
+    q: IRS_NOTICE_FAQ.question,
+    a: IRS_NOTICE_FAQ.answer,
   },
   {
     q: "Are there any hidden fees?",
@@ -508,7 +511,7 @@ function ValueOfFiling() {
       body: "Without the pro forma Form 1120 it attaches to, the IRS treats the return as never filed.",
     },
     {
-      title: "Filed, but incomplete",
+      title: "Filed, but substantially incomplete",
       body: "A blank Part V, missing supporting statement, or missing owner identifier is scored like a missing return.",
     },
   ];
@@ -528,7 +531,7 @@ function ValueOfFiling() {
             per form, per year under IRC § 6038A
           </h2>
           <p className="mx-auto mt-4 max-w-2xl leading-relaxed text-slate-300">
-            The penalty applies when Form 5472 is late, incomplete, or not filed. There is no small-LLC exception for an entity with no revenue or US tax due.
+            The penalty applies when Form 5472 is late, substantially incomplete, or not filed. There is no small-LLC exception for an entity with no revenue or US tax due.
           </p>
         </Reveal>
 
@@ -560,7 +563,7 @@ function WhoItsFor() {
   const items = [
     "Non-US owners of a US single-member LLC in any state who need this year's filing done correctly",
     "Owners who only just discovered the requirement and are one, two, or three years behind",
-    "Owners who received an IRS CP 215 penalty notice or § 6038A letter and need a properly prepared late filing",
+    "Owners who missed a deadline and have not yet received an IRS penalty notice",
     "Owners of several LLCs who want every entity filed the same way each year",
     "CPAs and tax attorneys who want a foreign client's package prepared, reviewed, and faxed",
   ];

@@ -60,7 +60,7 @@ export const STAT_CATEGORIES: Array<{ id: StatCategory; question: string; intro:
     id: "enforcement",
     question: "How does the IRS enforce Form 5472 penalties?",
     intro:
-      "Form5472 Prep's review of National Taxpayer Advocate data: in 2018 the IRS systemically assessed 9,889 Form 5471 and 5472 penalties totalling $253,087,500, and 55% were abated, or 71% by dollar value. Since 2013 the IRS has assessed the initial penalty automatically on each Form 5472 attached to a late-filed Form 1120.",
+      "Form5472 Prep's review of National Taxpayer Advocate data: in 2018 the IRS systemically assessed 9,889 Form 5471 and 5472 penalties totalling $253,087,500, and 55% were abated, or 71% by dollar value. Since 2013, the IRS has been able to assess the initial penalty systemically when processing a late-filed Form 1120 with Form 5472 attached.",
   },
   {
     id: "who-files",
@@ -181,9 +181,9 @@ export const FORM5472_STATS: Form5472Stat[] = [
   // ---- Enforcement ---------------------------------------------------------
   {
     id: "systemic-since-2013",
-    headline: "Since 2013 the IRS has automatically assessed Form 5472 penalties on late-filed Form 1120 returns.",
+    headline: "The IRS can assess Form 5472 penalties systemically on late-filed Form 1120 returns, a practice introduced in 2013.",
     detail:
-      "Per the Internal Revenue Manual, beginning in 2013 the IRS Master File systemically assesses the initial section 6038A penalty on each Form 5472 attached to a late-filed Form 1120 series return, followed by a CP 215 notice.",
+      "Per the Internal Revenue Manual, beginning in 2013 the IRS Master File can systemically assess the initial section 6038A penalty on a Form 5472 attached to a late-filed Form 1120 series return, followed by a CP 215 notice.",
     figure: "2013",
     sourceLabel: "IRM 21.8.2.21.2 (10-01-2024)",
     sourceUrl: IRM_21_8_2,

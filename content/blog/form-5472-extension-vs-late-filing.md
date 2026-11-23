@@ -97,7 +97,7 @@ Three things, and assuming otherwise is how an extension turns into a late filin
 
 ## The bottom line
 
-Comparing a known fee against a $25,000 exposure that scales per related party, per year, and compounds every 30 days after a notice is not a close call. The extension is the cheap route whenever the regular due date is still ahead of you, and the only honest thing anyone can say about the late route is that the outcome is the IRS's decision, not the preparer's. If the due date has not passed, [file the Form 7004](/form-7004-extension); if it has, [start the catch-up package](/start) and make the statement as specific as the facts allow.
+Comparing a known fee against a $25,000 exposure that scales per related party, per year, and adds a flat $25,000 for each 30-day period, or part of one, that the failure continues more than 90 days after the IRS mails a notice is not a close call. The extension is the cheap route whenever the regular due date is still ahead of you, and the only honest thing anyone can say about the late route is that the outcome is the IRS's decision, not the preparer's. If the due date has not passed, [file the Form 7004](/form-7004-extension); if it has, [start the catch-up package](/start) and make the statement as specific as the facts allow.
 
 ## Frequently asked questions
 

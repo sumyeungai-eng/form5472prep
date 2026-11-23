@@ -25,7 +25,7 @@ A foreign-owned Florida LLC should usually check the Sunbiz annual report first,
 | Federal Form 5472 + pro forma 1120 | IRS | Generally April 15 for a calendar-year foreign-owned DE with a reportable transaction | Related-party transactions were disclosed |
 | Form 7004 extension | IRS Ogden PIN Unit | File by the regular federal due date | Federal extension only, not a Sunbiz extension |
 
-The IRS Form 5472 instructions say a foreign-owned U.S. disregarded entity generally files Form 5472 when it had a reportable transaction with a related party, and the form is attached to a pro forma Form 1120 ([IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472)). The Florida annual report does not satisfy that IRS rule. A late, incomplete, or unfiled Form 5472 draws a $25,000 penalty per form per year under IRC §6038A(d), and $25,000 more for each 30-day period the failure continues past 90 days after an IRS notice ([IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472)).
+The IRS Form 5472 instructions say a foreign-owned U.S. disregarded entity generally files Form 5472 when it had a reportable transaction with a related party, and the form is attached to a pro forma Form 1120 ([IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472)). The Florida annual report does not satisfy that IRS rule. A late, substantially incomplete, or unfiled Form 5472 draws a $25,000 penalty per form per year under IRC §6038A(d), and $25,000 more for each 30-day period the failure continues past 90 days after an IRS notice ([IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472)).
 
 Separate Florida taxes can still apply if the LLC has employees, sales-taxable activity, a corporate tax election or other Florida tax facts.
 

@@ -70,7 +70,7 @@ Two lines are routinely left out, and they are the two that hurt. **Error rework
 
 ## Why does review depth decide the risk?
 
-Because an incomplete filing is treated as no filing. The IRS Instructions for Form 5472 state that a **$25,000** penalty may apply for failure to file when due and in the prescribed manner, for filing a substantially incomplete Form 5472, or for failure to maintain the required records. That penalty is not automatic for every mistake, and it applies per failure. The [Form 5472 penalty calculator](/form-5472-penalty-calculator) models the exposure.
+Because a substantially incomplete filing is treated as no filing. The IRS Instructions for Form 5472 state that a **$25,000** penalty may apply for failure to file when due and in the prescribed manner, for filing a substantially incomplete Form 5472, or for failure to maintain the required records. That penalty is not automatic for every mistake, and it applies per failure. The [Form 5472 penalty calculator](/form-5472-penalty-calculator) models the exposure.
 
 The consequence is specific: a cheap preparation with no independent review is not cheap. A complete, reconciled, reviewed package keeps a client out of the substantially-incomplete category, and review depth is the one factor where an under-resourced in-house process loses to both alternatives, a properly staffed in-house team and an outsourced specialist alike.
 
@@ -96,7 +96,7 @@ A mixed approach is legitimate. Some firms keep straightforward current-year fil
 
 ## What does the outsourced route look like in practice?
 
-One account, filings grouped under it, one filing per client LLC. The client gets a secure review-and-sign link and signs in-browser once, with a wet-ink route if preferred; your firm does not sign for the client. You track preparation, signature and submission, and see the fax receipt per filing. Your margin is whatever you charge your own client. [How the partner program works](/blog/form-5472-partner-program-how-it-works) has the full operating model.
+One account, filings grouped under it, one filing per client LLC. The client LLC's owner gets a secure review-and-sign link and draws their signature once in the browser; we place it on the pro forma 1120. Form 5472 has no taxpayer signature block, and neither your firm nor ours signs for the owner. You track preparation, signature and submission, and see the fax receipt per filing. Your margin is whatever you charge your own client. [How the partner program works](/blog/form-5472-partner-program-how-it-works) has the full operating model.
 
 ## Frequently asked questions
 

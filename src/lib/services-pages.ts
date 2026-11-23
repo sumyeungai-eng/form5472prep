@@ -368,7 +368,7 @@ See the [pricing page](/pricing) for everything each plan includes.`,
       },
       {
         q: "Who signs the pro forma 1120?",
-        a: "The person authorized to sign for the LLC. With us you sign once online after the accountant review, and the signature is placed in each required box. A wet-ink option is available if you prefer it.",
+        a: "The owner draws their signature once in the browser after the accountant review, and we place it on the pro forma Form 1120. Form 5472 has no taxpayer signature block; we never sign for the owner.",
       },
       {
         q: "Is the pro forma 1120 filed every year?",
@@ -496,7 +496,7 @@ Each late year's price includes its own reasonable-cause statement. See the [pri
       },
       {
         q: "What if I already received an IRS notice?",
-        a: "Then the DIIRSP eligibility wording no longer fits, because the IRS has contacted you. Respond to the notice by its deadline. The [late-filing checker](/form-5472-late-filing-checker) shows the routes; consider advice from a tax professional.",
+        a: "Then the DIIRSP eligibility wording no longer fits, because the IRS has contacted you. Respond to the notice by its deadline. The [late-filing checker](/form-5472-late-filing-checker) shows the routes. We don't handle penalty notices; contact a tax attorney.",
       },
       {
         q: "Do I need old bank statements?",
@@ -853,7 +853,7 @@ You pay for each filing at checkout, and what you charge your own client is up t
       },
       {
         q: "Who signs each client's filing?",
-        a: "The person authorized to sign for the client LLC. You copy the secure review-and-sign link from your dashboard and send it to them; they review the completed package and sign online. A wet-ink option is available.",
+        a: "The client LLC's owner. You send them the secure review-and-sign link from your dashboard; they review the package and draw their signature once in the browser. We place it on the pro forma 1120; Form 5472 has no taxpayer signature block. We never sign for them.",
       },
       {
         q: "Do I need to switch white-label filing on?",
@@ -1198,7 +1198,7 @@ Missed earlier years add ${ADD} each on either plan. For a calendar-year LLC the
       },
       {
         q: "Who signs the return when I hire you?",
-        a: "You, or another person authorized to sign for the LLC. Signing opens in your browser after the accountant review. A wet-ink option is available if you prefer to print and sign by hand.",
+        a: "You, the owner. After the accountant review, you draw your signature once in the browser, and we place it on the pro forma Form 1120. Form 5472 has no taxpayer signature block; we never sign for you.",
       },
       {
         q: "How is this different from filing it myself?",
@@ -1407,8 +1407,8 @@ Other returns stay with your firm or the client: partnership returns, a full For
         a: "Yes. A partner account lets your firm type in the figures from its own records, or have the client fill in the questionnaire through a secure link. Either way you can check the answers before they go to accountant review.",
       },
       {
-        q: "Who signs the client's pro forma 1120 and Form 5472?",
-        a: "Whoever is authorized to sign for the client's LLC, usually the owner. Once the review is approved, you copy the signing link from your partner dashboard and send it; they sign in the browser.",
+        q: "Who signs the client's pro forma 1120?",
+        a: "The client LLC's owner. Once the review is approved, you send them the signing link from your partner dashboard; they draw their signature once in the browser. We place it on the pro forma 1120; Form 5472 has no taxpayer signature block. We never sign for them.",
       },
     ],
     related: [],

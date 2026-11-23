@@ -50,7 +50,7 @@ export default function DataRetentionPage() {
             <td>No persistent bank connection is retained beyond the import session unless you opt to keep it</td>
           </tr>
           <tr>
-            <td>Signed PDFs you upload</td>
+            <td>PDFs you sign in the browser</td>
             <td>Up to 72 hours</td>
             <td>Held only to fax to the IRS and return the receipt; deleted after fax confirmation</td>
           </tr>

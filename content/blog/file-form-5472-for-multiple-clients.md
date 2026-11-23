@@ -115,7 +115,7 @@ Yes. One partner login holds every filing, grouped under the account, with one f
 
 ### Do we sign the filings on behalf of our clients?
 
-No. The person authorised to sign for the client LLC signs in the browser, through a secure link your firm sends from the dashboard. A wet-ink route exists if a client prefers to print, sign and upload.
+No. The client LLC's owner draws their signature once in the browser, through a secure link your firm sends from the dashboard; we place it on the pro forma 1120. Form 5472 has no taxpayer signature block, and we never sign for the owner.
 
 ### Is the fax receipt confirmation that the IRS accepted the return?
 

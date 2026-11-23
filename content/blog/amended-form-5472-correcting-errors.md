@@ -12,7 +12,7 @@ draft: false
 
 Finding an error after filing is uncomfortable, and the instinct to leave it alone is understandable. It is usually the wrong instinct, because of one sentence in the IRS instructions: **"Filing a substantially incomplete Form 5472 constitutes a failure to file Form 5472."**
 
-An incomplete or materially wrong return can therefore attract the same **$25,000 penalty** as filing nothing at all. Correcting it voluntarily, before the IRS raises it, is both cheaper and better evidence of good faith.
+A substantially incomplete or materially wrong return can therefore attract the same **$25,000 penalty** as filing nothing at all. Correcting it voluntarily, before the IRS raises it, is both cheaper and better evidence of good faith.
 
 This guide covers what the IRS does and does not say, which errors are worth correcting, and how to assemble the correction. If you would rather have it prepared for you, [we handle corrected filings from {{price.standard}}](/start).
 

@@ -8,7 +8,7 @@ tags: ["form-5472", "penalty", "diirsp", "reasonable-cause", "foreign-owned-llc"
 draft: false
 ---
 
-**If the IRS assessed a $25,000 Form 5472 penalty, you generally have three options: pay it, request abatement in writing on reasonable cause grounds, or appeal. The penalty under IRC § 6038A(d) is assessed automatically by computer, so a reasonable cause letter you already sent may never have been read. Respond in writing by the date on the notice.**
+**If the IRS assessed a $25,000 Form 5472 penalty, you generally have three options: pay it, request abatement in writing on reasonable cause grounds, or appeal. The penalty under IRC § 6038A(d) can be assessed systemically when a late Form 5472 is processed, so a reasonable cause letter you already sent may never have been read. Respond in writing by the date on the notice.**
 
 The notice usually arrives as a **CP215, "Notice of Civil Penalty Charge."** It names your LLC, cites a tax year, and shows a $25,000 charge with a short response window. It is frightening precisely because it arrives with no warning and no explanation of what you did wrong.
 
@@ -127,15 +127,15 @@ The one thing that never helps is waiting. Penalties accrue, the "voluntary befo
 
 ## Getting the delinquent filings done
 
-Responding to a penalty notice has two halves. The abatement argument is yours — it depends on your facts, and if the amounts are large it deserves a tax attorney or CPA. The **filings** are mechanical, and that half is what we do.
+If you already received a CP 215 notice or §6038A penalty letter, contact a tax attorney or enrolled agent. We only prepare preventative late filings before the IRS sends a penalty notice; we do not appeal or negotiate penalties.
 
-[Form5472 Prep](/) prepares the complete package for each missing year — pro forma Form 1120, Form 5472, the Part V supporting statement, and a reasonable cause cover letter — has it reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and faxes it to the IRS Ogden PIN Unit, returning the timestamped confirmation receipt you will cite in your response. Standard filings are **{{price.standard}}** and ready in 5-7 business days; express is **{{price.express}}**, ready to sign in under 3 days; each additional past tax year is **+{{price.additionalYear}}**.
+For preventative filings before a penalty notice, [Form5472 Prep](/) prepares the complete package for each missing year — pro forma Form 1120, Form 5472, the Part V supporting statement, and a reasonable cause cover letter — has it reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and faxes it to the IRS Ogden PIN Unit, returning a timestamped transmission receipt for your records. Standard filings are **{{price.standard}}** and ready in 5-7 business days; express is **{{price.express}}**, ready to sign in under 3 days; each additional past tax year is **+{{price.additionalYear}}**.
 
 For current flat-fee options before you start, [see current pricing](/pricing).
 
-We are not a CPA firm and we do not give tax advice. We prepare and submit the information returns accurately and fast, so the compliance half of your problem stops growing while you deal with the penalty half.
+We are not a CPA firm and we do not give tax advice. If an error in our own preparation ever causes a penalty, we handle the IRS response at no charge.
 
-[Start your filing here](/start) — about 15 minutes of your time, IRS fax delivery included.
+If you have not received a penalty notice, [start your preventative filing here](/start) — about 15 minutes of your time, IRS fax delivery included.
 
 ## Frequently asked questions
 
@@ -171,4 +171,4 @@ Commonly many months for international penalty correspondence. Silence during th
 
 A penalty notice is not the end of the process — but the clock on it is real. File every outstanding year, document your chronology, and respond in writing by the date printed on the notice.
 
-If you have missing years to file, [start here](/start). For the full catch-up procedure, see [filing Form 5472 late or never filed](/blog/form-5472-filed-late-never-filed). If you are unsure which years had reportable transactions, [our reportable transactions guide](/blog/form-5472-reportable-transactions-examples) walks through real examples.
+If you have missing years and no penalty notice, [start a preventative filing here](/start). If you already have a penalty notice, contact a tax attorney or enrolled agent. For the full catch-up procedure, see [filing Form 5472 late or never filed](/blog/form-5472-filed-late-never-filed). If you are unsure which years had reportable transactions, [our reportable transactions guide](/blog/form-5472-reportable-transactions-examples) walks through real examples.
