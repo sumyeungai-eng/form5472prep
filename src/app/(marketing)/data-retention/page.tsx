@@ -20,7 +20,9 @@ export default function DataRetentionPage() {
         We retain the minimum amount of data needed to (a) prove that your IRS filing was
         transmitted, (b) reproduce next year&apos;s filing without you re-entering everything,
         and (c) meet our own records-retention obligations. We deliberately do not store
-        copies of bank statements or signed PDFs after they have served their purpose.
+        copies of bank statements after they have served their purpose. Your signed forms,
+        the exact PDF we fax to the IRS, and the fax receipt are kept in your account for
+        up to 7 years; we delete them sooner if you ask.
       </p>
 
       <h2>Discarded during normal processing</h2>
@@ -49,21 +51,6 @@ export default function DataRetentionPage() {
             <td>Revoked immediately after transaction import is complete, or on user request</td>
             <td>No persistent bank connection is retained beyond the import session unless you opt to keep it</td>
           </tr>
-          <tr>
-            <td>PDFs you sign in the browser</td>
-            <td>Up to 72 hours</td>
-            <td>Held only to fax to the IRS and return the receipt; deleted after fax confirmation</td>
-          </tr>
-          <tr>
-            <td>Uploaded dissolution certificates and extension proof</td>
-            <td>Up to 72 hours after the filing or support task is complete</td>
-            <td>Held only to complete the related filing or support task, then deleted</td>
-          </tr>
-          <tr>
-            <td>Generated unsigned PDFs</td>
-            <td>Regenerated on demand</td>
-            <td>Built from your retained entity / owner / totals data; not stored after download</td>
-          </tr>
         </tbody>
       </table>
       </div>
@@ -79,6 +66,21 @@ export default function DataRetentionPage() {
           </tr>
         </thead>
         <tbody>
+          <tr>
+            <td>Your signed forms, the exact PDF we fax to the IRS, and the fax receipt</td>
+            <td>Up to 7 years</td>
+            <td>Kept in your account so you can download your filed documents; we delete them sooner if you ask</td>
+          </tr>
+          <tr>
+            <td>Uploaded dissolution certificates and extension proof</td>
+            <td>Stored with your filing</td>
+            <td>Kept for review of the related filing; ask us to delete these supporting documents</td>
+          </tr>
+          <tr>
+            <td>Generated unsigned PDFs</td>
+            <td>Stored with your filing</td>
+            <td>Saved for staff review and release; downloading does not delete the PDF</td>
+          </tr>
           <tr>
             <td>Fax transmission receipts</td>
             <td>7 years from filing date</td>
@@ -140,8 +142,9 @@ export default function DataRetentionPage() {
 
       <h2>Deletion process</h2>
       <p>
-        Records past their retention period are deleted on a rolling monthly basis. Deletion
-        is irreversible; once a filing&apos;s retention period expires we cannot retrieve it.
+        Filing PDFs are not deleted after fax confirmation or download. If you delete a
+        draft filing, we also attempt to remove its stored files. For other deletion
+        requests, contact us as described below.
       </p>
 
       <h2>Early deletion at your request</h2>
@@ -157,7 +160,6 @@ export default function DataRetentionPage() {
       <ul>
         <li>Bank statement files; discarded immediately after parsing.</li>
         <li>Individual line-item transactions; discarded after totals are confirmed.</li>
-        <li>Signed PDFs; deleted within 72 hours of fax confirmation.</li>
         <li>Payment card data; handled and stored exclusively by Stripe.</li>
         <li>Passwords; we use passwordless customer authentication (one-time email magic-link or Google OAuth); no customer passwords are ever stored.</li>
         <li>Bank login credentials; never seen or stored. Plaid handles authentication directly with your financial institution.</li>

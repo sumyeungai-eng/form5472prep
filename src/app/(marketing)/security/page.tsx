@@ -40,9 +40,10 @@ export default function SecurityPage() {
         </li>
         <li>
           <strong>How long:</strong> entity and owner identification data is retained for
-          7 years from the last filing, and fax receipts for 7 years from filing; uploaded
-          dissolution certificates and extension proof are kept for up to 72 hours after
-          the filing or support task is complete. See the{" "}
+          7 years from the last filing. Your signed forms, the exact PDF we fax to the IRS,
+          and the fax receipt are kept in your account for up to 7 years so you can download
+          them; ask us and we delete them sooner. Uploaded dissolution certificates and
+          extension proof are stored with your filing for review; ask us to delete them. See the{" "}
           <a href="/data-retention">Data Retention Policy</a> for the full schedule.
         </li>
         <li>

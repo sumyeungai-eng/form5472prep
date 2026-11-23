@@ -69,9 +69,9 @@ Form5472 Prep's [privacy policy](/privacy) says we do not sell personal informat
 
 Our [security page](/security) describes encryption in transit and storage, processing in the United States and European Union, and these providers: Vercel (hosting), Cloudflare R2 (file storage), Stripe (payments), Resend (email), Telnyx (fax), and a managed database provider. Stripe handles and stores card data; we never see card details. Affected customers receive email notification within 72 hours of a confirmed breach. We deliver the EIN and completed SS-4 by email.
 
-Our [data-retention policy](/data-retention) keeps entity and owner identification data for 7 years from the last filing. Signing records, signing IP/browser information, fax receipts and IRS faxes stay for 7 years; fax receipts run from the filing date. Uploaded signed PDFs are held up to 72 hours for faxing and deleted after fax confirmation.
+Our [data-retention policy](/data-retention) keeps entity and owner identification data for 7 years from the last filing. Signing records, signing IP/browser information, fax receipts and IRS faxes stay for 7 years; fax receipts run from the filing date. Your signed forms, the exact PDF we fax to the IRS, and the fax receipt are kept in your account for up to 7 years so you can download them; ask us and we delete them sooner.
 
-Expired records are deleted monthly; deletion is irreversible. Email support@form5472prep.com from the account email for early deletion, processed within 30 days. A minimal deletion record may remain. We never see or store bank login credentials and do not store customer passwords.
+Filing PDFs are not deleted after fax confirmation or download. Deleting a draft filing also attempts to remove its stored files. Email support@form5472prep.com from the account email for early deletion, processed within 30 days. A minimal deletion record may remain. We never see or store bank login credentials and do not store customer passwords.
 
 Our EIN intake collects a drawn signature for the completed form, used only after you review and confirm.
 

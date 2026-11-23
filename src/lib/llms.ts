@@ -130,7 +130,7 @@ ${MONEY_BACK}`;
 const PRIVACY = `## Privacy
 
 - We do NOT permanently store uploaded bank statements — they are parsed in memory and discarded.
-- We do NOT permanently store signed PDFs — they are deleted within 72 hours of fax confirmation.
+- Your signed forms, the exact PDF we fax to the IRS, and the fax receipt are kept in your account for up to 7 years so you can download them; ask us and we delete them sooner.
 - We DO retain the fax confirmation receipt (proof of filing) and basic entity/owner data so next year's filing pre-fills. Retention: 7 years to match IRS records-retention guidance.
 - We do not sell customer data. Advertising measurement: the Google Ads conversion tag, and the Meta pixel only after marketing consent (see ${SITE_URL}/cookies). Site analytics: Vercel Analytics and Speed Insights.`;
 

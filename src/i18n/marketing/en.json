@@ -75,7 +75,7 @@
     "s009": "Are there any hidden fees?",
     "s010": "No. The price you see is the price you pay. No setup fee, no monthly subscription, no per-page fax surcharge. Multi-year filings add a flat {value1} per additional past year — disclosed up front and shown in the checkout summary before you pay.",
     "s011": "Do you store my bank statements or signed forms?",
-    "s012": "No. We process your bank statements in memory to extract transaction totals, then discard them — they are never written to permanent storage. The signed PDF you upload is held only long enough to fax to the IRS and deliver the fax confirmation receipt back to you, then it is deleted. The only thing we retain is the fax confirmation receipt itself (your proof of filing) and the basic entity / owner information needed to produce next year's filing.",
+    "s012": "No. We process your bank statements in memory to extract transaction totals, then discard them — they are never written to permanent storage. Your signed forms, the exact PDF we fax to the IRS, and the fax receipt are kept in your account for up to 7 years so you can download them; ask us and we delete them sooner. The only thing we retain is the fax confirmation receipt itself (your proof of filing) and the basic entity / owner information needed to produce next year's filing.",
     "s013": "What's your guarantee?",
     "s014": "100% money-back guarantee if we fail to submit your filing to the IRS. If the fax doesn't deliver on the first send, we automatically retry. If it still fails, you get a full refund — no questions asked. And if the IRS ever assesses a penalty because of an error in our preparation, we handle the response with the IRS at no charge.",
     "s015": "Form 5472 and pro forma 1120 filing for a foreign-owned US LLC, from {value1}. Prepared, reviewed, and filed by fax to the IRS Ogden PIN Unit.",
@@ -641,7 +641,7 @@
       },
       "store-bank-statements-signed-forms": {
         "q": "Do you store my bank statements or signed forms?",
-        "a": "No, we do not permanently store bank statements or signed forms. Bank statements are processed in memory to extract transaction totals and discarded; signed PDFs are held only long enough to fax to the IRS and deliver the fax confirmation receipt, then deleted.",
+        "a": "Bank statements are processed in memory to extract transaction totals and discarded. Your signed forms, the exact PDF we fax to the IRS, and the fax receipt are kept in your account for up to 7 years so you can download them; ask us and we delete them sooner.",
         "learnMore": "Read the data retention policy"
       },
       "message-reply-time": {

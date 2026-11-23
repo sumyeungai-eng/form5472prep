@@ -208,7 +208,7 @@ GUARANTEE
 DATA HANDLING
 - Bank statements (if uploaded for transaction extraction): processed in
   memory, never written to permanent storage.
-- Signed PDF: held only long enough to fax and deliver the receipt, then deleted.
+- Your signed forms, the exact PDF we fax to the IRS, and the fax receipt are kept in your account for up to 7 years so you can download them; ask us and we delete them sooner.
 - We retain: the fax confirmation receipt + the basic entity/owner info
   needed to pre-fill next year's filing.
 
