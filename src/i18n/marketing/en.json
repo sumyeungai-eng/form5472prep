@@ -544,12 +544,12 @@
       },
       "missed-form-5472": {
         "q": "What happens if Form 5472 is missed?",
-        "a": "The IRS penalty is generally {amount1} for a missing or incomplete Form 5472. If the IRS mails a notice and the failure continues for more than {days1} days after that notice, another {amount2} can be added for each {days2}-day period, or part of one, that it continues. Late filings can sometimes include a reasonable cause explanation under DIIRSP.",
+        "a": "The IRS penalty is generally {amount1} for a missing or substantially incomplete Form 5472. If the IRS mails a notice and the failure continues for more than {days1} days after that notice, another {amount2} can be added for each {days2}-day period, or part of one, that it continues. Late filings can sometimes include a reasonable cause explanation under DIIRSP.",
         "learnMore": "Estimate the penalty"
       },
       "automatic-penalty": {
         "q": "Is the penalty really automatic?",
-        "a": "It can be. IRC §6038A(d) provides an initial {amount1} penalty when a reporting corporation fails to furnish required Form 5472 information on time or files an incomplete return, and the IRS can assess it systemically when a late Form 5472 is processed, without a person reviewing the case first."
+        "a": "It can be. IRC §6038A(d) provides an initial {amount1} penalty when a reporting corporation fails to furnish required Form 5472 information on time or files a substantially incomplete return, and the IRS can assess it systemically when a late Form 5472 is processed, without a person reviewing the case first."
       },
       "can-penalty-be-abated": {
         "q": "Can the penalty be abated?",
@@ -574,7 +574,7 @@
       },
       "irs-notice-help": {
         "q": "I've received an IRS notice — can you still help, and what do you need from me?",
-        "a": "We help owners with a CP 215 penalty notice or §6038A letter who need a properly prepared late filing. Send the notice number and tax year; we explain the filing path before you pay. We prepare the late filing, not appeals of penalties already assessed for the original late filing. If an error in our own preparation ever causes a penalty, we handle the IRS response at no charge.",
+        "a": "We help owners with a CP 215 notice or §6038A letter who need a properly prepared late filing. Send the notice number and tax year; we explain the filing path before you pay. We prepare the filing but do not appeal the late-filing penalty, whether assessed before or after we file. If our own preparation error ever causes a penalty, we handle the IRS response free.",
         "learnMore": "Contact support"
       },
       "ein-needed-for-form-5472": {
@@ -633,7 +633,7 @@
       },
       "how-do-i-sign": {
         "q": "How do I sign the forms?",
-        "a": "Once our tax accountant has reviewed your package, you read it and draw your signature once in your browser. We place your signature in the signature box of the pro forma Form 1120; Form 5472 itself has no taxpayer signature block. Only you sign your return — we never sign for you — and nothing is sent to the IRS until you have signed."
+        "a": "Once our tax accountant has reviewed your package, you read it and draw your signature once in your browser. We place your signature in the signature box of the pro forma Form 1120; Form 5472 itself has no taxpayer signature block. Only you sign your return — we never sign for you — and nothing in your Form 5472 package is sent to the IRS until you have signed."
       },
       "how-long-whole-thing": {
         "q": "How fast is Form5472 Prep Express filing?",

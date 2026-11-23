@@ -544,12 +544,12 @@
       },
       "missed-form-5472": {
         "q": "Was passiert, wenn Form 5472 fehlt?",
-        "a": "Das IRS-Bußgeld beträgt bei fehlender oder unvollständiger Form 5472 im Allgemeinen {amount1}. Versendet der IRS einen Bescheid per Post und besteht der Verstoß länger als {days1} Tage nach diesem Bescheid fort, können für jeden weiteren Zeitraum von {days2} Tagen oder einen Teil davon weitere {amount2} hinzukommen. Verspätete Einreichungen können unter DIIRSP eine Begründung enthalten.",
+        "a": "Das IRS-Bußgeld beträgt bei fehlender oder im Wesentlichen unvollständiger Form 5472 im Allgemeinen {amount1}. Versendet der IRS einen Bescheid per Post und besteht der Verstoß länger als {days1} Tage nach diesem Bescheid fort, können für jeden weiteren Zeitraum von {days2} Tagen oder einen Teil davon weitere {amount2} hinzukommen. Verspätete Einreichungen können unter DIIRSP eine reasonable cause explanation enthalten.",
         "learnMore": "Bußgeld schätzen"
       },
       "automatic-penalty": {
         "q": "Wird das Bußgeld wirklich automatisch festgesetzt?",
-        "a": "Das kann der Fall sein. IRC §6038A(d) sieht ein anfängliches Bußgeld von {amount1} vor, wenn eine berichtspflichtige Körperschaft die erforderlichen Angaben auf Form 5472 nicht fristgerecht vorlegt oder eine unvollständige Erklärung einreicht. Der IRS kann dieses Bußgeld bei der Verarbeitung einer verspäteten Form 5472 systemseitig festsetzen, ohne dass eine Person den Fall zuvor prüft."
+        "a": "Das kann der Fall sein. IRC §6038A(d) sieht ein anfängliches Bußgeld von {amount1} vor, wenn eine berichtspflichtige Körperschaft die erforderlichen Angaben auf Form 5472 nicht fristgerecht vorlegt oder eine im Wesentlichen unvollständige Erklärung einreicht. Der IRS kann dieses Bußgeld bei der Verarbeitung einer verspäteten Form 5472 systemseitig festsetzen, ohne dass eine Person den Fall zuvor prüft."
       },
       "can-penalty-be-abated": {
         "q": "Kann das Bußgeld erlassen werden?",
@@ -574,7 +574,7 @@
       },
       "irs-notice-help": {
         "q": "Ich habe einen IRS-Bescheid erhalten. Können Sie helfen und was brauchen Sie?",
-        "a": "Wir helfen Inhabern, die einen Strafbescheid CP 215 oder ein §6038A-Schreiben erhalten haben und eine korrekt vorbereitete verspätete Einreichung benötigen. Senden Sie uns die Bescheidnummer und das Steuerjahr; wir erläutern den Ablauf der Einreichung, bevor Sie bezahlen. Wir erstellen die verspätete Einreichung, legen aber keine Einsprüche gegen Strafen ein, die bereits wegen der ursprünglichen verspäteten Einreichung festgesetzt wurden. Sollte ein Fehler bei unserer eigenen Erstellung eine Strafe verursachen, übernehmen wir die Antwort an den IRS kostenlos.",
+        "a": "Wir helfen Inhabern, die einen CP 215-Bußgeldbescheid oder ein §6038A-Schreiben erhalten haben und eine korrekt vorbereitete verspätete Einreichung benötigen. Senden Sie uns die Bescheidnummer und das Steuerjahr; wir erläutern den Ablauf der Einreichung, bevor Sie bezahlen. Wir bereiten die Einreichung vor, legen aber keinen Einspruch gegen das Bußgeld wegen verspäteter Einreichung ein, unabhängig davon, ob es vor oder nach unserer Einreichung festgesetzt wird. Sollte ein Fehler bei unserer eigenen Erstellung jemals ein Bußgeld verursachen, übernehmen wir die Antwort an den IRS kostenlos.",
         "learnMore": "Support kontaktieren"
       },
       "ein-needed-for-form-5472": {
@@ -633,7 +633,7 @@
       },
       "how-do-i-sign": {
         "q": "Wie unterschreibe ich die Formulare?",
-        "a": "Sobald unsere Steuerfachkraft mit IRS-PTIN Ihr Paket geprüft hat, lesen Sie es durch und zeichnen Ihre Unterschrift einmal im Browser. Wir setzen Ihre Unterschrift in das Unterschriftsfeld der pro forma Form 1120 ein; Form 5472 selbst hat kein Unterschriftsfeld für den Steuerpflichtigen. Nur Sie unterschreiben Ihre Erklärung — wir unterschreiben niemals für Sie — und erst nach Ihrer Unterschrift wird etwas an den IRS gesendet."
+        "a": "Sobald unsere Steuerfachkraft mit IRS-PTIN Ihr Paket geprüft hat, lesen Sie es durch und zeichnen Ihre Unterschrift einmal im Browser. Wir setzen Ihre Unterschrift in das Unterschriftsfeld der pro forma Form 1120 ein; Form 5472 selbst hat kein Unterschriftsfeld für den Steuerpflichtigen. Nur Sie unterschreiben Ihre Erklärung — wir unterschreiben niemals für Sie — und nichts aus Ihrem Form 5472-Paket wird an den IRS gesendet, bevor Sie unterschrieben haben."
       },
       "how-long-whole-thing": {
         "q": "Wie schnell ist Form5472 Prep Express?",
