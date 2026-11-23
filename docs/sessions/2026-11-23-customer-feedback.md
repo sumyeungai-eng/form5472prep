@@ -13,6 +13,7 @@
 | `i18n` | `feat/i18n-portal` | Phase 3a portal | merged |
 | `i18n-email` | `feat/i18n-emails` | Phase 3b emails + FilingLocked | merged |
 | `i18n-wiz` | `feat/i18n-wizard` | Phase 3c wizard | merged |
+| `mkt-plan` | `feat/i18n-marketing` | Phase 3d public pages | merged |
 
 The main checkout `~/Documents/Claude work/form5472` holds another session's uncommitted work and was not touched. The merged worktrees are stale and may be removed.
 
@@ -27,6 +28,7 @@ Every row was deployed, and each one passed the full vitest suite, `next build`,
 | **Portal i18n (3a).** next-intl 3.26.5 without i18n routing. The locale comes from the `NEXT_LOCALE` cookie, then Accept-Language, then `en`. There is no DB access in `request.ts`. English is deep-merged under every locale, and `onError` only logs. Adds `User.locale` (migration `20261123120000_user_locale`), applied to the cookie at magic-link login. The language switcher is a server action. The provider lives only in `(app)/layout.tsx`, so marketing stays ○/● (verified in the build route table). Verified live: every locale renders the "English is authoritative" footer. | `f851ae1`, `1267505` |
 | **Email i18n (3b).** 18 customer emails take a `locale` argument (from `User.locale`, already loaded; no new webhook or checkout queries). English output is byte-identical (25 fixture hashes). Admin and partner-firm emails stay English. `FilingLocked` is translated. The German no-name greeting uses an ICU select. The email translator does not import `server-only`. | `2f7098d`…`7ce4abb` |
 | **Wizard i18n (3c).** The questionnaire is translated: `components/wizard/**` (inside the `(app)` provider), `wizard-v3`, `/file/*` (English-first lazy client provider, so the pages stay ○ static, verified in the route table) and the `/start` form (server `getMessages`; the route was already ƒ). The change is text only. A Codex review confirmed that values, option codes, validation, navigation and the pay-button state are identical, and that the pay button stays enabled on bad data in all 6 locales. A `lang` wrapper (`display:contents`) is added for screen readers. Verified live: `/file` in `de` renders German with `lang="de"`. Codex's sandbox could not commit, so its 3 commits were imported from a git bundle after a byte-for-byte check against the worktree. | `130fd34`…`8c39660` |
+| **Public pages i18n (3d).** Owner picks D1 zh-Hans+de, D2 5 pages, D3 noindex until native review, D4 `/zh-hans`/`/de`. `/`, `/pricing`, `/services`, `/faq`, `/form-5472-penalty-calculator` each render from one shared component per page (`src/components/marketing/pages/*`) for en/de/zh-Hans; translated routes live in `src/app/(marketing-intl)/{de,zh-hans}`. Catalogs `src/i18n/marketing/{en,de,zh-Hans}.json` (outside `messages/`), pure `createTranslator` so every route stays ○ static. English output is byte-identical (`english-baseline.test.tsx`, 11 snapshots taken before the change). Codex built it; Codex read-only review found 0 P1, fixed: calculator shipped all 3 catalogs (191→131 kB First Load; baseline 114 — the remaining +17 kB is the next-intl client runtime), blank translations now fall back to English, homepage title and order-card checklist translated. Other English pages +1.2 kB (language menu / mobile-menu islands in the layout chunk). Full suite 4949 pass, `tsc` clean. | `d02a33b`…`1148d92` |
 
 Read-only Codex reviews ran on every lane before shipping, and every finding was fixed. The highest-value finds:
 - the monitoring cron sampled partner filings;
@@ -43,6 +45,7 @@ Read-only Codex reviews ran on every lane before shipping, and every finding was
   - IRS PDFs and admin UI stay English.
 - **Catalogs.** Every locale has the same keys and placeholder names as `en` (`src/i18n/messages.test.ts`). New namespaces are new `messages/{locale}/{ns}.json` files.
 - **Static marketing.** Keep `getLocale`/the provider out of the root layout, so marketing pages stay static.
+- **Translated public pages.** Never use `getTranslations`/`getLocale`/`getMessages` or a server `NextIntlClientProvider` on marketing pages; client islands get only their own message subset (e.g. `getCalculatorMessages`), never the full catalogs. Changing English marketing copy changes the baseline snapshots on purpose — update them deliberately AND add the de/zh-Hans wording (a changed English string under an existing key is not caught by tests). Keep `export const revalidate = 600` literal in each homepage route file.
 - **Faxed-PDF access.** It mirrors `fax-receipt/route.ts` exactly. Do not widen it.
 - **Fax failures.** They stay internal only (commit `7a3be4b`, earlier).
 
@@ -52,7 +55,7 @@ Read-only Codex reviews ran on every lane before shipping, and every finding was
 - Native-speaker review of the zh/de/fr/es catalogs (machine-translated, spot-checked by Opus).
 - Optional: `grok login` to restore the Grok lane (it was logged out, so Codex was used instead).
 
-- Phase 3d (translated public pages): planned in `docs/reviews/2026-11-23-marketing-i18n-plan.md`, waiting on owner decisions D1–D4. Nothing built yet.
+- **Owner, Phase 3d:** native-speaker review of `src/i18n/marketing/{de,zh-Hans}.json`, then flip `MARKETING_LOCALES_INDEXABLE` in `src/i18n/marketing/config.ts` (adds hreflang + sitemap entries, drops noindex) and resubmit the sitemap in Search Console.
 
 **Follow-ups:**
 - Server zod/schema validation messages and raw checkout/API errors still show in English (the 3c follow-up list: entity and owner field errors, year, dissolution and extension errors, reasonable-cause length and encoding errors, save banners).
