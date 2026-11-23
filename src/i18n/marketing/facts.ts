@@ -11,7 +11,7 @@ export function messageFacts(text: string) {
   }).replace(/\bUSD\b/g, value => {
     values.currency = value;
     return "{currency}";
-  }).replace(/\b\d+(?:[–-]\d+)?(?=\s*(?:business\s+)?days?\b)/g, value => {
+  }).replace(/\b\d+(?:[–-]\d+)?(?=[\s-]*(?:business\s+)?days?\b)/g, value => {
     const key = `days${++days}`;
     values[key] = value;
     return `{${key}}`;

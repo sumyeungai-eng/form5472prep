@@ -70,7 +70,7 @@ export const TIERS: Record<Tier, TierInfo> = {
     subtitle: `Ready in ${STANDARD_TURNAROUND}`,
     priceCents: 14900,
     ctaLabel: "Start your filing",
-    features: [`Prepared and filed in ${STANDARD_TURNAROUND}`, ...SHARED_FEATURES, "Email support"],
+    features: [`Ready to check and sign in ${STANDARD_TURNAROUND}`, ...SHARED_FEATURES, "Email support"],
   },
   express: {
     label: "Express filing",

@@ -345,7 +345,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "deadlines-penalties",
     question: "What happens if Form 5472 is missed?",
     answer:
-      "The IRS penalty is generally $25,000 for a missing or incomplete Form 5472. If the IRS sends a notice and the filing is still not corrected, another $25,000 can be added every 30 days. Late filings can sometimes include a reasonable cause explanation under DIIRSP.",
+      "The IRS penalty is generally $25,000 for a missing or incomplete Form 5472. If the IRS mails a notice and the failure continues for more than 90 days after that notice, another $25,000 can be added for each 30-day period, or part of one, that it continues. Late filings can sometimes include a reasonable cause explanation under DIIRSP.",
     learnMore: { href: "/form-5472-penalty-calculator", label: "Estimate the penalty" },
     source: "src/app/(marketing)/do-i-need-to-file-form-5472/page.tsx:45",
     speakable: true,
@@ -355,7 +355,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "deadlines-penalties",
     question: "Is the penalty really automatic?",
     answer:
-      "The Form 5472 penalty is automatic. IRC §6038A(d) provides an initial $25,000 penalty when a reporting corporation fails to furnish required Form 5472 information on time or files an incomplete return. The IRS computer system can assess it without a human reviewing the case first.",
+      "It can be. IRC §6038A(d) provides an initial $25,000 penalty when a reporting corporation fails to furnish required Form 5472 information on time or files an incomplete return, and the IRS can assess it systemically when a late Form 5472 is processed, without a person reviewing the case first.",
     source: "src/app/(marketing)/form-5472-penalty-calculator/page.tsx:37; src/lib/penalty.ts:1",
   },
   {
@@ -404,7 +404,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "deadlines-penalties",
     question: "I've received an IRS notice — can you still help, and what do you need from me?",
     answer:
-      "We can help owners who received an IRS CP 215 penalty notice or §6038A letter and need a properly prepared late filing. Send the notice number, such as CP 215, and the tax year it covers; we will explain the filing path before you pay. We prepare the late filing itself; we do not handle penalty appeals.",
+      "We can help owners who received an IRS CP 215 penalty notice or §6038A letter and need a properly prepared late filing. Send the notice number, such as CP 215, and the tax year it covers; we will explain the filing path before you pay. We prepare the late filing itself; we do not appeal penalties the IRS has already assessed for your original late filing. If a penalty ever results from an error in our own preparation, we handle the response with the IRS at no charge.",
     learnMore: { href: "/contact", label: "Contact support" },
     source: "src/app/(marketing)/form-5472-filing/page.tsx:71; src/app/(marketing)/contact/page.tsx:38; src/lib/landing-pages.ts:644",
   },
@@ -522,7 +522,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "how-our-service-works",
     question: "How do I sign the forms?",
     answer:
-      "Review the completed package and establish who is authorized to sign. Form 5472 has no taxpayer signature block; the pro forma Form 1120 has the relevant block. Ink signing the completed cover and scanning it for fax is a conservative approach. A browser signature feature does not by itself establish IRS authorization for every document or submission route; contact us to resolve the method before submission.",
+      "Once our tax accountant has reviewed your package, you read it and draw your signature once in your browser. We place your signature in the signature box of the pro forma Form 1120; Form 5472 itself has no taxpayer signature block. Only you sign your return — we never sign for you — and nothing is sent to the IRS until you have signed.",
     source: "src/app/(marketing)/page.tsx:444; src/app/(marketing)/form-5472-filing/page.tsx:460; src/lib/landing-pages.ts:425; src/app/(marketing)/page.tsx:72",
   },
   {

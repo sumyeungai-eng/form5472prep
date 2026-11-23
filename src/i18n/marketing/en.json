@@ -544,12 +544,12 @@
       },
       "missed-form-5472": {
         "q": "What happens if Form 5472 is missed?",
-        "a": "The IRS penalty is generally {amount1} for a missing or incomplete Form 5472. If the IRS sends a notice and the filing is still not corrected, another {amount2} can be added every {days1} days. Late filings can sometimes include a reasonable cause explanation under DIIRSP.",
+        "a": "The IRS penalty is generally {amount1} for a missing or incomplete Form 5472. If the IRS mails a notice and the failure continues for more than {days1} days after that notice, another {amount2} can be added for each {days2}-day period, or part of one, that it continues. Late filings can sometimes include a reasonable cause explanation under DIIRSP.",
         "learnMore": "Estimate the penalty"
       },
       "automatic-penalty": {
         "q": "Is the penalty really automatic?",
-        "a": "The Form 5472 penalty is automatic. IRC §6038A(d) provides an initial {amount1} penalty when a reporting corporation fails to furnish required Form 5472 information on time or files an incomplete return. The IRS computer system can assess it without a human reviewing the case first."
+        "a": "It can be. IRC §6038A(d) provides an initial {amount1} penalty when a reporting corporation fails to furnish required Form 5472 information on time or files an incomplete return, and the IRS can assess it systemically when a late Form 5472 is processed, without a person reviewing the case first."
       },
       "can-penalty-be-abated": {
         "q": "Can the penalty be abated?",
@@ -574,7 +574,7 @@
       },
       "irs-notice-help": {
         "q": "I've received an IRS notice — can you still help, and what do you need from me?",
-        "a": "We can help owners who received an IRS CP 215 penalty notice or §6038A letter and need a properly prepared late filing. Send the notice number, such as CP 215, and the tax year it covers; we will explain the filing path before you pay. We prepare the late filing itself; we do not handle penalty appeals.",
+        "a": "We can help owners who received an IRS CP 215 penalty notice or §6038A letter and need a properly prepared late filing. Send the notice number, such as CP 215, and the tax year it covers; we will explain the filing path before you pay. We prepare the late filing itself; we do not appeal penalties the IRS has already assessed for your original late filing. If a penalty ever results from an error in our own preparation, we handle the response with the IRS at no charge.",
         "learnMore": "Contact support"
       },
       "ein-needed-for-form-5472": {
@@ -633,7 +633,7 @@
       },
       "how-do-i-sign": {
         "q": "How do I sign the forms?",
-        "a": "Review the completed package and establish who is authorized to sign. Form 5472 has no taxpayer signature block; the pro forma Form 1120 has the relevant block. Ink signing the completed cover and scanning it for fax is a conservative approach. A browser signature feature does not by itself establish IRS authorization for every document or submission route; contact us to resolve the method before submission."
+        "a": "Once our tax accountant has reviewed your package, you read it and draw your signature once in your browser. We place your signature in the signature box of the pro forma Form 1120; Form 5472 itself has no taxpayer signature block. Only you sign your return — we never sign for you — and nothing is sent to the IRS until you have signed."
       },
       "how-long-whole-thing": {
         "q": "How fast is Form5472 Prep Express filing?",
@@ -867,7 +867,7 @@
         "subtitle": "Ready in {days1} business days",
         "ctaLabel": "Start your filing",
         "features": {
-          "0": "Prepared and filed in {days1} business days",
+          "0": "Ready to check and sign in {days1} business days",
           "1": "Reviewed by a PTIN-holding tax accountant before submission",
           "2": "Form 5472 + pro forma 1120 prepared",
           "3": "IRS Ogden fax delivery + timestamped receipt",
