@@ -1,3 +1,4 @@
+import { SITE_URL } from "@/lib/seo";
 import { describe, expect, it, vi } from "vitest";
 import { readFileSync } from "node:fs";
 import { createTranslator } from "next-intl";
@@ -108,11 +109,16 @@ describe("marketing catalog contracts", () => {
       expect(path).not.toMatch(/\.json$/);
     }
   });
-  it("localizes only supported routes and leaves the indexing gate closed", () => {
+  it("localizes only supported routes and emits hreflang alternates when indexable", () => {
     expect(localizedPath("de", "/")).toBe("/de");
     expect(localizedPath("zh-Hans", "/faq")).toBe("/zh-hans/faq");
     expect(localizedPath("de", "/start")).toBe("/start");
     expect(localizedPath("en", "/pricing")).toBe("/pricing");
-    expect(marketingLanguageAlternates("/pricing")).toBeUndefined();
+    expect(marketingLanguageAlternates("/pricing")).toEqual({
+      en: SITE_URL + "/pricing",
+      de: SITE_URL + "/de/pricing",
+      "zh-Hans": SITE_URL + "/zh-hans/pricing",
+      "x-default": SITE_URL + "/pricing",
+    });
   });
 });

@@ -7,6 +7,12 @@
     "canonical": "http://localhost:3000/form-5472-penalty-calculator",
     "types": {
       "application/rss+xml": "http://localhost:3000/feed.xml"
+    },
+    "languages": {
+      "en": "http://localhost:3000/form-5472-penalty-calculator",
+      "zh-Hans": "http://localhost:3000/zh-hans/form-5472-penalty-calculator",
+      "de": "http://localhost:3000/de/form-5472-penalty-calculator",
+      "x-default": "http://localhost:3000/form-5472-penalty-calculator"
     }
   },
   "openGraph": {

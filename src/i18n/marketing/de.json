@@ -52,7 +52,7 @@
     "s049": "Form 5472 Anleitung",
     "s050": "Form 5472 Beispiel",
     "s051": "Form 5472 Bußgeld",
-    "s052": "Begründung für eine verspätete Einreichung",
+    "s052": "Begründung für eine verspätete Einreichung (reasonable cause statement)",
     "s053": "Wo wird Form 5472 eingereicht?",
     "s054": "pro forma 1120",
     "s055": "Form 5472 Frist",
@@ -154,7 +154,7 @@
     "s088": "Der Ablauf hat sechs Schritte: Sie geben Daten ein, wir erstellen das Paket, eine Steuerfachkraft prüft es, Sie unterschreiben online, wir faxen an den IRS, und Sie erhalten den Faxbeleg mit Zeitstempel. Das Paket enthält Anschreiben, pro forma Form 1120, Form 5472, Ergänzung und bei DIIRSP eine Begründung für die verspätete Einreichung.",
     "s089": "Anschreiben",
     "s090": "An das IRS Ogden Service Center, PIN Unit. Nennt Unternehmen, EIN und betroffene Steuerjahre.",
-    "s091": "Begründung für die verspätete Einreichung",
+    "s091": "Begründung für die verspätete Einreichung (reasonable cause statement)",
     "s092": "Nur bei DIIRSP. Erläutert das versäumte Vorjahr und beantragt Bußgelderlass.",
     "s093": "pro forma Form 1120",
     "s094": "Mit LLC-Name, EIN, Anschrift, Gründungsdatum und Gesamtvermögen zum Jahresende. Mit Vermerk „Foreign-Owned U.S. DE“.",
@@ -211,7 +211,7 @@
     "s145": "Partner werden",
     "s146": "Partner-Anmeldung",
     "s147": "Schon beworben? Mit Ihrer Partner-E-Mail anmelden.",
-    "s148": "Sorgen um das Bußgeld von {amount1} beenden.",
+    "s148": "Schluss mit der Sorge vor dem Bußgeld von {amount1}.",
     "s149": "Erledigen Sie die Angaben zur diesjährigen Form 5472 in fünfzehn Minuten. Holen Sie frühere Jahre in einem Durchgang nach.",
     "s150": "Erstellung und Einreichung von IRS Form 5472 und pro forma Form 1120",
     "s151": "Ausländische Inhaber einer US-LLC mit einem Mitglied",
@@ -227,7 +227,7 @@
     "absoluteTitle": "IRS Form 5472 + pro forma 1120 einreichen — Form5472 Prep",
     "heroDeliverables": {
       "forms": "Ausgefüllte IRS Form 5472 + pro forma 1120",
-      "reasonableCause": "Begründung der Verspätung (bei verspäteter Einreichung)",
+      "reasonableCause": "Begründung der Verspätung (reasonable cause statement, bei verspäteter Einreichung)",
       "review": "Geprüft von einer Steuerfachkraft mit IRS-PTIN",
       "fax": "Per Fax an die IRS Ogden PIN Unit gesendet",
       "moneyBack": "100% Geld-zurück-Garantie, falls wir nicht einreichen"
@@ -450,7 +450,7 @@
       },
       "can-you-tell-me-whether-i-need-to-file": {
         "q": "Können Sie mir sagen, ob ich einreichen muss?",
-        "a": "Wir können bestätigen, ob Ihre geschilderte Situation zu unserem Leistungsprofil passt. Ist Ihre US-LLC eine LLC mit einem nicht in den USA ansässigen Einzelinhaber und gab es eine meldepflichtige Transaktion, auch eine Einzahlung zur Kontoeröffnung, muss sie Form 5472 mit pro forma Form 1120 einreichen.",
+        "a": "Wir können bestätigen, ob Ihre geschilderte Situation zu unserem Leistungsprofil passt. Ist Ihre US-LLC eine LLC mit einem einzigen Inhaber, der keine US-Person ist, und gab es eine meldepflichtige Transaktion, auch eine Einzahlung zur Kontoeröffnung, muss sie Form 5472 mit pro forma Form 1120 einreichen.",
         "learnMore": "Einreichungsprüfung nutzen"
       },
       "how-much-does-it-cost": {
@@ -740,7 +740,7 @@
       "s008": "Anfängliches Bußgeld",
       "s009": "Fortlaufendes Bußgeld",
       "s010": "× Zeitraum von {periodDays} Tagen seit",
-      "s011": "Tage nach Ihrem Bescheid",
+      "s011": "Tagen nach Ihrem Bescheid",
       "s012": "Gesetzliches Risiko, wächst bis zur Einreichung",
       "s013": "Gesamtes gesetzliches Bußgeldrisiko",
       "s014": "Auf Basis der oben eingegebenen Anzahl und des Bescheidstatus.",
@@ -872,7 +872,7 @@
           "2": "Form 5472 + pro forma 1120 erstellt",
           "3": "IRS-Fax nach Ogden mit Beleg und Zeitstempel",
           "4": "Einreichungsbestätigung",
-          "5": "Begründung für verspätete Einreichungen",
+          "5": "Begründung für verspätete Einreichungen (reasonable cause statement)",
           "6": "Erinnerung für das Folgejahr in der zweiten Januarwoche",
           "7": "E-Mail-Support"
         }
@@ -887,7 +887,7 @@
           "2": "Form 5472 + pro forma 1120 erstellt",
           "3": "IRS-Fax nach Ogden mit Beleg und Zeitstempel",
           "4": "Einreichungsbestätigung",
-          "5": "Begründung für verspätete Einreichungen",
+          "5": "Begründung für verspätete Einreichungen (reasonable cause statement)",
           "6": "Erinnerung für das Folgejahr in der zweiten Januarwoche",
           "7": "Bevorzugter E-Mail-Support"
         }
@@ -966,7 +966,7 @@
         "5": {
           "0": "Kosten",
           "1": "Ab {amount1}",
-          "3": "Kostenlos (bis zu {amount1})"
+          "3": "Kostenlos (bis zum Bußgeld von {amount1})"
         }
       }
     },

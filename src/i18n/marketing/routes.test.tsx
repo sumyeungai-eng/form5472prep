@@ -23,7 +23,7 @@ const pages = [
 const textOf = (html: string) => html.replace(/<[^>]+>/g, "").replace(/&quot;/g, '"').replace(/&#x27;/g, "'").replace(/&amp;/g, "&").replace(/\s+/g, " ").trim();
 
 describe.each(["de", "zh-Hans"] as const)("%s public marketing routes", locale => {
-  it.each(pages)("%s renders with matching visible FAQ schema and gated metadata", async (path, Page, metadata) => {
+  it.each(pages)("%s renders with matching visible FAQ schema and indexable metadata", async (path, Page, metadata) => {
     const html = renderToStaticMarkup(await Page({ locale }));
     expect(html).not.toMatch(/(?:home|pricing|services|faq|penalty|shared)\.s\d{3}/);
     const visible = textOf(html.replace(/<script[\s\S]*?<\/script>/g, ""));
@@ -42,8 +42,8 @@ describe.each(["de", "zh-Hans"] as const)("%s public marketing routes", locale =
     if (path !== "/faq") expect(JSON.stringify(schemas)).toContain(ORG_ID);
     const meta = metadata(locale);
     expect(meta.alternates?.canonical).toBe(SITE_URL + localizedPath(locale, path));
-    expect(meta.alternates?.languages).toBeUndefined();
-    expect(meta.robots).toEqual({ index: false, follow: true });
+    expect(meta.alternates?.languages).toHaveProperty(locale, SITE_URL + localizedPath(locale, path));
+    expect(meta.robots).toBeUndefined();
     expect(meta.openGraph).toHaveProperty("locale", locale === "de" ? "de_DE" : "zh_CN");
     if (path === "/form-5472-penalty-calculator") {
       expect(html).not.toContain("/embed/form-5472-penalty-calculator");
