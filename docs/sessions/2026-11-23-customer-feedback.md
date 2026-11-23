@@ -52,6 +52,8 @@ Read-only Codex reviews ran on every lane before shipping, and every finding was
 - Native-speaker review of the zh/de/fr/es catalogs (machine-translated, spot-checked by Opus).
 - Optional: `grok login` to restore the Grok lane (it was logged out, so Codex was used instead).
 
+- Phase 3d (translated public pages): planned in `docs/reviews/2026-11-23-marketing-i18n-plan.md`, waiting on owner decisions D1–D4. Nothing built yet.
+
 **Follow-ups:**
 - Server zod/schema validation messages and raw checkout/API errors still show in English (the 3c follow-up list: entity and owner field errors, year, dissolution and extension errors, reasonable-cause length and encoding errors, save banners).
 - Form 7004 confirmations stay English (no account or locale).
