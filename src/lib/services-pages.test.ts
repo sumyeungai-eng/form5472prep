@@ -4,6 +4,7 @@ import {
   FORMATION_PROVIDER_SLUGS,
   SERVICES_HUB,
   SERVICE_PAGES,
+  getServicePage,
   serviceHowTo,
   serviceHubCategories,
   servicePlainBody,
@@ -205,11 +206,20 @@ describe("services pages: on-page rules", () => {
       });
 
       const [minWords, maxWords] = AUDIENCE_PAGES.has(page.slug) ? [400, 800] : [800, 1300];
+      // Add-only specialist scope section: allow its heading plus the same
+      // 60-word capsule maximum. Every other page keeps its original cap.
+      const specialistAllowance = page.slug === "form-5472-preparer"
+        ? wordCount("Do I need a Form 5472 specialist or expert?") + 60
+        : 0;
       // +100 on the caps (2026-11-16): each page gained a ~90-word answer-first paragraph above its unchanged intro.
-      it(`body is ${minWords}–${maxWords} words`, () => {
+      it(`body is ${minWords}–${maxWords + specialistAllowance} words`, () => {
         const n = wordCount(servicePlainBody(page));
         expect(n).toBeGreaterThanOrEqual(minWords);
-        expect(n).toBeLessThanOrEqual(maxWords);
+        expect(n).toBeLessThanOrEqual(maxWords + specialistAllowance);
+        if (specialistAllowance) {
+          const existingSections = page.sections.filter((s) => s.heading !== "Do I need a Form 5472 specialist or expert?");
+          expect(wordCount(servicePlainBody({ ...page, sections: existingSections }))).toBeLessThanOrEqual(maxWords);
+        }
       });
 
       it("follows the copy rules", () => {
@@ -306,6 +316,41 @@ describe("services pages: on-page rules", () => {
   it("titles and meta descriptions are unique", () => {
     expect(new Set(SERVICE_PAGES.map((p) => p.title)).size).toBe(SERVICE_PAGES.length);
     expect(new Set(SERVICE_PAGES.map((p) => p.metaDescription)).size).toBe(SERVICE_PAGES.length);
+  });
+});
+
+describe("services pages: specialist scope and reading links", () => {
+  it("adds one specialist section with a 40-60 word answer and the required scope", () => {
+    const page = getServicePage("form-5472-preparer")!;
+    const matches = page.sections.filter((s) => s.heading === "Do I need a Form 5472 specialist or expert?");
+    expect(matches).toHaveLength(1);
+    const answer = toPlainText(firstBlock(matches[0].body));
+    expect(wordCount(answer)).toBeGreaterThanOrEqual(40);
+    expect(wordCount(answer)).toBeLessThanOrEqual(60);
+    expect(answer).toContain("A specialist prepares both Form 5472 and the pro forma 1120 from your facts.");
+    expect(answer).toContain("a tax accountant who holds an IRS PTIN reviews them");
+    expect(answer).toContain("you check and sign online, then we fax them");
+    expect(answer).toContain("no tax advice, no IRS representation, and are not a CPA firm");
+    expect(matches[0].body).toContain("[Form 5472 instructions](/form-5472-instructions)");
+    expect(matches[0].body).toContain("[Form 5472 example](/form-5472-example)");
+    expect(page.faqs).toHaveLength(4);
+  });
+
+  it.each([
+    ["form-5472-filing-service", "form-5472-fax-filing-service", "Form 5472 fax filing service"],
+    ["form-5472-fax-filing-service", "form-5472-filing-service", "Form 5472 filing service"],
+  ])("%s links to its sibling and guides after the capsule", (slug, sibling, anchor) => {
+    const page = getServicePage(slug)!;
+    for (const link of [
+      `[${anchor}](/services/${sibling})`,
+      "[Form 5472 instructions](/form-5472-instructions)",
+      "[Form 5472 example](/form-5472-example)",
+    ]) {
+      const section = page.sections.find((s) => s.body.includes(link));
+      expect(section, link).toBeDefined();
+      expect(firstBlock(section!.body)).not.toContain(link);
+      expect(section!.body.split(/\n\s*\n/).at(-1)).toContain(link);
+    }
   });
 });
 

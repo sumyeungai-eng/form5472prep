@@ -14,6 +14,8 @@ The three fields are a reconciliation system. Line 1f is per form, line 1g count
 
 For a checked calculation and filing, [start the reviewed Form 5472 package](/start).
 
+See the totals entered on a filled return in our [Form 5472 example and sample](/form-5472-example).
+
 ## What does Form 5472 line 1f report?
 
 The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) direct the filer to enter the total US-dollar value of foreign related-party transactions reported in Parts IV and VI and, for a foreign-owned US disregarded entity, Part V. Line 1f belongs to the related party reported on that specific form.

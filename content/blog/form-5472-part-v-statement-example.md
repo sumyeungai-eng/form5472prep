@@ -14,6 +14,8 @@ Part V is where many otherwise careful filings become substantially incomplete. 
 
 The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state that Part V covers amounts paid or received in connection with formation, dissolution, acquisition and disposition of the entity, including contributions to and distributions from the entity. The same instructions state that a missing or substantially incomplete Form 5472 can trigger a **$25,000** penalty. If you want the attachment prepared with the rest of the filing, [we prepare Form 5472 packages from {{price.standard}}](/start).
 
+Compare the attachment with the complete filing package in our [Form 5472 example and sample](/form-5472-example).
+
 ## What does Form 5472 Part V require?
 
 Part V requires the foreign-owned US disregarded entity to check the box when it had other reportable transactions not already entered in Part IV, and to describe those transactions on an attached statement.

@@ -64,3 +64,42 @@ describe("/do-i-need-to-file-form-5472 capsules", () => {
     expect(text(link![1])).toBe(anchor);
   });
 });
+
+
+describe("requirements checklist", () => {
+  it("adds one exact-question summary with a 40-60 word answer and the filing essentials", () => {
+    const question = "What are the Form 5472 filing requirements?";
+    expect(html.split(question)).toHaveLength(2);
+    const lead = leadAfter("form-5472-requirements-checklist");
+    expect(words(lead)).toBeGreaterThanOrEqual(40);
+    expect(words(lead)).toBeLessThanOrEqual(60);
+    expect(lead).toContain("wholly owned by one foreign person");
+    expect(lead).toContain("disregarded for federal tax");
+    expect(lead).toContain("any year with a reportable transaction");
+    expect(lead).toContain("owner contributions and distributions");
+    expect(lead).toContain("pro forma Form 1120");
+
+    const checklist = text(html.slice(html.indexOf('id="form-5472-requirements-checklist"')).split("</ul>")[0]);
+    expect(checklist).toContain("April 15");
+    expect(checklist).toContain("October 15 with a Form 7004 extension filed by April 15");
+    expect(checklist).toContain("no e-filing");
+    expect(checklist).toContain("$25,000 per Form 5472");
+    expect(checklist).toContain("Record-keeping:");
+    expect(html).toContain('href="/file-form-5472"');
+    expect(html).toContain('href="/form-5472-instructions"');
+  });
+
+  it("keeps every FAQ schema answer identical to its visible answer", () => {
+    const nodes = Array.from(html.matchAll(/<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g))
+      .map((match) => JSON.parse(match[1]));
+    const faq = nodes.find((node) => node["@type"] === "FAQPage");
+    expect(faq).toBeDefined();
+    const visible = Array.from(html.matchAll(/<details[^>]*>([\s\S]*?)<\/details>/g)).map((match) => ({
+      q: text(match[1].match(/<summary[^>]*>([\s\S]*?)<\/summary>/)?.[1] ?? ""),
+      a: text(match[1].match(/<p[^>]*>([\s\S]*?)<\/p>/)?.[1] ?? ""),
+    }));
+    for (const question of faq.mainEntity) {
+      expect(visible.find(({ q }) => q === question.name)?.a).toBe(question.acceptedAnswer.text);
+    }
+  });
+});

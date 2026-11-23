@@ -104,6 +104,8 @@ Form5472 Prep prepares the complete Form 5472 package, including Form 5472, the 
 
 Standard service is **{{price.standard}}** in 5-7 business days, Express is **{{price.express}}**, ready to sign in under 3 days, each additional past tax year is **+{{price.additionalYear}}**, and fax delivery is included. EIN service is **{{price.ein}}** at [/ein](/ein). We are not a CPA firm and we do not give tax advice, but we do make the filing package and delivery evidence complete.
 
+For preparation, review and IRS fax delivery together, see our [Form 5472 fax filing service](/services/form-5472-fax-filing-service).
+
 ## Frequently asked questions
 
 ### Can a foreign-owned LLC e-file Form 5472?

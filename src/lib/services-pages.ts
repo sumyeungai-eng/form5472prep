@@ -1285,6 +1285,10 @@ Every filing is reviewed by a tax accountant before it is submitted, and signing
 - **Know facts you have not shared.** You remain responsible for the information.
 - **Promise penalty relief.** For a late year, nobody can promise the IRS will not assess the $25,000 penalty under IRC §6038A(d).`,
       },
+      {
+        heading: "Do I need a Form 5472 specialist or expert?",
+        body: `A specialist prepares both Form 5472 and the pro forma 1120 from your facts. At Form5472 Prep, a tax accountant who holds an IRS PTIN reviews them; you check and sign online, then we fax them. We provide no tax advice, no IRS representation, and are not a CPA firm. Read the [Form 5472 instructions](/form-5472-instructions) and [Form 5472 example](/form-5472-example).`,
+      },
     ],
     faqs: [
       {
@@ -1561,6 +1565,29 @@ const SERVICE_OPENINGS: Record<string, string> = {
 
 for (const page of SERVICE_PAGES) {
   prependIntro(page, SERVICE_OPENINGS[page.slug]);
+}
+
+// Append reading links after the established copy, preserving each capsule
+// and every original source line above.
+const SERVICE_READING_PARAGRAPHS = [
+  {
+    slug: "form-5472-filing-service",
+    heading: "What does a filed package look like for a first-year LLC?",
+    text: "Read the [Form 5472 instructions](/form-5472-instructions) alongside the [Form 5472 example](/form-5472-example), then see how the [Form 5472 fax filing service](/services/form-5472-fax-filing-service) transmits the signed package and records delivery.",
+  },
+  {
+    slug: "form-5472-fax-filing-service",
+    heading: "What does the IRS receive in the fax?",
+    text: "The [Form 5472 filing service](/services/form-5472-filing-service) covers preparation through transmission. Read the [Form 5472 instructions](/form-5472-instructions) and [Form 5472 example](/form-5472-example) to understand the forms in the package before you sign.",
+  },
+] as const;
+
+for (const addition of SERVICE_READING_PARAGRAPHS) {
+  const section = SERVICE_PAGES.find((page) => page.slug === addition.slug)?.sections.find(
+    (section) => section.heading === addition.heading,
+  );
+  if (!section) throw new Error(`services-pages: missing reading-links section for ${addition.slug}`);
+  section.body += `\n\n${addition.text}`;
 }
 
 // Related links: two or three sibling services plus the most relevant free

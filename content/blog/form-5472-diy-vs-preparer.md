@@ -25,6 +25,18 @@ If you want preparation help, [view current service options and pricing](/pricin
 | **Risk** | You remain responsible for a complete, timely package | You remain responsible; a capable preparer may reduce research and preparation burden, not remove legal risk |
 | **Often suitable for** | One current year, uncomplicated owner transactions, organized records | Late or multiple years, uncertain classifications, or a preference for help with the filing workflow |
 
+## A $50 DIY form tool vs done-for-you preparation: what is the difference?
+
+A low-cost DIY form tool typically describes fill-in fields, calculations and PDF generation; check the provider's stated scope. Our done-for-you service prepares Form 5472 and pro forma Form 1120 from your facts, includes review by a tax accountant who holds an IRS PTIN, and sends the package after your check and signature.
+
+| Work | Low-cost DIY form tool | Form5472 Prep |
+|---|---|---|
+| Preparation | You enter the facts into fill-in fields, use calculations and generate PDFs as described by the tool | Our team prepares Form 5472 and pro forma Form 1120 from your facts |
+| Review and signing | Check the provider's stated review and signing process | Review by a tax accountant who holds an IRS PTIN, then you check and sign |
+| Filing and evidence | Check the stated submission options and what delivery evidence is included | We fax the signed package to the IRS and provide a timestamped receipt |
+
+Our Standard service is {{price.standard}}, Express is {{price.express}}, and each additional past tax year is +{{price.additionalYear}}; see [current pricing and service scope](/pricing). A fax receipt shows transmission, not IRS acceptance. We do not give tax advice, and preparation, review and fax delivery do not promise an IRS outcome.
+
 ## What does a DIY Form 5472 filing involve?
 
 For a foreign-owned U.S. disregarded entity, the IRS instructions call for a pro forma Form 1120 with Form 5472 attached. On the pro forma Form 1120, the instructions require the entity's name and address and items B and E on page 1, with “Foreign-owned U.S. DE” across the top. Our [1120 pro forma instructions](/1120-pro-forma-instructions) guide walks through the cover page.

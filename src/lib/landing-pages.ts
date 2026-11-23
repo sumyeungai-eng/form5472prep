@@ -3274,6 +3274,10 @@ export const LANDING_PAGES: LandingPage[] = [
         },
       },
       {
+        heading: "Is there a Form 5472 template I can use?",
+        body: "The IRS publishes the official blank Form 5472 and Form 1120 as fillable PDFs on [irs.gov](https://www.irs.gov/forms-pubs/about-form-5472). This page shows a filled sample to compare against when reviewing your own entries. Our service prepares the actual forms from your facts; the sample illustrates a package rather than replacing your filing.",
+      },
+      {
         heading: "What goes at the top of Form 5472?",
         body: "The top of Form 5472 records the reporting corporation's tax year. A foreign-owned US disregarded entity uses its owner's US tax year or, if the owner has none, the calendar year, so the sample enters 1 January 2025 to 31 December 2025. The form's note requires English entries and US-dollar amounts.",
         table: {

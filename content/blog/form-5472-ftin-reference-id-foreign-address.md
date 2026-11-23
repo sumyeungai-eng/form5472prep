@@ -42,6 +42,8 @@ Use the LLC’s actual mailing address in Part I based on the entity’s records
 
 The [current Form 5472](https://www.irs.gov/pub/irs-pdf/f5472.pdf) provides separate fields for the reporting corporation and the foreign owner. A registered-agent address should not automatically be copied into the owner field.
 
+Compare the owner and LLC fields in our [Form 5472 example and sample](/form-5472-example).
+
 ## What is the Form5472 Prep identity audit?
 
 Before submission, compare:

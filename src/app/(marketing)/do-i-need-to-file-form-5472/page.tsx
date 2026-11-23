@@ -251,6 +251,40 @@ function FilingRequirements() {
               </Link>{" "}
               guide.
             </p>
+            <h3 id="form-5472-requirements-checklist" className="pt-4 text-xl font-semibold text-ink">
+              What are the Form 5472 filing requirements?
+            </h3>
+            <p data-speakable>
+              A US LLC wholly owned by one foreign person and disregarded for federal tax must file
+              Form 5472 for any year with a reportable transaction, including owner contributions and
+              distributions. Attach it to a pro forma Form 1120, file by fax or mail, and retain records
+              supporting the transactions.
+            </p>
+            <ul className="list-disc space-y-2 pl-5">
+              <li>
+                <strong className="text-slate-800">Deadline:</strong> generally April 15 for a
+                calendar-year LLC, or October 15 with a Form 7004 extension filed by April 15.
+              </li>
+              <li>
+                <strong className="text-slate-800">Filing method:</strong> fax or mail the complete
+                package; no e-filing for a foreign-owned US disregarded entity.
+              </li>
+              <li>
+                <strong className="text-slate-800">Penalty:</strong> $25,000 per Form 5472 for failure
+                to file when due or a substantially incomplete filing.
+              </li>
+              <li>
+                <strong className="text-slate-800">Record-keeping:</strong> keep books and records
+                supporting the filing and related-party transactions.
+              </li>
+            </ul>
+            <p>
+              Follow our guide to{" "}
+              <Link href="/file-form-5472" className="font-medium text-accent hover:underline">
+                how to file Form 5472
+              </Link>{" "}
+              for the preparation and submission steps.
+            </p>
           </div>
         </div>
       </div>

@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { ArrowRight, ChevronRight, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { JsonLd } from "@/components/JsonLd";
+import { FaxReceiptExample } from "@/components/FaxReceiptExample";
 import {
   SERVICES_HUB,
   SERVICES_HUB_PATH,
@@ -165,6 +166,9 @@ export default function ServicePageRoute({ params }: { params: { slug: string } 
                   <div className="mt-4 space-y-4 leading-relaxed text-slate-700">
                     <ServiceRichText body={s.body} />
                   </div>
+                  {page.slug === "form-5472-fax-filing-service" && s.heading === "What is on the fax receipt?" && (
+                    <FaxReceiptExample />
+                  )}
                 </div>
               );
             })}
