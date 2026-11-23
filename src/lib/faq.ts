@@ -402,9 +402,9 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
   {
     id: "irs-notice-help",
     category: "deadlines-penalties",
-    question: "I've received an IRS notice — can you still help, and what do you need from me?",
+    question: "I've received an IRS penalty notice — can you still help?",
     answer:
-      "We help owners with a CP 215 notice or §6038A letter who need a properly prepared late filing. Send the notice number and tax year; we explain the filing path before you pay. We prepare the filing but do not appeal the late-filing penalty, whether assessed before or after we file. If our own preparation error ever causes a penalty, we handle the IRS response free.",
+      "Not with the penalty itself. We handle preventative late filings, made before the IRS sends a penalty notice. If you have already received a CP 215 notice or a §6038A penalty letter, contact a tax attorney or enrolled agent who handles international information return penalties. Separately, if an error in our own preparation ever causes a penalty, we handle the IRS response at no charge.",
     learnMore: { href: "/contact", label: "Contact support" },
     source: "src/app/(marketing)/form-5472-filing/page.tsx:71; src/app/(marketing)/contact/page.tsx:38; src/lib/landing-pages.ts:644",
   },
