@@ -59,14 +59,18 @@ export async function POST(req: Request) {
   try {
     const startDate = `${year}-01-01`;
     const endDate = `${year}-12-31`;
-    const item = await plaid().itemGet({ access_token: accessToken });
-    const instId = item.data.item.institution_id;
-    if (instId) {
-      const inst = await plaid().institutionsGetById({
-        institution_id: instId,
-        country_codes: ["US"] as never[],
-      });
-      institutionName = inst.data.institution.name;
+    try {
+      const item = await plaid().itemGet({ access_token: accessToken });
+      const instId = item.data.item.institution_id;
+      if (instId) {
+        const inst = await plaid().institutionsGetById({
+          institution_id: instId,
+          country_codes: ["US"] as never[],
+        });
+        institutionName = inst.data.institution.name;
+      }
+    } catch {
+      institutionName = null;
     }
     const tx = await plaid().transactionsGet({
       access_token: accessToken,
@@ -91,7 +95,8 @@ export async function POST(req: Request) {
       transactionCount: categorized.length,
       transactions: categorized,
     });
-  } catch {
+  } catch (error) {
+    console.warn("Plaid import failed", { itemId, error_code: errorCode(error, accessToken, publicToken) });
     return NextResponse.json({ error: "Could not import transactions from Plaid" }, { status: 502 });
   } finally {
     try {
@@ -102,7 +107,7 @@ export async function POST(req: Request) {
       console.warn("Plaid item removal failed", { itemId, error_code: code });
       await alertServerError({
         path: "/api/plaid/exchange",
-        digest: `plaid-remove:${itemId}`,
+        digest: "plaid-item-remove-failed",
         message: `Plaid item removal failed: itemId=${itemId}, error_code=${code ?? "unknown"}`,
       }).catch(() => {});
     }
@@ -121,7 +126,7 @@ export async function POST(req: Request) {
   } catch {
     await alertServerError({
       path: "/api/plaid/exchange",
-      digest: `plaid-metadata:${filing.id}:${itemId}`,
+      digest: "plaid-connection-persist-failed",
       message: `Plaid import metadata save failed: filingId=${filing.id}, itemId=${itemId}`,
     }).catch(() => {});
   }

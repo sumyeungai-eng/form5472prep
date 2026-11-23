@@ -104,7 +104,7 @@ describe("Plaid one-time import", () => {
     });
     expect(mocks.alert).toHaveBeenCalledExactlyOnceWith({
       path: "/api/plaid/exchange",
-      digest: "plaid-remove:item-1",
+      digest: "plaid-item-remove-failed",
       message: "Plaid item removal failed: itemId=item-1, error_code=INTERNAL_SERVER_ERROR",
     });
     expect(JSON.stringify(mocks.alert.mock.calls)).not.toContain(accessToken);
@@ -112,7 +112,11 @@ describe("Plaid one-time import", () => {
   });
 
   it.each([false, true])("revokes even when fetching throws (removal also fails: %s)", async (removeFails) => {
-    mocks.transactionsGet.mockRejectedValue(new Error(`request failed: ${accessToken}`));
+    mocks.transactionsGet.mockRejectedValue({
+      message: `raw request failed: ${accessToken}`,
+      response: { data: { error_code: `ERROR_${accessToken}_public-1`, error_message: "raw Plaid error" } },
+      config: { data: { access_token: accessToken, public_token: "public-1" } },
+    });
     if (removeFails) mocks.itemRemove.mockRejectedValue(new Error(accessToken));
     const response = await POST(request());
     expect(response.status).toBe(502);
@@ -121,7 +125,14 @@ describe("Plaid one-time import", () => {
     expect(mocks.transactionsGet.mock.invocationCallOrder[0])
       .toBeLessThan(mocks.itemRemove.mock.invocationCallOrder[0]);
     expect(mocks.create).not.toHaveBeenCalled();
-    expect(JSON.stringify(vi.mocked(console.warn).mock.calls)).not.toContain(accessToken);
+    expect(console.warn).toHaveBeenCalledWith("Plaid import failed", {
+      itemId: "item-1", error_code: "ERROR_[redacted]_[redacted]",
+    });
+    expect(console.warn).toHaveBeenCalledTimes(removeFails ? 2 : 1);
+    const output = JSON.stringify([vi.mocked(console.warn).mock.calls,
+      vi.mocked(console.error).mock.calls, vi.mocked(console.log).mock.calls]);
+    for (const value of [accessToken, "public-1", "raw request failed", "raw Plaid error", "config"])
+      expect(output).not.toContain(value);
   });
 
   it("redacts the token even if it appears in the removal error code", async () => {
@@ -132,11 +143,26 @@ describe("Plaid one-time import", () => {
     });
   });
 
-  it.each(["item", "institution", "mapping", "categorizing", "response"])(
+  it.each(["item", "institution"])("continues importing when %s lookup fails", async (stage) => {
+    const error = new Error(`request secret: ${accessToken}`);
+    if (stage === "item") mocks.itemGet.mockRejectedValue(error);
+    if (stage === "institution") mocks.institutionGet.mockRejectedValue(error);
+    const response = await POST(request());
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({
+      institutionName: null, transactionCount: 1, transactions: [{ bankRef: "tx-1", amountCents: 1234 }],
+    });
+    expect(mocks.itemRemove).toHaveBeenCalledExactlyOnceWith({ access_token: accessToken });
+    expect(mocks.transactionsGet.mock.invocationCallOrder[0])
+      .toBeLessThan(mocks.itemRemove.mock.invocationCallOrder[0]);
+    expect(mocks.create).toHaveBeenCalledExactlyOnceWith({ data: {
+      filingId: "filing-1", itemId: "item-1", institutionName: null, revokedAt: expect.any(Date),
+    } });
+  });
+
+  it.each(["mapping", "categorizing", "response"])(
     "revokes and returns a generic 502 after a post-exchange failure in %s", async (stage) => {
       const error = new Error(`request secret: ${accessToken}`);
-      if (stage === "item") mocks.itemGet.mockRejectedValue(error);
-      if (stage === "institution") mocks.institutionGet.mockRejectedValue(error);
       if (stage === "mapping") mocks.transactionsGet.mockResolvedValue({ data: { transactions: [null] } });
       if (stage === "categorizing") mocks.categorize.mockImplementation(() => { throw error; });
       if (stage === "response") vi.spyOn(NextResponse, "json").mockImplementationOnce(() => { throw error; });
@@ -211,7 +237,7 @@ describe("Plaid one-time import", () => {
     expect(mocks.itemRemove.mock.invocationCallOrder[0]).toBeLessThan(mocks.create.mock.invocationCallOrder[0]);
     expect(mocks.alert).toHaveBeenCalledExactlyOnceWith({
       path: "/api/plaid/exchange",
-      digest: "plaid-metadata:filing-1:item-1",
+      digest: "plaid-connection-persist-failed",
       message: "Plaid import metadata save failed: filingId=filing-1, itemId=item-1",
     });
     expect(JSON.stringify(mocks.alert.mock.calls)).not.toContain(accessToken);
@@ -222,5 +248,25 @@ describe("Plaid one-time import", () => {
     mocks.create.mockRejectedValue(new Error(accessToken));
     mocks.alert.mockRejectedValue(new Error("monitoring unavailable"));
     expect((await POST(request())).status).toBe(200);
+  });
+
+  it.each([
+    { stage: "removal", digest: "plaid-item-remove-failed" },
+    { stage: "persistence", digest: "plaid-connection-persist-failed" },
+  ])("uses the same $stage alert digest for different items and filings", async ({ stage, digest }) => {
+    if (stage === "removal") mocks.itemRemove.mockRejectedValue(new Error(accessToken));
+    if (stage === "persistence") mocks.create.mockRejectedValue(new Error(accessToken));
+    for (const suffix of ["1", "2"]) {
+      mocks.exchange.mockResolvedValueOnce({ data: { access_token: accessToken, item_id: `item-${suffix}` } });
+      mocks.ownedFiling.mockResolvedValueOnce({ id: `filing-${suffix}`, ownerName: "Jane Doe" });
+      expect((await POST(request({ filingId: `filing-${suffix}`, publicToken: "public-1", taxYear: 2025 }))).status)
+        .toBe(200);
+    }
+    expect(mocks.alert).toHaveBeenCalledTimes(2);
+    expect(mocks.alert.mock.calls.map(([alert]) => alert.digest)).toEqual([digest, digest]);
+    mocks.alert.mock.calls.forEach(([alert], index) => {
+      expect(alert.message).toContain(`itemId=item-${index + 1}`);
+      if (stage === "persistence") expect(alert.message).toContain(`filingId=filing-${index + 1}`);
+    });
   });
 });
