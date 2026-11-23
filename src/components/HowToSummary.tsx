@@ -1,7 +1,10 @@
+import { getMarketingTranslator } from "@/i18n/marketing";
+import { type MarketingLocale } from "@/i18n/marketing/config";
 import { BadgeDollarSign, ClipboardList, Clock, Wrench, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export type HowToSummaryProps = {
+ locale?: "en" | MarketingLocale;
   totalTime?: string;
   tools?: string[];
   supplies?: string[];
@@ -50,19 +53,21 @@ function formatCost(cost: { currency: string; value: string }): string {
 }
 
 export function HowToSummary({
+ locale = "en",
   totalTime,
   tools,
   supplies,
   cost,
   className,
 }: HowToSummaryProps): JSX.Element | null {
+  const t = getMarketingTranslator(locale);
   const items: SummaryItem[] = [
-    ...(totalTime ? [{ label: "Estimated time", value: formatDuration(totalTime), icon: Clock }] : []),
+    ...(totalTime ? [{ label: t("shared.summary.s001"), value: locale === "en" ? formatDuration(totalTime) : t("shared.summary.duration", { minutes: String(Number(/^PT(\d+)M$/.exec(totalTime)?.[1] ?? 15)) }), icon: Clock }] : []),
     ...(supplies && supplies.length > 0
-      ? [{ label: "What you need", value: formatList(supplies), icon: ClipboardList }]
+      ? [{ label: t("shared.summary.s002"), value: formatList(supplies), icon: ClipboardList }]
       : []),
-    ...(tools && tools.length > 0 ? [{ label: "Tools", value: formatList(tools), icon: Wrench }] : []),
-    ...(cost ? [{ label: "Cost", value: formatCost(cost), icon: BadgeDollarSign }] : []),
+    ...(tools && tools.length > 0 ? [{ label: t("shared.summary.s003"), value: formatList(tools), icon: Wrench }] : []),
+    ...(cost ? [{ label: t("shared.summary.s004"), value: locale === "en" ? formatCost(cost) : t("shared.summary.cost", { value: new Intl.NumberFormat(locale, { style: "currency", currency: cost.currency }).format(Number(cost.value)) }), icon: BadgeDollarSign }] : []),
   ];
 
   if (items.length === 0) {
@@ -71,7 +76,7 @@ export function HowToSummary({
 
   return (
     <div className={cn("rounded-2xl border border-slate-200 bg-white/90 p-5 shadow-sm", className)}>
-      <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent">Before you start</p>
+      <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent">{t("shared.summary.s005")}</p>
       <dl className="mt-4 grid gap-4 sm:grid-cols-2">
         {items.map(({ label, value, icon: Icon }) => (
           <div key={label} className="grid grid-cols-[auto_1fr] gap-3">

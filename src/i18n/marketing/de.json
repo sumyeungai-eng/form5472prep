@@ -1,0 +1,968 @@
+{
+  "chrome": {
+    "englishAuthoritative": "Maßgeblich ist die englische Fassung. Übersetzungen dienen Ihrer Orientierung.",
+    "s001": "Form5472 Prep Startseite",
+    "s002": "Preise",
+    "s003": "EIN",
+    "s004": "ITIN",
+    "s005": "Form 7004",
+    "s006": "Ratgeber",
+    "s007": "Kontakt",
+    "s008": "Anmelden",
+    "s009": "Erklärung starten",
+    "s010": "Meine Erklärungen",
+    "s011": "Wir übernehmen Form 5472 + pro forma 1120 für US-LLCs in ausländischem Besitz. Jede Erklärung wird vor der Einreichung durch eine Steuerfachkraft mit IRS-PTIN geprüft. Wir erstellen und übermitteln die Formulare anhand Ihrer Angaben; eine persönliche Steuerplanung bieten wir nicht an. Sie sind für die Richtigkeit Ihrer Angaben verantwortlich.",
+    "s012": "Einreichung bei der IRS Ogden PIN Unit · IRS-Fax +1-855-887-7737",
+    "s013": "Fragen?",
+    "s014": "Unsere Bewertungen auf Trustpilot",
+    "s015": "Leistungen",
+    "s016": "Form 5472 Einreichungsservices",
+    "s017": "Form 5472 Einreichung",
+    "s018": "EIN beantragen",
+    "s019": "ITIN beantragen",
+    "s020": "Fristverlängerung mit Form 7004",
+    "s021": "Partner werden",
+    "s022": "Partner-Anmeldung",
+    "s023": "Ratgeber",
+    "s024": "Häufige Fragen",
+    "s025": "Über uns",
+    "s026": "Presseinformationen",
+    "s027": "Kostenlose Tools",
+    "s028": "Muss ich einreichen?",
+    "s029": "Fristenrechner",
+    "s030": "Bußgeldrechner",
+    "s031": "IRS-Wechselkurse",
+    "s032": "Meldepflichtige Transaktionen",
+    "s033": "Prüfung verspäteter Einreichungen",
+    "s034": "Pflichtenkalender",
+    "s035": "LLC-Gebühren nach Bundesstaat",
+    "s036": "Form 5472 Statistiken",
+    "s037": "Rechtliches",
+    "s038": "Nutzungsbedingungen",
+    "s039": "Datenschutzerklärung",
+    "s040": "Cookies",
+    "s041": "Redaktionsrichtlinien",
+    "s042": "Datenaufbewahrung",
+    "s043": "Sicherheit",
+    "s044": "Einreichungsservices",
+    "s045": "Anbieter vergleichen",
+    "s046": "Einreichungsservices vergleichen",
+    "s047": "Was ist IRS Form 5472?",
+    "s048": "Form 5472 nach Land",
+    "s049": "Form 5472 Anleitung",
+    "s050": "Form 5472 Beispiel",
+    "s051": "Form 5472 Bußgeld",
+    "s052": "Begründung für eine verspätete Einreichung",
+    "s053": "Wo wird Form 5472 eingereicht?",
+    "s054": "pro forma 1120",
+    "s055": "Form 5472 Frist",
+    "s056": "Was ist Form 5472?",
+    "s057": "© ",
+    "s058": "Form5472 Prep. Alle Rechte vorbehalten.",
+    "language": "Sprache",
+    "openMenu": "Menü öffnen",
+    "closeMenu": "Menü schließen"
+  },
+  "home": {
+    "s001": "Was ist, wenn ich frühere Jahre versäumt habe?",
+    "s002": "Wählen Sie beim Start alle Jahre aus, die Sie nachreichen müssen. Wir kennzeichnen die Einreichung automatisch als DIIRSP (Delinquent International Information Return Submission Procedure) und fügen eine Begründung für einen Antrag auf Bußgelderlass bei. Jedes weitere frühere Jahr kostet bei beiden Tarifen +{value1}.",
+    "s003": "Brauche ich Form 5472 und Form 1120 auch ohne Einnahmen meiner LLC?",
+    "s004": "Wahrscheinlich ja. Form 5472 meldet Transaktionen mit verbundenen Personen, darunter Einlagen und Entnahmen, nicht nur Umsatz. Ist Form 5472 erforderlich, muss immer auch die pro forma Form 1120 als Trägerformular beigefügt werden, selbst ohne Einnahmen.",
+    "s005": "Ist die Einreichung per Fax wirklich enthalten?",
+    "s006": "Ja. Jeder Tarif enthält die Faxübermittlung an die IRS Ogden PIN Unit und einen Übertragungsbeleg des Anbieters mit Zeitstempel. Bewahren Sie ihn mit dem eingereichten Paket auf. Er belegt die Übertragung, keine IRS-Annahme und keinen Bußgelderlass. Ein eigenes Faxgerät brauchen Sie nicht.",
+    "s007": "Warum wird per Fax statt elektronisch eingereicht?",
+    "s008": "Ausländisch gehaltene US-Unternehmen, die steuerlich als disregarded entity gelten, können dieses Paket aus Form 5472 und pro forma Form 1120 nicht über die gewöhnliche elektronische Körperschaftsteuer-Einreichung abgeben. Die besonderen IRS-Anweisungen erlauben Fax an +1-855-887-7737 oder Post an die Ogden PIN Unit. Wir nutzen Fax und liefern den Übertragungsbeleg.",
+    "s009": "Gibt es versteckte Gebühren?",
+    "s010": "Nein. Sie zahlen den angezeigten Preis. Keine Einrichtungsgebühr, kein Monatsabo und kein Faxaufschlag pro Seite. Jedes weitere frühere Steuerjahr kostet pauschal {value1}. Das wird vorab offengelegt und vor der Zahlung in der Bestellübersicht angezeigt.",
+    "s011": "Speichern Sie Kontoauszüge oder unterschriebene Formulare?",
+    "s012": "Nein. Wir verarbeiten Kontoauszüge im Arbeitsspeicher, um Transaktionssummen zu ermitteln, und verwerfen sie danach ohne dauerhafte Speicherung. Hochgeladene unterschriebene PDFs bleiben nur bis zur Faxübermittlung und Zustellung des Faxbelegs gespeichert und werden dann gelöscht. Wir behalten nur den Faxbeleg und die grundlegenden LLC- und Inhaberdaten für die nächste Einreichung.",
+    "s013": "Welche Geld-zurück-Garantie bieten Sie?",
+    "s014": "100 % Geld-zurück-Garantie, wenn wir Ihre Erklärung nicht an den IRS übermitteln können. Scheitert das erste Fax, versuchen wir es automatisch erneut. Scheitert es weiterhin, erhalten Sie den vollen Betrag zurück, ohne weitere Fragen. Verhängt der IRS wegen eines Fehlers bei unserer Erstellung ein Bußgeld, übernehmen wir die Antwort an den IRS ohne Zusatzkosten.",
+    "s015": "Form 5472 und pro forma 1120 für eine ausländisch gehaltene US-LLC, ab {value1}. Erstellt, geprüft und per Fax bei der IRS Ogden PIN Unit eingereicht.",
+    "s016": "LLC-, Inhaber- und Finanzdaten eingeben",
+    "s017": "Beantworten Sie die geführten Fragen zu Ihrer LLC (Name, EIN, Anschrift, Gründung), zum ausländischen Inhaber (Name, Steuer-ID, Wohnsitzland) und zu den Geldbewegungen des Jahres: Einlagen, Entnahmen, Darlehen und Vermögen zum Jahresende. Das dauert etwa fünfzehn Minuten; Buchhaltungssoftware ist nicht erforderlich.",
+    "s018": "Wir erstellen Ihr Einreichungspaket",
+    "s019": "Nach der Zahlung erstellen wir aus Ihren Antworten das Paket: Anschreiben, pro forma Form 1120, Form 5472, Part-V-Ergänzung und bei verspäteter Einreichung nach DIIRSP eine Begründung. Alles kommt als eine PDF-Datei; Sie müssen kein IRS-Formular Zeile für Zeile ausfüllen.",
+    "s020": "Eine Steuerfachkraft mit IRS-PTIN prüft die Unterlagen",
+    "s021": "Jede Erklärung wird vor der Einreichung durch eine Steuerfachkraft mit IRS-PTIN geprüft. Die Fachkraft gleicht das Paket mit Ihren Angaben ab. Bei Rückfragen schreiben wir Ihnen auf Ihrer Einreichungsseite. Erst nach Freigabe der Prüfung können Sie unterschreiben.",
+    "s022": "Sie unterschreiben online",
+    "s023": "Nach der Freigabe lesen Sie das Paket und zeichnen Ihre Unterschrift einmal im Browser. Wir setzen sie in alle erforderlichen Felder der PDF-Datei ein. Drucken, Scannen oder Hochladen entfällt. Vor Ihrer Unterschrift wird nichts an den IRS gesendet.",
+    "s024": "Wir faxen an den IRS",
+    "s025": "Nach Ihrer Unterschrift faxen wir das vollständige Paket an die IRS Ogden PIN Unit unter +1-855-887-7737. Das ist in jedem Tarif enthalten; Sie brauchen weder ein Faxgerät noch einen eigenen Faxdienst oder ein IRS-Konto. Nach der Zustellung informieren wir Sie per E-Mail.",
+    "s026": "Sie erhalten den Faxbeleg mit Zeitstempel",
+    "s027": "Sie erhalten den Übertragungsbeleg des Faxanbieters und können ihn auf Ihrer Einreichungsseite herunterladen. Er enthält Zielnummer, Zeitstempel, Seitenzahl und gemeldetes Ergebnis. Bewahren Sie ihn mit dem eingereichten Paket auf: Er belegt, was wann gesendet wurde, und ist keine Annahmebestätigung des IRS.",
+    "s028": "Form5472 Prep Fragebogen",
+    "s029": "IRS-Fax an die Ogden PIN Unit (+1-855-887-7737)",
+    "s030": "LLC- und Inhaberdaten",
+    "s031": "Summen meldepflichtiger Transaktionen",
+    "s032": "Gesamtvermögen zum Jahresende",
+    "s033": "IRS Form 5472 + pro forma 1120 einreichen — Form5472 Prep",
+    "s034": "Für ausländisch gehaltene US-LLCs mit einem Mitglied. Wir erstellen, Sie unterschreiben einmal, wir faxen an den IRS. Ab {value1} oder {value2} für Express, unterschriftsbereit in {value3}.",
+    "s035": "EIN — {value1}",
+    "s036": "Braucht Ihre LLC eine EIN?",
+    "s037": "Keine SSN oder ITIN? Wir erstellen Form SS-4 und beschaffen Ihre EIN direkt beim IRS per Fax oder Telefon, üblicherweise in {days1} Werktagen.",
+    "s038": "ITIN — {value1}",
+    "s039": "Brauchen Sie persönlich eine ITIN?",
+    "s040": "Ein IRS Certifying Acceptance Agent prüft Ihre Identitätsdokumente, und wir reichen Form W-7 ein. Ihr Originalreisepass muss nicht per Post versendet werden.",
+    "s041": "Form 7004 — {value1}",
+    "s042": "Brauchen Sie mehr Zeit?",
+    "s043": "Wir erstellen Form 7004 für Ihre ausländisch gehaltene LLC und faxen sie an die IRS Ogden PIN Unit. Sie muss bis zur ursprünglichen Frist eingereicht werden.",
+    "s044": "Mehr für Gründer aus dem Ausland",
+    "s045": "Brauchen Sie auch Hilfe mit EIN, ITIN oder Fristverlängerung?",
+    "s046": "Eine US-LLC aus dem Ausland zu führen erfordert mehr als ein Formular. Wir beschaffen auch die beiden wichtigsten IRS-Steuernummern für nicht ansässige Inhaber und reichen Fristverlängerungen mit Form 7004 ein.",
+    "s047": "Vereinigtes Königreich · VAE · Singapur · Indien · Deutschland · Kanada · Australien · Hongkong",
+    "s048": "Form5472 Prep · Für ausländisch gehaltene US-LLCs",
+    "s049": "Form 5472 zum Festpreis einreichen.",
+    "s050": "Keine versteckten Gebühren.",
+    "s051": "Wir übernehmen Form 5472 + pro forma 1120 für ausländisch gehaltene US-LLCs. Vermeiden Sie das IRS-Bußgeld von {amount1} pro Formular. Faxübermittlung an die IRS Ogden PIN Unit ist bei jedem Tarif enthalten.",
+    "s052": "Wir übernehmen die Arbeit: Unser Team erstellt Ihre Formulare, und eine Steuerfachkraft mit IRS-PTIN prüft sie vor Ihrer Unterschrift.",
+    "s053": "Faxeinreichung bei jedem Tarif",
+    "s054": "Durch eine Steuerfachkraft geprüft",
+    "s055": "Keine US-Adresse nötig",
+    "s056": "Gründer aus über 40 Ländern vertrauen uns",
+    "s057": "Pakete an die IRS Ogden PIN Unit gefaxt",
+    "s058": "Jede Bestellung wird vor dem Faxen durch eine Steuerfachkraft geprüft",
+    "s059": "Jetzt Einreichung starten",
+    "s060": "Die Leistung bleibt gleich: Prüfung, IRS-Fax und Einreichungsbestätigung. Nur die Bearbeitungszeit unterscheidet sich.",
+    "s061": "Leistungsumfang ansehen",
+    "s062": "Einreichung starten",
+    "s063": "Alle Tarife ansehen",
+    "s064": "Kein Abo. Einmal pro Einreichung zahlen.",
+    "s065": "15 Min.",
+    "s066": "IRS-Formulare",
+    "s067": "Wir faxen für Sie",
+    "s068": "Beleg gespeichert",
+    "s069": "Einreichungspflicht",
+    "s070": "Müssen Sie Form 5472 und Form 1120 einreichen?",
+    "s071": "Treffen alle drei Punkte zu, verlangt der IRS beide Formulare jährlich, auch ohne Umsatz. Form 5472 meldet Transaktionen mit verbundenen Personen; die pro forma Form 1120 dient als Trägerformular.",
+    "s072": "Besitzen Sie eine US-LLC?",
+    "s073": "Eine LLC mit einem Mitglied in einem US-Bundesstaat, etwa Wyoming, Delaware, New Mexico oder Florida.",
+    "s074": "Sind Sie keine US-Person?",
+    "s075": "Sie sind weder US-Staatsbürger noch Green-Card-Inhaber oder in den USA steuerlich ansässig. Sie leben und zahlen Steuern außerhalb der USA.",
+    "s076": "Gab es Ein- oder Auszahlungen?",
+    "s077": "Sie haben Kapital eingezahlt, Ausschüttungen erhalten, sich selbst bezahlt oder andere meldepflichtige Transaktionen im Jahr vorgenommen.",
+    "s078": "Das Bußgeld beträgt {amount1} pro Formular und Jahr.",
+    "s079": "Das Bußgeld gilt bei verspäteter oder fehlender Form 5472. Der IRS kann es bei gemeinsamer Bearbeitung einer verspäteten Form 5472 und Form 1120 systemseitig festsetzen. Für versäumte Jahre ermöglicht DIIRSP eine Nachreichung mit Begründung, die wir für Sie erstellen.",
+    "s080": "Frist",
+    "s081": "Wann ist Form 5472 fällig?",
+    "s082": "Für LLCs mit Kalenderjahr sind Form 5472 und pro forma Form 1120 am 15. April des Folgejahres fällig, mit rechtzeitiger Form 7004 bis zum 15. Oktober. Bei abweichendem Geschäftsjahr gilt der 15. Tag des vierten Monats nach Jahresende.",
+    "s083": "Genaues Fälligkeitsdatum mit dem Fristenrechner ermitteln →",
+    "s084": "Wer die Arbeit übernimmt",
+    "s085": "Wer jede Erklärung prüft →",
+    "s086": "So funktioniert es",
+    "s087": "Wie läuft die Form 5472 Einreichung ab?",
+    "s088": "Der Ablauf hat sechs Schritte: Sie geben Daten ein, wir erstellen das Paket, eine Steuerfachkraft prüft es, Sie unterschreiben online, wir faxen an den IRS, und Sie erhalten den Faxbeleg mit Zeitstempel. Das Paket enthält Anschreiben, pro forma Form 1120, Form 5472, Ergänzung und bei DIIRSP eine Begründung für die verspätete Einreichung.",
+    "s089": "Anschreiben",
+    "s090": "An das IRS Ogden Service Center, PIN Unit. Nennt Unternehmen, EIN und betroffene Steuerjahre.",
+    "s091": "Begründung für die verspätete Einreichung",
+    "s092": "Nur bei DIIRSP. Erläutert das versäumte Vorjahr und beantragt Bußgelderlass.",
+    "s093": "pro forma Form 1120",
+    "s094": "Mit LLC-Name, EIN, Anschrift, Gründungsdatum und Gesamtvermögen zum Jahresende. Mit Vermerk „Foreign-Owned U.S. DE“.",
+    "s095": "Form 5472",
+    "s096": "Parts I, II, III, IV, V und VII ausgefüllt. Zeile 1f enthält die Part-V-Transaktionen nach den IRS-Regeln für ausländisch gehaltene disregarded entities.",
+    "s097": "Part-V-Ergänzung",
+    "s098": "Listet Einlagen und Ausschüttungen einzeln auf. Summen entsprechen Form 5472 Zeile 1f, ergänzt um die vorgeschriebene Schlussformulierung.",
+    "s099": "Was Sie erhalten",
+    "s100": "Was enthält das Einreichungspaket?",
+    "s101": "Das Paket enthält Anschreiben, pro forma Form 1120, Form 5472, Ergänzung und bei verspäteter Einreichung eine Begründung. Jede Erklärung wird vor der Übermittlung durch eine Steuerfachkraft geprüft. Alles in einer PDF-Datei, bereit für Ihre Unterschrift.",
+    "s102": "Im Vergleich",
+    "s103": "Warum Form5472 Prep statt CPA oder Eigenleistung?",
+    "s104": "Form5472 Prep ist auf die Einreichung zum Festpreis spezialisiert: {value1} ({value2}) oder {value3} (unterschriftsbereit in {value4}), einschließlich fachlicher Prüfung, IRS-Fax und Beleg mit Zeitstempel.",
+    "s105": "Preise",
+    "s106": "Am beliebtesten",
+    "s107": "/ Einreichung",
+    "s108": "je weiterem früheren Steuerjahr, bei beiden Tarifen",
+    "s109": "Hilft, das IRS-Bußgeld von {amount1} pro Formular zu vermeiden",
+    "s110": "DIIRSP = IRS Delinquent International Information Return Submission Procedure.",
+    "s111": "Muss ich Form 5472 einreichen?",
+    "s112": "Sechs Fragen, eine klare Antwort.",
+    "s113": "Fristenrechner",
+    "s114": "Ihr genaues Fälligkeitsdatum, auch bei Verlängerungen und Rumpfjahren.",
+    "s115": "Bußgeldrechner",
+    "s116": "Kosten verspäteter oder fehlender Einreichungen nach IRC §6038A.",
+    "s117": "IRS-Jahresdurchschnittskurse",
+    "s118": "Alle IRS-Jahresdurchschnittskurse 2021–2025 und ein Umrechner in US-Dollar.",
+    "s119": "Ist die Transaktion meldepflichtig?",
+    "s120": "Prüfen Sie, ob Inhaberzahlungen, Darlehen oder Gebühren in Form 5472 gehören.",
+    "s121": "Prüfung verspäteter Einreichungen",
+    "s122": "Form 5472 versäumt? Prüfen Sie das passende IRS-Verfahren.",
+    "s123": "Pflichtenkalender",
+    "s124": "Alle Bundes- und Landesfristen Ihrer LLC, mit Kalenderdownload.",
+    "s125": "Jährliche LLC-Gebühren nach Bundesstaat",
+    "s126": "Jahresgebühren, Franchise Taxes und Fristen in 10 häufig gewählten Staaten.",
+    "s127": "Form 5472 einreichen",
+    "s128": "Das Bußgeld von {amount1} erklärt",
+    "s129": "Verspätete Einreichung nach DIIRSP",
+    "s130": "Die pro forma Form 1120",
+    "s131": "Was ist Form 5472?",
+    "s132": "Form 5472 Frist für 2026",
+    "s133": "Zahlt eine ausländisch gehaltene LLC US-Steuern?",
+    "s134": "Zu spät oder noch nie eingereicht?",
+    "s135": "Hilfsmittel",
+    "s136": "Welche kostenlosen Tools und Ratgeber helfen vor der Einreichung?",
+    "s137": "Die Tools klären, ob Sie Form 5472 brauchen, welche Transaktionen meldepflichtig sind, welche Fristen gelten, welche LLC-Kosten anfallen, wie Sie Fremdwährungen mit IRS-Kursen umrechnen und wie Sie verspätet einreichen. Die Ratgeber behandeln Form 5472, DIIRSP, pro forma Form 1120 und verspätete Einreichungen.",
+    "s138": "Alle Ratgeber ansehen →",
+    "s139": "Häufige Fragen",
+    "s140": "Welche Fragen zu Form 5472 werden häufig gestellt?",
+    "s141": "Alle Fragen ansehen →",
+    "s142": "Für Buchhaltungsfirmen und Gründungsagenturen",
+    "s143": "Form 5472 für Ihre Kunden einreichen",
+    "s144": "Verwalten Sie die Form-5472-Einreichungen aller Kunden in einem Partnerkonto. Unsere Steuerfachkraft prüft jedes Paket, Ihr Kunde prüft und unterschreibt über einen sicheren Link, und jede Einreichung kostet genauso viel wie für direkte Kunden.",
+    "s145": "Partner werden",
+    "s146": "Partner-Anmeldung",
+    "s147": "Schon beworben? Mit Ihrer Partner-E-Mail anmelden.",
+    "s148": "Sorgen um das Bußgeld von {amount1} beenden.",
+    "s149": "Erledigen Sie die Angaben zur diesjährigen Form 5472 in fünfzehn Minuten. Holen Sie frühere Jahre in einem Durchgang nach.",
+    "s150": "Erstellung und Einreichung von IRS Form 5472 und pro forma Form 1120",
+    "s151": "Ausländische Inhaber einer US-LLC mit einem Mitglied",
+    "s152": "Wir übernehmen die Erstellung, Prüfung durch eine Steuerfachkraft mit IRS-PTIN und Faxübermittlung von IRS Form 5472 mit pro forma Form 1120 an die IRS Ogden PIN Unit für ausländisch gehaltene US-LLCs mit einem Mitglied. Bei verspäteter DIIRSP-Einreichung ist eine Begründung enthalten.",
+    "s153": "{value1} — {value2}",
+    "s154": "Startseite",
+    "s155": "Form 5472 mit Form5472 Prep einreichen",
+    "s156": "Form5472 Prep",
+    "extra1": "durchschnittlicher Zeitaufwand",
+    "extra2": "ausgefüllt, nicht neu gezeichnet",
+    "extra3": "an die Ogden PIN Unit",
+    "extra4": "Einreichungsnachweis"
+  },
+  "pricing": {
+    "s001": "Preise für die Form 5472 Einreichung",
+    "s002": "Preise für Form 5472 + pro forma 1120: Standard {value1}, bereit in {value2}; Express {value3}, unterschriftsbereit in {value4}. IRS-Fax enthalten.",
+    "s003": "Preise — Form 5472 für ausländisch gehaltene LLCs",
+    "s004": "26. Oktober 2026",
+    "s005": "Was unterscheidet die beiden Tarife?",
+    "s006": "Nur die Bearbeitungszeit. Die Leistung ist gleich: Wir erstellen Form 5472 + pro forma 1120, eine Steuerfachkraft mit IRS-PTIN prüft sie, wir faxen an die IRS Ogden PIN Unit und senden den Beleg mit Zeitstempel per E-Mail. Beide Tarife enthalten bei verspäteter Einreichung eine DIIRSP-Begründung und eine Erinnerung in der zweiten Januarwoche des Folgejahres. {value1} ({value2}) ist in {value3} bereit; {value4} ({value5}) ist in {value6} unterschriftsbereit und bietet bevorzugten E-Mail-Support.",
+    "s007": "Ist die Einreichung per Fax wirklich enthalten?",
+    "s008": "Ja. Jeder Tarif enthält die Faxübermittlung an die IRS Ogden PIN Unit und den Übertragungsbeleg des Faxanbieters mit Ziel, Zeitstempel, Seitenzahl und Ergebnis. Er belegt die Übertragung, keine IRS-Annahme. Sie brauchen kein eigenes Faxgerät.",
+    "s009": "Was gilt für mehrere frühere Jahre (DIIRSP)?",
+    "s010": "Bei beiden Tarifen kommen je weiterem früheren Jahr {value1} hinzu. Jede verspätete Einreichung enthält eine Begründung, damit das IRS-Verfahren DIIRSP korrekt in Anspruch genommen wird.",
+    "s011": "Gibt es versteckte Gebühren?",
+    "s012": "Nein. Sie zahlen den angezeigten Preis. Keine Einrichtungsgebühr, kein Monatsabo und kein Faxaufschlag pro Seite.",
+    "s013": "Form 5472 + pro forma 1120 Einreichungsservice",
+    "s014": "Wir übernehmen IRS Form 5472 und pro forma Form 1120 für ausländisch gehaltene US-LLCs mit einem Mitglied. Die Faxübermittlung an die IRS Ogden PIN Unit ist bei jedem Tarif enthalten.",
+    "s015": "{value1} — {value2}",
+    "s016": "Einreichung",
+    "s017": "Pauschaler Aufpreis je weiterem früheren Steuerjahr, bei beiden Tarifen.",
+    "s018": "weiteres Steuerjahr",
+    "s019": "Form 5472 Einreichungspreise",
+    "s020": "Startseite",
+    "s021": "Preise",
+    "s022": "Für ausländisch gehaltene US-LLCs",
+    "s023": "Form 5472 Einreichungspreise:",
+    "s024": "und ",
+    "s025": ", ohne versteckte Gebühren.",
+    "s026": "Wir übernehmen Form 5472 + pro forma 1120 für ausländisch gehaltene US-LLCs. Gleiche Leistung, passende Bearbeitungszeit wählen:",
+    "s027": "bereit in ",
+    "s028": ", oder unterschriftsbereit in ",
+    "s029": "mit Express. Fax an die IRS Ogden PIN Unit ist in beiden Tarifen enthalten.",
+    "s030": "Zuletzt geprüft am ",
+    "s031": "Faxeinreichung bei jedem Tarif",
+    "s032": "Durch eine Steuerfachkraft geprüft",
+    "s033": "je weiterem früheren Steuerjahr, bei beiden Tarifen",
+    "s034": "Eine fehlende oder unvollständige Einreichung kann zu einem",
+    "s035": "IRS-Bußgeld von {amount1} pro Formular führen",
+    "s036": "Die vollständige Aufschlüsselung finden Sie im Ratgeber zu",
+    "s037": "Form 5472 Einreichungskosten",
+    "s038": ", oder vergleichen Sie",
+    "s039": "veröffentlichte Preise anderer Anbieter",
+    "s040": "Einmalige Pauschale, über Stripe in {currency} abgerechnet. Kein Abo. Jede Erklärung wird vor der Einreichung durch eine Steuerfachkraft mit IRS-PTIN geprüft. Wir erstellen und übermitteln die Formulare anhand Ihrer Angaben; persönliche Steuerplanung bieten wir nicht an.",
+    "s041": "Wie schneidet Form5472 Prep gegenüber CPA oder Eigenleistung ab?",
+    "s042": "Die Tabelle vergleicht Zeitaufwand, Übermittlung, Belegaufbewahrung und Kosten bei Form5472 Prep, CPA und Eigenleistung.",
+    "s043": "Mehr für Gründer aus dem Ausland",
+    "s044": "Brauchen Sie auch EIN, ITIN oder eine Form-7004-Verlängerung?",
+    "s045": "EIN — {value1}",
+    "s046": "Braucht Ihre LLC eine EIN?",
+    "s047": "Keine SSN oder ITIN erforderlich. Wir erstellen Form SS-4 und beschaffen Ihre EIN direkt beim IRS in {days1} Werktagen.",
+    "s048": "ITIN — {value1}",
+    "s049": "Brauchen Sie persönlich eine ITIN?",
+    "s050": "Ein IRS Certifying Acceptance Agent prüft Ihre Dokumente, und wir reichen Form W-7 ein. Kein Reisepassversand nötig.",
+    "s051": "Form 7004 — {value1}",
+    "s052": "Brauchen Sie mehr Zeit?",
+    "s053": "Wir erstellen Form 7004 und faxen sie an die IRS Ogden PIN Unit. Sie muss bis zur ursprünglichen Frist eingereicht werden.",
+    "s054": "Was fragen Kunden vor der Zahlung?",
+    "s055": "Am beliebtesten",
+    "s056": "/ Einreichung"
+  },
+  "services": {
+    "hub": {
+      "title": "Form 5472 Leistungen nach Situation — Form5472 Prep",
+      "metaDescription": "Form 5472 für ausländisch gehaltene US-LLCs: jährliche, verspätete, ruhende und letzte Einreichungen, IRS-Fax, Partner, EIN und ITIN.",
+      "longDescription": "Form 5472 und pro forma Form 1120 für ausländisch gehaltene US-LLCs mit einem Mitglied: jährliche Einreichungen, verspätete DIIRSP-Pakete mit Begründung, ruhende und aufgelöste LLCs, IRS-Fax mit Zeitstempel, Einreichung unter der Marke von Agenturen sowie EIN- und ITIN-Anträge.",
+      "h1": "Form 5472 Leistungen nach Situation",
+      "intro": "Jede hier angebotene Form5472-Prep-Leistung umfasst eine Form 5472 mit pro forma Form 1120 für eine US-LLC mit einem ausländischen Inhaber: {amount1} (bereit in {days1} Werktagen) oder {amount2} (unterschriftsbereit in unter {days2} Tagen) pro Jahr. Eine Steuerfachkraft mit IRS-PTIN prüft jedes Paket vor dem Fax an den IRS."
+    },
+    "categories": {
+      "0": {
+        "heading": "Welche Leistung brauche ich für die jährliche Form 5472?",
+        "description": "Der Einreichungsservice deckt die jährliche Form 5472 und pro forma 1120 für eine LLC mit einem ausländischen Inhaber ab. Eigene Seiten erläutern pro forma 1120, Bundespflichten, Faxübermittlung, Beauftragung und Auswahl des Erstellers."
+      },
+      "1": {
+        "heading": "Welche Leistung passt für versäumte Jahre, ruhende oder aufgelöste LLCs?",
+        "description": "Ein versäumtes Jahr braucht eine verspätete Einreichung mit Begründung. Auch eine ruhende LLC kann meldepflichtige Transaktionen haben. Eine aufgelöste LLC reicht eine letzte Erklärung für das Rumpfjahr ein. Jede Situation hat eine eigene Seite."
+      },
+      "2": {
+        "heading": "Welche Leistung passt für Buchhaltungsfirmen, Gründungs- und registrierte Agenturen?",
+        "description": "Buchhaltungsfirmen, Gründungs- und registrierte Agenturen können Kunden empfehlen, Einreichungen über ein Partnerkonto verwalten oder unter eigener Marke anbieten. Wir erstellen, prüfen und faxen jedes Paket."
+      }
+    },
+    "identifiers": {
+      "0": {
+        "label": "US-EIN für Ihre ausländisch gehaltene LLC beantragen",
+        "blurb": "Wir erstellen Form SS-4 und beschaffen die EIN. Keine SSN oder ITIN nötig."
+      },
+      "1": {
+        "label": "Prüfen, ob Sie eine ITIN für einen Bundessteuerzweck brauchen",
+        "blurb": "ITIN-Antragshilfe für Personen mit einem berechtigten Bundessteuergrund."
+      },
+      "2": {
+        "label": "Fristverlängerung für Form 5472 mit Form 7004 beantragen",
+        "blurb": "Wir erstellen Form 7004, faxen sie an die IRS Ogden PIN Unit und senden Ihnen den Faxbeleg per E-Mail."
+      }
+    },
+    "pages": {
+      "form-5472-filing-service": {
+        "h1": "Form 5472 Einreichungsservice für ausländisch gehaltene US-LLCs",
+        "shortBlurb": "Die diesjährige Form 5472 und pro forma 1120, in einer Bestellung erstellt, geprüft und gefaxt."
+      },
+      "pro-forma-1120-filing-service": {
+        "h1": "pro forma 1120 für nicht ansässige LLC-Inhaber einreichen",
+        "shortBlurb": "Das Trägerformular Form 1120 für Ihre Form 5472, Feld für Feld ausgefüllt und gemeinsam eingereicht."
+      },
+      "late-form-5472-filing-service": {
+        "h1": "Verspätete Form 5472 für versäumte Jahre einreichen",
+        "shortBlurb": "Ein oder mehrere versäumte Jahre nachreichen, jeweils mit einer Begründung."
+      },
+      "foreign-owned-llc-tax-filing-service": {
+        "h1": "US-Steuereinreichung für ausländische LLC-Inhaber",
+        "shortBlurb": "Welche US-Erklärungen die LLC eines nicht ansässigen Inhabers braucht und welche Bundeserklärung wir erstellen und faxen."
+      },
+      "form-5472-fax-filing-service": {
+        "h1": "Form 5472 per Fax einreichen, mit Beleg und Zeitstempel",
+        "shortBlurb": "Faxübermittlung an die IRS Ogden PIN Unit, mit aufbewahrtem Übertragungsbeleg und Zeitstempel."
+      },
+      "white-label-form-5472-filing": {
+        "h1": "Form 5472 unter eigener Marke für Gründungs- und registrierte Agenturen",
+        "shortBlurb": "Ihre Kunden bleiben bei Ihnen: Sie senden die Links, wir erstellen, prüfen und faxen im Hintergrund."
+      },
+      "form-5472-filing-for-dormant-llc": {
+        "h1": "Form 5472 für Inhaber ruhender LLCs",
+        "shortBlurb": "Wann eine LLC ohne Geschäftstätigkeit trotzdem einreicht und welche vom Inhaber bezahlten Kosten zählen."
+      },
+      "final-form-5472-for-dissolved-llc": {
+        "h1": "Letzte Form 5472 für aufgelöste LLCs",
+        "shortBlurb": "Letzte Form 5472 und pro forma 1120 für das mit der Auflösung endende Rumpfjahr."
+      },
+      "hire-someone-to-file-form-5472": {
+        "h1": "Form 5472 für Ihre ausländisch gehaltene LLC erstellen lassen",
+        "shortBlurb": "Die Übergabe einfach erklärt: Ihre Angaben, unsere Unterlagen und die zwei Schritte, die Sie selbst erledigen."
+      },
+      "form-5472-preparer": {
+        "h1": "Form 5472 Erstellung für ausländisch gehaltene US-LLCs",
+        "shortBlurb": "So wählen Sie einen Ersteller: vier Anbietertypen und sechs Fragen, die Sie stellen sollten."
+      },
+      "form-5472-for-accountants": {
+        "h1": "Form 5472 für Buchhaltungsfirmen, CPAs und Steuerfachkräfte",
+        "shortBlurb": "Für Firmen, die zwischen einer Empfehlung und der Verwaltung im Partnerkonto wählen."
+      },
+      "form-5472-for-bookkeepers": {
+        "h1": "Form 5472 für Buchhaltungsdienste: Einreichung abgeben, Buchführung behalten",
+        "shortBlurb": "Welche Unterlagen Sie für die Form 5472 Ihres Kunden übergeben und wie die Übergabe abläuft."
+      }
+    },
+    "s001": "Welche Seiten behandeln Form 5472 für Kunden von Gründungsdiensten?",
+    "s002": "Ein Gründungs- oder Registered-Agent-Paket enthält die jährliche Form 5472 nicht unbedingt. Jede Seite zeigt, wie die Einreichung zum Angebot des Anbieters passt und wie das Paket zum IRS gelangt.",
+    "s003": "Brauche ich vor der Einreichung EIN, ITIN oder eine Verlängerung?",
+    "s004": "Eine ausländisch gehaltene LLC braucht eine EIN für Form 5472. Der Inhaber braucht nur bei einem berechtigten Bundessteuergrund eine ITIN. Wir helfen bei beiden und reichen Form 7004 ein, wenn Sie mehr Zeit brauchen.",
+    "s005": "Startseite",
+    "s006": "Leistungen",
+    "s007": "Seitennavigation",
+    "s008": "Zuletzt geprüft am ",
+    "s009": "Mehr erfahren",
+    "s010": "Ihre Form 5472 Einreichung starten",
+    "s011": "Etwa 15 Minuten für die Fragen. Jede Erklärung wird vor der Einreichung durch eine Steuerfachkraft mit IRS-PTIN geprüft und anschließend mit Übertragungsbeleg und Zeitstempel an den IRS gefaxt.",
+    "s012": "Ihre Einreichung starten",
+    "s013": "Preise ansehen",
+    "formation": {
+      "clemta-form-5472": {
+        "label": "Clemta-Kunde? Form 5472 schriftlich klären.",
+        "blurb": "Clemta nennt Federal Tax Filing, führt Form 5472 auf öffentlichen Seiten aber nicht klar einzeln auf. Was Sie bestätigen lassen sollten und wie Sie bei Bedarf einreichen."
+      },
+      "doola-form-5472": {
+        "label": "LLC mit doola gegründet? Den genauen Umfang prüfen.",
+        "blurb": "Lesen Sie, was doolas eigene Seiten zu Preis und Umfang von Form 5472 sagen, und vergleichen Sie eine reine Einreichung zum Festpreis."
+      },
+      "firstbase-form-5472": {
+        "label": "Firstbase für Ihre US-Firma? Form 5472 richtig einordnen.",
+        "blurb": "Firstbase nennt Form 5472 in einem Steuerpaket für {amount1}/Jahr für ausländisch gehaltene LLCs mit einem Mitglied. Prüfen Sie den Umfang und wann eine reine Einreichung passt."
+      },
+      "northwest-registered-agent-form-5472": {
+        "label": "Northwest Registered Agent genutzt? Form 5472 ist eine eigene Bundeserklärung.",
+        "blurb": "Form 5472 bleibt eine eigene Bundeserklärung. Was Sie schriftlich bestätigen lassen sollten und wie Sie das IRS-Paket einreichen."
+      },
+      "startglobal-form-5472": {
+        "label": "StartGlobal hat die LLC gegründet. Jetzt Form 5472 klären.",
+        "blurb": "StartGlobal verkauft Federal Tax Filing, nennt Form 5472 aber nicht auf den Preis- und Bundessteuerseiten. Was Sie prüfen sollten und wie reine Einreichungshilfe funktioniert."
+      },
+      "zenind-form-5472": {
+        "label": "Zenind erklärt Form 5472. Als Nächstes kommt die Einreichung.",
+        "blurb": "Zenind veröffentlicht einen Form-5472-Ratgeber, führt auf der Preisseite aber keine Form-5472-Einreichung auf. Nächste Schritte für ausländisch gehaltene LLCs."
+      },
+      "form-5472-fax-number": {
+        "label": "Form 5472 einreichen: Faxnummer und Postanschrift",
+        "blurb": "IRS-Faxnummer (+1-855-887-7737) und Ogden-Postanschrift für ausländisch gehaltene US-LLCs: was Sie senden und welche Belege Sie aufbewahren sollten."
+      }
+    }
+  },
+  "faq": {
+    "items": {
+      "express-ready-in-24-hours": {
+        "q": "Ist Form5472 Prep Express in {hours1} Stunden bereit?",
+        "a": "Nein. Express ist in unter {days1} Tagen unterschriftsbereit, gerechnet in Kalendertagen an {days2} Tagen pro Woche. Standard ist in {days3} Werktagen bereit. Nach Ihrer Prüfung und Unterschrift faxen wir Form 5472 und pro forma Form 1120 an den IRS.",
+        "learnMore": "Bearbeitungszeiten vergleichen"
+      },
+      "additional-year-is-not-first-year-price": {
+        "q": "Kostet Form5472 Prep {amount1}?",
+        "a": "Nein. Ein Steuerjahr kostet {amount1} mit Standard oder {amount2} mit Express, einschließlich Erstellung, Prüfung und IRS-Fax. Die {amount3} gelten nur je weiterem früheren Steuerjahr derselben Bestellung, nie für das erste Jahr.",
+        "learnMore": "Einreichungspreise ansehen"
+      },
+      "is-form5472-prep-tax-software": {
+        "q": "Ist Form5472 Prep eine Steuersoftware?",
+        "a": "Nein. Wir übernehmen die Einreichung: Sie beantworten einen Fragebogen, unser Team erstellt Form 5472 und pro forma 1120, und eine Steuerfachkraft mit IRS-PTIN prüft sie. Sie prüfen und unterschreiben, wir faxen an den IRS.",
+        "learnMore": "Ablauf einer Einreichung"
+      },
+      "what-is-form-5472-who-files": {
+        "q": "Was ist Form 5472 und wer muss sie einreichen?",
+        "a": "Form 5472 ist eine Informationserklärung über Transaktionen mit verbundenen Personen. Eine ausländisch gehaltene US-LLC mit einem Mitglied, die als disregarded entity gilt, reicht sie üblicherweise mit pro forma Form 1120 ein, wenn im Steuerjahr eine meldepflichtige Transaktion vorliegt.",
+        "learnMore": "Einreichungspflicht prüfen"
+      },
+      "no-income-form-5472-form-1120": {
+        "q": "Brauche ich Form 5472 und Form 1120 auch ohne Einnahmen meiner LLC?",
+        "a": "Form 5472 und pro forma Form 1120 werden wahrscheinlich auch ohne Einnahmen benötigt. Keine Einnahmen bedeutet nicht keine meldepflichtigen Transaktionen. Gründungskosten, Einlagen, Erstattungen, Darlehen oder Entnahmen können eine Pflicht auslösen."
+      },
+      "can-you-tell-me-whether-i-need-to-file": {
+        "q": "Können Sie mir sagen, ob ich einreichen muss?",
+        "a": "Wir können bestätigen, ob Ihre geschilderte Situation zu unserem Leistungsprofil passt. Ist Ihre US-LLC eine LLC mit einem nicht in den USA ansässigen Einzelinhaber und gab es eine meldepflichtige Transaktion, auch eine Einzahlung zur Kontoeröffnung, muss sie Form 5472 mit pro forma Form 1120 einreichen.",
+        "learnMore": "Einreichungsprüfung nutzen"
+      },
+      "how-much-does-it-cost": {
+        "q": "Was kostet Form5472 Prep?",
+        "a": "Form5472 Prep kostet je Steuerjahr {amount1} mit Standard oder {amount2} mit Express, einschließlich IRS-Fax. Wir übernehmen die Arbeit: Sie beantworten einen Fragebogen, wir erstellen Form 5472 und pro forma 1120, und eine Steuerfachkraft mit IRS-PTIN prüft sie. Der Aufpreis von {amount3} gilt nur je weiterem früheren Steuerjahr, nie für das erste Jahr.",
+        "learnMore": "Preise ansehen"
+      },
+      "standard-vs-express": {
+        "q": "Was unterscheidet Standard und Express?",
+        "a": "Nur die Bearbeitungszeit unterscheidet sich. Standard ist für {amount1} in {days1} Werktagen bereit. Express ist für {amount2} in unter {days2} Tagen ab Bestellung unterschriftsbereit, an {days3} Tagen pro Woche, mit bevorzugtem E-Mail-Support. Gefaxt wird bei beiden nach Ihrer Unterschrift. Dokumente, Prüfung und IRS-Fax sind gleich."
+      },
+      "whats-included-for-the-price": {
+        "q": "Was ist im Preis enthalten?",
+        "a": "Enthalten sind Form 5472, pro forma Form 1120, Part-V-Ergänzung, Prüfung durch eine Steuerfachkraft mit IRS-PTIN, eine Begründung bei Verspätung, IRS-Fax, Beleg mit Zeitstempel, Einreichungsbestätigung und eine Erinnerung vor der nächsten Jahresfrist."
+      },
+      "hidden-fees": {
+        "q": "Gibt es versteckte Gebühren?",
+        "a": "Wir erheben keine versteckten Gebühren. Sie zahlen den angezeigten Preis, ohne Einrichtung, Monatsabo oder Faxaufschlag pro Seite. Jedes weitere frühere Jahr kostet pauschal {amount1}, vorab offengelegt."
+      },
+      "information-to-have-ready": {
+        "q": "Welche Angaben sollte ich bereithalten?",
+        "a": "Halten Sie LLC-Name, EIN, Anschrift, Gründungsdatum, NAICS-Code, Inhabername, ausländische Steuer-ID, Wohnanschrift, Staatsangehörigkeit, steuerlichen Wohnsitz, Einlagen, Ausschüttungen und Gesamtvermögen zum Jahresende bereit. Dies sind übliche Felder zur manuellen Eingabe."
+      },
+      "guarantee": {
+        "q": "Welche Geld-zurück-Garantie bieten Sie?",
+        "a": "Wir bieten eine 100%ige Geld-zurück-Garantie, wenn wir Ihre Erklärung nicht an den IRS übermitteln können. Scheitert das erste Fax, versuchen wir es automatisch erneut. Bleibt die Übermittlung nach diesen Versuchen erfolglos, erhalten Sie den vollen Betrag zurück."
+      },
+      "are-you-a-cpa-firm": {
+        "q": "Sind Sie eine CPA-Firma? Wer erstellt meine Erklärung?",
+        "a": "Jede Erklärung wird vor der Einreichung durch eine Steuerfachkraft mit IRS-PTIN geprüft. Wir erstellen und übermitteln die Formulare anhand Ihrer Angaben. Persönliche Steuerplanung oder Beratung zu steuerlichen Positionen bieten wir nicht an.",
+        "learnMore": "Mehr über Form5472 Prep"
+      },
+      "who-reviews-my-filing": {
+        "q": "Wer prüft meine Form 5472?",
+        "a": "Jedes Paket wird vor dem Fax durch eine Steuerfachkraft mit IRS-PTIN geprüft. Die PTIN ist die vom IRS für bezahlte Ersteller verlangte Identifikationsnummer, keine Berufserlaubnis oder IRS-Anerkennung. Wir sind keine CPA-Firma und bieten keine Steuerberatung.",
+        "learnMore": "So prüfen wir Einreichungen"
+      },
+      "is-form5472-prep-automated-software": {
+        "q": "Ist Form5472 Prep eine automatisierte Software?",
+        "a": "Nein. Form5472 Prep übernimmt die Einreichung, statt eine Software zur Eigenleistung anzubieten. Die Software entwirft Form 5472 und pro forma Form 1120 aus Ihren Antworten. Eine Steuerfachkraft mit IRS-PTIN prüft jedes Paket vor Ihrer Unterschrift. Sie prüfen und unterschreiben, wir faxen an die IRS Ogden PIN Unit mit Beleg und Zeitstempel.",
+        "learnMore": "Ablauf einer Einreichung"
+      },
+      "is-form5472-prep-legit": {
+        "q": "Ist Form5472 Prep seriös?",
+        "a": "Form5472 Prep ist ein 2025 gegründeter Form-5472-Einreichungsservice. Eine Steuerfachkraft mit IRS-PTIN prüft jedes Paket vor Ihrer Unterschrift. Wir sind keine CPA-Firma und bieten keine persönliche Steuer- oder Rechtsberatung. Daten werden bei Übertragung und Speicherung verschlüsselt. Kundenbewertungen finden Sie auf Trustpilot.",
+        "learnMore": "Über Form5472 Prep"
+      },
+      "is-form5472-prep-same-as-snapfile": {
+        "q": "Ist Form5472 Prep dasselbe wie Snapfile?",
+        "a": "Es sind getrennte Dienste desselben Teams. Laut snapfile.tax/pricing vom 24. Oktober 2026 verkauft Snapfile eine Einreichung für {amount1} (+{amount2} je weiterem früheren Jahr) mit KI-Prüfung ohne menschliche Steuerfachkraft. Bei Form5472 Prep prüft ab {amount3} eine Steuerfachkraft mit IRS-PTIN jedes Paket. Snapfiles Tarif mit menschlicher Prüfung wird von uns ausgeführt."
+      },
+      "what-is-pro-forma-form-1120": {
+        "q": "Was ist pro forma Form 1120 und warum wird sie beigefügt?",
+        "a": "Die pro forma Form 1120 ist das Trägerdokument für das gültige IRS-Paket mit Form 5472. Bei ausländisch gehaltenen LLCs mit einem Mitglied wird Form 5472 als Anlage eingereicht. Keines der beiden Formulare allein genügt für diese Einreichung.",
+        "learnMore": "Anleitung zu pro forma 1120 lesen"
+      },
+      "what-counts-as-reportable-transaction": {
+        "q": "Was zählt als meldepflichtige Transaktion?",
+        "a": "Die Definition ist weit: Einlagen, Ausschüttungen, Zahlungen zwischen Ihnen und der LLC, Darlehen und andere Transaktionen mit verbundenen Personen können dazugehören. Form 5472 meldet Beträge in Dollar. Part V erfasst Einlagen, Ausschüttungen und die meisten Zahlungen zwischen Inhaber und LLC."
+      },
+      "capital-contributions-owner-reimbursements": {
+        "q": "Zählen Einlagen und Erstattungen an den Inhaber als meldepflichtig?",
+        "a": "Ja, sie können meldepflichtig sein. Einlagen und Ausschüttungen zählen, ebenso die erste Überweisung zur Kontoeröffnung oder eine Kostenerstattung an Sie für eine Geschäftsausgabe, auch ohne Umsatz der LLC."
+      },
+      "can-form-5472-be-e-filed": {
+        "q": "Kann Form 5472 elektronisch oder nur per Fax oder Post eingereicht werden?",
+        "a": "Bei einer ausländisch gehaltenen LLC nur per Fax oder Post. Laut IRS-Anweisungen darf eine ausländisch gehaltene US-disregarded entity Form 5472 nicht elektronisch einreichen. Sie geht mit pro forma Form 1120 per Fax an +1-855-887-7737 oder per Post an die IRS Ogden PIN Unit. Wir erstellen, faxen und senden Ihnen den Übertragungsbeleg."
+      },
+      "first-year-llc-file": {
+        "q": "Muss eine LLC schon im ersten Jahr einreichen?",
+        "a": "Ja, wenn im Gründungsjahr meldepflichtige Transaktionen vorlagen. Prüfen Sie Vorgänge ab Gründung, auch vom Inhaber bezahlte Gründungskosten. Das Gründungsjahr zählt und unterliegt denselben Fristregeln."
+      },
+      "dissolved-llc-still-file": {
+        "q": "Meine LLC wurde dieses Jahr aufgelöst. Muss ich noch einreichen?",
+        "a": "Eine aufgelöste LLC reicht Form 5472 für das mit der Auflösung endende Rumpfjahr ein. Die Frist ist in der Regel der 15. Tag des vierten Monats nach dem letzten Monat. Endet ein vor 2026 begonnenes Rumpfjahr im Juni, gilt stattdessen der 15. Tag des dritten Monats.",
+        "learnMore": "Letzte Form 5472 einer aufgelösten LLC"
+      },
+      "form-5472-deadline": {
+        "q": "Wann ist die Frist für Form 5472?",
+        "a": "Für eine LLC mit Kalenderjahr ist Form 5472 mit pro forma Form 1120 in der Regel am 15. April fällig. Bei rechtzeitiger Form 7004 kann sich die Frist auf den 15. Oktober verlängern, da Form 5472 der Form 1120 beigefügt ist. Die Verlängerung muss korrekt erfolgen.",
+        "learnMore": "Ihre Frist berechnen"
+      },
+      "form-7004-extension": {
+        "q": "Wie funktioniert die Verlängerung mit Form 7004?",
+        "a": "Form 7004 muss bis zur ursprünglichen Frist am 15. April eingereicht werden. Rechtzeitig eingereicht verlängert sie das Form-5472-Paket bis zum 15. Oktober, da Form 5472 der Form 1120 beigefügt ist. Ohne sie bleibt der 15. April. Wir bieten dies separat gegen Gebühr an, faxen an die IRS Ogden PIN Unit und senden den Faxbeleg, keine IRS-Annahmebestätigung.",
+        "learnMore": "Form 7004 Fristverlängerung einreichen"
+      },
+      "no-income-no-transactions-deadline": {
+        "q": "Ändern fehlende Einnahmen oder Transaktionen die Frist?",
+        "a": "Nein. Die Frist ändert sich dadurch nicht. Form 5472 wird durch meldepflichtige Transaktionen ausgelöst, nicht durch Einnahmen. Gibt es solche Transaktionen, gilt auch ohne Umsatz dieselbe Frist."
+      },
+      "missed-form-5472": {
+        "q": "Was passiert, wenn Form 5472 fehlt?",
+        "a": "Das IRS-Bußgeld beträgt bei fehlender oder unvollständiger Form 5472 im Allgemeinen {amount1}. Sendet der IRS einen Bescheid und wird nicht korrigiert, können alle {days1} Tage weitere {amount2} hinzukommen. Verspätete Einreichungen können unter DIIRSP eine Begründung enthalten.",
+        "learnMore": "Bußgeld schätzen"
+      },
+      "automatic-penalty": {
+        "q": "Wird das Bußgeld wirklich automatisch festgesetzt?",
+        "a": "Das Form-5472-Bußgeld kann automatisch festgesetzt werden. IRC §6038A(d) sieht zunächst {amount1} vor, wenn Pflichtangaben verspätet oder unvollständig eingereicht werden. Das IRS-System kann es ohne vorherige Prüfung durch einen Menschen festsetzen."
+      },
+      "can-penalty-be-abated": {
+        "q": "Kann das Bußgeld erlassen werden?",
+        "a": "Ein Erlass ist möglich, aber nicht zugesagt. Viele verspätete Einreicher reichen unter DIIRSP die Erklärung mit einem Reasonable Cause Statement nach. Der IRS entscheidet nach den Tatsachen; Treas. Reg. §1.6038A-4(b) verlangt reasonable cause und guten Glauben."
+      },
+      "cp15-notice": {
+        "q": "Was ist ein CP-215-Bescheid?",
+        "a": "CP 215 ist der IRS Notice of Penalty Charge für Geschäftskonten. Laut IRM 20.1.9.5.2 wird er nach Festsetzung eines Form-5472-Bußgelds erzeugt. CP 15 ist die Entsprechung für Privatkonten. Prüfen Sie Betrag, Steuerjahr und Antwortfrist; ignorieren Sie den Bescheid nicht."
+      },
+      "statute-of-limitations": {
+        "q": "Gibt es eine Verjährungsfrist?",
+        "a": "Bis eine vollständige oder im Wesentlichen vollständige Form 5472 vorliegt, läuft praktisch keine Verjährungsfrist. Erst die Einreichung, auch verspätet, setzt die Frist in Gang. Bis dahin bleibt das Jahr offen. Deshalb ist das fehlende Paket weiterhin wichtig."
+      },
+      "missed-prior-years": {
+        "q": "Was ist, wenn ich frühere Jahre versäumt habe?",
+        "a": "Wählen Sie beim Start alle fehlenden Jahre aus. Wir kennzeichnen die Einreichung als DIIRSP und fügen eine Begründung mit Erlassantrag bei. Jedes weitere frühere Steuerjahr kostet {amount1}.",
+        "learnMore": "Mehrjahrespreise ansehen"
+      },
+      "deadline-already-passed": {
+        "q": "Die Frist ist dieses Jahr schon vorbei. Was jetzt?",
+        "a": "Bei versäumter Form-5472-Frist ist DIIRSP mit Begründung der übliche Nachreichungsweg. Wurde der 15. April ohne Form 7004 versäumt, reichen Sie die eigentliche Erklärung als verspätetes DIIRSP-Paket nach."
+      },
+      "irs-notice-help": {
+        "q": "Ich habe einen IRS-Bescheid erhalten. Können Sie helfen und was brauchen Sie?",
+        "a": "Wir helfen Inhabern mit IRS CP 215 oder einem §6038A-Schreiben bei einer korrekt vorbereiteten verspäteten Einreichung. Senden Sie Bescheidnummer und betroffenes Steuerjahr. Wir erklären den Weg vor der Zahlung. Wir erstellen die Nachreichung, übernehmen aber keine Bußgeld-Einsprüche.",
+        "learnMore": "Support kontaktieren"
+      },
+      "ein-needed-for-form-5472": {
+        "q": "Brauche ich eine EIN für Form 5472?",
+        "a": "Ja, die EIN Ihrer LLC gehört in den Kopf von Form 5472. Sie identifiziert die LLC als meldepflichtige Gesellschaft. Falls Sie beides brauchen, können wir EIN-Antrag und Form-5472-Einreichung koordinieren."
+      },
+      "what-is-an-ein": {
+        "q": "Was ist eine EIN und warum braucht meine LLC eine?",
+        "a": "Eine EIN ist eine neunstellige US-Steuernummer des IRS für Unternehmen. Ihre LLC braucht sie etwa für ein US-Geschäftskonto, Stripe oder PayPal, US-Auftragnehmer, Form 5472 und bestimmte Verträge.",
+        "learnMore": "Mehr zu EINs"
+      },
+      "apply-for-ein-myself": {
+        "q": "Kann ich die EIN nicht selbst auf der IRS-Website beantragen?",
+        "a": "Der Online-Antrag auf irs.gov ist nur mit US-SSN oder ITIN verfügbar. Ausländische Personen ohne US-Steuer-ID können ihn nicht nutzen. Es bleibt Form SS-4 per Fax oder Telefon."
+      },
+      "ssn-itin-needed-for-ein": {
+        "q": "Brauche ich SSN oder ITIN, um eine EIN zu bekommen?",
+        "a": "Nein. Nicht ansässige Inhaber können auch ohne SSN oder ITIN eine EIN erhalten. Form SS-4 erlaubt „Foreign“ im Steuer-ID-Feld der verantwortlichen Person; der Antrag geht an die internationale IRS-Einheit. Das Online-Tool verlangt dagegen eine vorhandene SSN oder ITIN."
+      },
+      "ein-timing": {
+        "q": "Wie lange dauert die EIN?",
+        "a": "Nach Eingang Ihrer Unterlagen dauert die EIN üblicherweise {days1} Werktage. Wir rufen in Ihrem Namen die IRS Business & Specialty Tax Line an und können die EIN häufig direkt im Gespräch erhalten. Komplexere Fälle können länger dauern."
+      },
+      "already-have-ein": {
+        "q": "Was ist, wenn meine LLC schon eine EIN hat?",
+        "a": "Dann brauchen Sie den EIN-Service nicht. Verwenden Sie diese EIN im Form-5472-Paket mit LLC-Name, Anschrift und Gesamtvermögen. Auch bei verlorener oder vergessener EIN können wir helfen: support@form5472prep.com."
+      },
+      "what-is-itin": {
+        "q": "Was ist eine ITIN und brauche ich sie für meine US-LLC?",
+        "a": "Eine ITIN ist eine neunstellige IRS-Steuer-ID für Personen, die auf einer US-Steuererklärung erscheinen müssen, aber keine SSN erhalten können. Viele ausländische US-LLC-Inhaber benötigen nur eine EIN und nie eine ITIN.",
+        "learnMore": "Mehr zu ITINs"
+      },
+      "ein-vs-itin": {
+        "q": "Was ist der Unterschied zwischen EIN und ITIN?",
+        "a": "Die EIN gehört zu einem Unternehmen, die ITIN zu einer Person. Ihre LLC hat eine EIN; Sie persönlich hätten eine ITIN oder SSN. Die meisten ausländischen Einzelinhaber einer LLC brauchen eine EIN, aber nicht unbedingt eine ITIN."
+      },
+      "certifying-acceptance-agent": {
+        "q": "Was ist ein Certifying Acceptance Agent und wie arbeiten Sie zusammen?",
+        "a": "Ein Certifying Acceptance Agent (CAA) kann zulässige Identitätsdokumente für einen ITIN-Antrag prüfen. Wir leiten Ihren Antrag für die nötigen Prüfungen an einen IRS-berechtigten CAA weiter. Eine hochgeladene Kopie allein genügt nicht; folgen Sie dessen Anweisungen. So lässt sich der Versand des Originalreisepasses an den IRS unter Umständen vermeiden. ITIN-Berechtigung und Bewilligung sind damit nicht zugesagt."
+      },
+      "itin-timing": {
+        "q": "Wie lange dauert die ITIN?",
+        "a": "Laut IRS ist mit {weeks1} Wochen bis zur Statusmitteilung zu rechnen, bei Anträgen aus dem Ausland oder zwischen 15. Januar und 30. April mit {weeks2} Wochen. Das sind Schätzungen, kein zugesagter Ausstellungstermin. Rückfragen können die Entscheidung verzögern."
+      },
+      "itin-and-ein-same-time": {
+        "q": "Kann ich ITIN und EIN gleichzeitig beantragen?",
+        "a": "Ja. Kontaktieren Sie uns, um getrennte Anträge zu koordinieren, falls beide tatsächlich gebraucht werden. Die EIN der LLC und die persönliche ITIN dienen unterschiedlichen Zwecken. Voraussetzungen, Unterlagen und Bearbeitungszeiten sind getrennt; die eine Nummer führt nicht automatisch zur anderen."
+      },
+      "process-start-to-finish": {
+        "q": "Wie läuft der gesamte Prozess ab?",
+        "a": "Sie geben LLC- und Inhaberdaten, Transaktionen mit verbundenen Personen und Jahresendvermögen an. Wir erstellen das unterstützte Paket zur Prüfung, klären die Unterschrift und organisieren das IRS-Fax. Bewahren Sie das exakte Paket und den Anbieterbeleg zusammen auf. Der Beleg dokumentiert die Übertragung, keine IRS-Entscheidung über Vollständigkeit oder Annahme."
+      },
+      "fax-filing-included": {
+        "q": "Ist das Fax an den IRS wirklich enthalten?",
+        "a": "Ja. Fax an die IRS Ogden PIN Unit ist in jedem Tarif ohne Zusatzgebühr enthalten. Ein eigenes Faxgerät ist nicht nötig. Der Anbieterbeleg mit Zeitstempel ist ein Übertragungsnachweis, keine IRS-Annahmebestätigung oder Zusage eines Bußgelderlasses."
+      },
+      "how-do-i-sign": {
+        "q": "Wie unterschreibe ich die Formulare?",
+        "a": "Prüfen Sie das fertige Paket und klären Sie die unterschriftsberechtigte Person. Form 5472 hat kein Unterschriftsfeld für den Steuerpflichtigen; das relevante Feld steht auf pro forma Form 1120. Eine vorsichtige Vorgehensweise ist, das fertige Deckblatt mit Tinte zu unterschreiben und für das Fax zu scannen. Eine Browser-Unterschrift allein belegt keine IRS-Zulässigkeit für jedes Dokument oder jeden Weg. Klären Sie die Methode vor der Übermittlung mit uns."
+      },
+      "how-long-whole-thing": {
+        "q": "Wie schnell ist Form5472 Prep Express?",
+        "a": "Form5472 Prep Express ({amount1}) ist in unter {days1} Tagen ab Bestellung zur Prüfung und Unterschrift bereit, an {days2} Tagen pro Woche. Danach faxen wir an den IRS. Standard ({amount2}) ist in {days3} Werktagen bereit. Beide Tarife enthalten dasselbe Paket, dieselbe Prüfung und IRS-Faxübermittlung."
+      },
+      "store-bank-statements-signed-forms": {
+        "q": "Speichern Sie Kontoauszüge oder unterschriebene Formulare?",
+        "a": "Nein. Kontoauszüge und unterschriebene Formulare werden nicht dauerhaft gespeichert. Auszüge werden im Arbeitsspeicher zur Summenermittlung verarbeitet und verworfen. Unterschriebene PDFs bleiben nur bis zum IRS-Fax und zur Zustellung des Belegs gespeichert und werden dann gelöscht.",
+        "learnMore": "Richtlinie zur Datenaufbewahrung lesen"
+      },
+      "message-reply-time": {
+        "q": "Wie schnell beantworten Sie Nachrichten?",
+        "a": "Wir antworten montags bis freitags innerhalb eines Werktags über support@form5472prep.com. Suchen Sie nach dieser Absenderadresse und prüfen Sie gegebenenfalls den Spamordner.",
+        "learnMore": "Form5472 Prep kontaktieren"
+      },
+      "accountants-formation-agents": {
+        "q": "Arbeiten Sie mit Buchhaltungsfirmen und Gründungsagenturen?",
+        "a": "Ja. Wir arbeiten mit Gründungsagenturen, registrierten Agenten, CPA- und Buchhaltungsfirmen sowie Beratern, die US-LLCs mehrerer ausländischer Kunden verwalten. Ein Partnerkonto bündelt alle Kundeneinreichungen mit aktuellem Status unter einem Login.",
+        "learnMore": "Mehr zum Partnerprogramm"
+      },
+      "irs-received-filing-proof": {
+        "q": "Woher weiß ich, ob der IRS meine Einreichung erhalten hat?",
+        "a": "Prüfen Sie Ziel, Zeitstempel, Seitenzahl und Ergebnis auf dem Anbieterbeleg. Bewahren Sie ihn mit dem exakten Paket auf. Er belegt die Übertragung, keine IRS-Bestätigung der Bearbeitung oder Annahme. Bei unklarer Zustellung oder einem IRS-Bescheid kontaktieren Sie uns und beachten Sie dessen Hinweise und Frist."
+      },
+      "irs-confirmation": {
+        "q": "Sendet mir der IRS eine Bestätigung?",
+        "a": "Die aktuellen Form-5472-Anweisungen beschreiben keine routinemäßige Annahmebestätigung für dieses Faxpaket. Anbieterbeleg und IRS-Bearbeitung sind verschieden; Schweigen belegt weder Annahme noch Ablehnung. Speichern Sie Paket und Beleg selbst und verlassen Sie sich nicht auf unbegrenzte Portalaufbewahrung. Senden Sie nicht allein wegen fehlender Rückmeldung erneut."
+      },
+      "next-year-reminder": {
+        "q": "Erinnern Sie mich nächstes Jahr?",
+        "a": "Ja. Wir erinnern in der zweiten Januarwoche an die nächste Einreichung und erneut im März, falls sie noch offen ist. Im Januar bleiben über drei Monate Zeit. Für wiederkehrende Kunden füllen wir LLC- und Inhaberdaten aus der letzten bezahlten Einreichung vorab aus."
+      },
+      "keep-records": {
+        "q": "Wie lange sollte ich meine Unterlagen aufbewahren?",
+        "a": "Bewahren Sie das eingereichte Paket, den IRS-Faxbeleg und unsere Bestätigung mindestens sechs Jahre mit den LLC-Unterlagen auf. Bei einer letzten Erklärung nach Auflösung gehören diese Dokumente ebenfalls mindestens sechs Jahre zu Ihren dauerhaften Steuerunterlagen."
+      },
+      "refund-policy": {
+        "q": "Wie lautet Ihre Erstattungsrichtlinie?",
+        "a": "Nach Erstellung einer PDF-Datei sind Gebühren außer in ausdrücklich genannten Fällen nicht erstattbar. Maßgeblich ist die Erzeugung der PDF Ihres Pakets. Können wir die Einreichung nach drei Versuchen nicht an den IRS übermitteln, sind die Gebühren erstattbar.",
+        "learnMore": "Bedingungen lesen"
+      },
+      "data-retention": {
+        "q": "Wie lange speichern Sie meine Daten?",
+        "a": "Faxbelege speichern wir sieben Jahre ab Einreichung, aggregierte Einlagen- und Ausschüttungssummen sieben Jahre, LLC- und Inhaberdaten sieben Jahre ab letzter Einreichung, Zahlungsdaten sieben Jahre, E-Mail- und Anmeldedaten während aktiver Nutzung plus zwölf Monate und Serverzugriffsprotokolle {days1} Tage.",
+        "learnMore": "Richtlinie zur Datenaufbewahrung lesen"
+      }
+    },
+    "categories": {
+      "before-you-order": {
+        "title": "Vor der Bestellung",
+        "eyebrow": "Grundlagen",
+        "blurb": "Was es ist, ob Sie es brauchen und was es kostet."
+      },
+      "the-filing": {
+        "title": "Die Einreichung",
+        "eyebrow": "Die Formulare",
+        "blurb": "Welche Formulare und wie sie eingereicht werden."
+      },
+      "deadlines-penalties": {
+        "title": "Fristen und Bußgelder",
+        "eyebrow": "Termine und Risiken",
+        "blurb": "Wann es fällig ist und was ein Versäumnis kostet."
+      },
+      "ein-itin": {
+        "title": "EIN und ITIN",
+        "eyebrow": "Steuernummern",
+        "blurb": "Die Nummern, die Ihre LLC und Sie benötigen."
+      },
+      "how-our-service-works": {
+        "title": "So funktioniert unser Service",
+        "eyebrow": "Unser Ablauf",
+        "blurb": "Vom Fragebogen bis zum Fax."
+      },
+      "after-we-file": {
+        "title": "Nach der Einreichung",
+        "eyebrow": "Danach",
+        "blurb": "Belege, Aufzeichnungen und nächstes Jahr."
+      }
+    },
+    "s001": "Verlässliche Kurzantworten zu Form 5472, Fristen, Bußgeldern, EIN, ITIN, Belegen, Aufbewahrung und Form5472 Prep.",
+    "s002": "Form 5472 FAQ: Einreichung, Fristen, EIN und ITIN",
+    "s003": "Form 5472 Häufige Fragen",
+    "s004": "Startseite",
+    "s005": "Häufige Fragen",
+    "s006": "Zentrale Fragen und Antworten",
+    "s007": "Antworten auf Ihre Form-5472-Fragen.",
+    "s008": "Kurze, quellenbezogene Antworten auf Kundenfragen vor und nach der Einreichung: Form 5472, pro forma Form 1120, Fristen, Bußgelder, EIN, ITIN, Belege und Aufzeichnungen.",
+    "s009": "FAQ-Bereiche",
+    "s010": "Zuletzt geprüft am ",
+    "s011": "Bereit zur Einreichung",
+    "s012": "Starten Sie die Einreichung oder stellen Sie zuerst eine Frage.",
+    "s013": "Ihre Einreichung starten",
+    "s014": "Kontakt aufnehmen"
+  },
+  "penalty": {
+    "calculator": {
+      "s001": "Eingaben für den Rechner",
+      "s002": "Anzahl der LLCs",
+      "s003": "Nicht eingereichte Steuerjahre je LLC",
+      "s004": "IRS-Bußgeldbescheid erhalten, etwa CP 215?",
+      "s005": "Nur aktivieren, wenn der IRS bereits einen Bußgeldbescheid zur verspäteten Einreichung gesendet hat.",
+      "s006": "Datum des Bescheids",
+      "s007": "Geschätztes gesetzliches Bußgeldrisiko",
+      "s008": "Anfängliches Bußgeld",
+      "s009": "Fortlaufendes Bußgeld",
+      "s010": "× Zeitraum von {periodDays} Tagen seit",
+      "s011": "Tage nach Ihrem Bescheid",
+      "s012": "Gesetzliches Risiko, wächst bis zur Einreichung",
+      "s013": "Gesamtes gesetzliches Bußgeldrisiko",
+      "s014": "Auf Basis der oben eingegebenen Anzahl und des Bescheidstatus.",
+      "s015": "Link kopiert",
+      "s016": "Link zu diesem Ergebnis kopieren",
+      "s017": "Diesen Link kopieren:",
+      "s018": "Der nächste Schritt",
+      "s019": "Wenn Sie nicht vom IRS geprüft werden und der IRS Sie nicht wegen der fehlenden Erklärungen kontaktiert hat, sehen die Delinquent International Information Return Submission Procedures (DIIRSP) eine reguläre Nachreichung vor; eine Begründung kann beigefügt werden. Der IRS kann Bußgelder bei reasonable cause im Einzelfall erlassen. Eine Zusage gibt es nicht; First Time Abate gilt im Allgemeinen nicht.",
+      "s020": "Lesen Sie die Übersicht zur verspäteten Einreichung",
+      "s021": "für die DIIRSP-Schritte",
+      "s022": "und den Ratgeber zur Begründung",
+      "s023": "für die Anforderungen an einen Erlassantrag",
+      "s024": "Versäumte Jahre nachreichen — ",
+      "s025": "Gesetzliches Risiko nach IRC §6038A(d), keine Vorhersage der IRS-Festsetzung.",
+      "s026": "So berechnen wir dies"
+    },
+    "s001": "Form 5472 Bußgeldrechner — Kosten verspäteter Einreichung",
+    "s002": "Form-5472-Bußgeldrisiko schätzen, IRS-Quellen lesen und die DIIRSP-Nachreichung mit Begründung verstehen.",
+    "s003": "Wird das Form-5472-Bußgeld wirklich automatisch festgesetzt?",
+    "s004": "Das ist möglich. IRC §6038A(d) sieht zunächst {value1} vor, wenn eine meldepflichtige Gesellschaft Form-5472-Angaben nicht rechtzeitig liefert. Eine wesentlich unvollständige Form 5472 gilt als nicht eingereicht. Laut IRS-Handbuch kann das Bußgeld bei einer verspäteten Form 5472 zusammen mit einer verspäteten Form 1120 systemseitig festgesetzt werden.",
+    "s005": "Kann das Bußgeld erlassen werden?",
+    "s006": "Möglicherweise, aber ohne Zusage. Nach Treas. Reg. §1.6038A-4(b) kann der IRS eine verspätete Form 5472 bei reasonable cause im Einzelfall entschuldigen. First Time Abate gilt für Form-5472-Bußgelder im Allgemeinen nicht.",
+    "s007": "Was ist ein CP-215-Bescheid?",
+    "s008": "Das ist der Notice of Penalty Charge des IRS. Laut Handbuch wird CP 215 nach Festsetzung eines Form-5472-Bußgelds erzeugt und versandt. Ist die Einreichung {days1} Tage nach Mitteilung des Versäumnisses weiterhin nicht korrigiert, können fortlaufende Bußgelder beginnen.",
+    "s009": "Bin ich ohne Einnahmen vom Bußgeld befreit?",
+    "s010": "Nein. Eine ausländisch gehaltene disregarded LLC kann auch ohne Einnahmen Form 5472 und pro forma Form 1120 einreichen müssen. Einlagen, Ausschüttungen und andere Vorgänge zwischen Inhaber und LLC können meldepflichtig sein.",
+    "s011": "Gibt es eine Verjährungsfrist?",
+    "s012": "Nach IRC §6501(c)(8) endet die Steuerfestsetzungsfrist für eine betroffene Erklärung oder einen Zeitraum frühestens drei Jahre, nachdem dem IRS die Form-5472-Informationen vorliegen.",
+    "s013": "Ratgeber zur Form-5472-Verjährung lesen.",
+    "s014": "Form 5472 Bußgeldrechner",
+    "s015": "Kostenloses Tool",
+    "s016": "Form 5472 Bußgeldrechner.",
+    "s017": "Der IRS kann je Form 5472 und Jahr {amount1} festsetzen, oft automatisch bei Bearbeitung einer verspäteten Erklärung. Nach Ablauf von {days2} Tagen seit einem Bescheid können weitere {amount2} je {days1} Tage hinzukommen.",
+    "s018": "Nutzen Sie dies als Schätzung des gesetzlichen Risikos und vergleichen Sie dann den üblichen Weg: fehlendes Form-5472-Paket mit DIIRSP-Begründung nachreichen. Informationen zum Erlass finden Sie im Ratgeber zum",
+    "s019": "IRS-Bußgeld bei verspäteter Form 5472",
+    "s020": "Nächster Schritt mit Ruhe",
+    "s021": "Erst schätzen, dann die Einreichung nachholen.",
+    "s022": "Die Zahl unten ist keine Vorhersage. Der Rechner bildet den gesetzlichen Rahmen ab und erklärt den IRS-Weg für verspätete Informationserklärungen.",
+    "s023": "Versäumte Jahre nachreichen — ",
+    "s024": "Wie hoch ist das anfängliche Bußgeld?",
+    "s025": "Das anfängliche Bußgeld beträgt {value1} je Form 5472 und Jahr. Es dient hier als Risikoschätzung, da der IRS bei verspäteten, fehlenden oder wesentlich unvollständigen Angaben ein Bußgeld festsetzen kann, oft automatisch bei Verarbeitung einer verspäteten Erklärung. Vergleichen Sie dies mit dem üblichen Nachreichungsweg.",
+    "s026": "Was geschieht nach einem Bescheid?",
+    "s027": "Nach einem IRS-Bescheid gilt eine Korrekturfrist von {value1} Tagen. Ist danach weiterhin nicht korrigiert, kommen gesetzlich {value2} je begonnenem Zeitraum von {periodDays} Tagen hinzu. Deshalb wird die Bescheidfrist getrennt vom anfänglichen Bußgeld je Formular und Jahr berechnet.",
+    "s028": "Was sind häufige Auslöser?",
+    "s029": "Häufig sind fehlende Einreichungen, Form 5472 ohne pro forma Form 1120 oder unvollständige Pakete. Auch ohne Einnahmen kann eine ausländisch gehaltene disregarded LLC durch Einlagen, Ausschüttungen und andere Inhabervorgänge einreichungspflichtig sein.",
+    "s030": "Wie läuft ein Erlassantrag ab?",
+    "s031": "Hat der IRS Sie noch nicht kontaktiert, kann eine DIIRSP-Nachreichung mit Begründung der passende Weg sein. Reichen Sie das fehlende Form-5472-Paket mit der Erklärung nach und beantragen Sie einen Erlass, wenn die Tatsachen reasonable cause stützen.",
+    "s032": "So funktioniert das Bußgeld",
+    "s033": "Wie funktioniert die Form-5472-Bußgeldregel?",
+    "s034": "Das anfängliche Bußgeld gilt je Form 5472 und Jahr; nach einem IRS-Bescheid können weitere Beträge hinzukommen. Der Rechner zeigt beides als gesetzliches Risiko, nicht als Vorhersage. Der übliche nächste Schritt bleibt die Nachreichung mit fehlendem Paket und Begründung.",
+    "s035": "Anfängliches Bußgeld: {value1} × LLCs × fehlende Jahre",
+    "s036": "Das Gesetz sieht {value1} für jedes Steuerjahr mit fehlenden Pflichtangaben vor; der IRS wendet dies auf jede nicht vollständig und richtig eingereichte Form 5472 an. Wir zählen eine Form je LLC und Jahr und nehmen eine verbundene Person an, meist den ausländischen Inhaber. Laut IRS-Handbuch fällt das anfängliche Bußgeld je verbundener Person und Steuerjahr an; bei mehreren Personen kann es höher sein.",
+    "s037": "Fortlaufendes Bußgeld: ab dem Bescheiddatum berechnet",
+    "s038": "Besteht das Versäumnis mehr als {value1} Tage nach Versand des IRS-Bescheids fort, kommen {value2} je begonnenem Zeitraum von {periodDays} Tagen hinzu. Das Gesetz zählt ab Versand; wir verwenden Ihr eingegebenes Bescheiddatum. Tag {value3} beginnt den ersten Zeitraum, danach kommt je weiteren {days1} Tagen oder Teil davon ein Zeitraum hinzu, je LLC und Jahr bis heute. Laut IRS gibt es keinen Höchstbetrag.",
+    "s039": "Wie der IRS das Bußgeld festsetzt",
+    "s040": "Laut IRS-Handbuch kann das Bußgeld bei der ersten Verarbeitung einer verspäteten Form 5472 mit verspäteter Form 1120 systemseitig festgesetzt werden. Danach wird CP 215 versandt. Deshalb behandelt der Rechner das anfängliche Bußgeld ab dem ersten verspäteten Tag als Risiko.",
+    "s041": "Was die Schätzung nicht berücksichtigt",
+    "s042": "Erlassmöglichkeiten. Der IRS kann eine verspätete Form 5472 bei reasonable cause im Einzelfall entschuldigen und muss diese Regel für kleine Gesellschaften unter den vorgesehenen Bedingungen großzügig anwenden. Bei bestehendem reasonable cause beginnt die Frist von {graceDays} Tagen frühestens nach dessen Ende. First Time Abate steht nicht auf der IRS-Liste für diese Bußgelder. Der Rechner zieht solche Ermäßigungen nicht ab.",
+    "s043": "Verspätet einreichen, bevor der IRS Sie kontaktiert",
+    "s044": "Wenn keine IRS-Prüfung oder Untersuchung läuft und Sie nicht wegen der fehlenden Erklärungen kontaktiert wurden, sieht der IRS die normale Nachreichung vor. Sie können eine Begründung beifügen. Bußgelder können dennoch festgesetzt werden.",
+    "s045": "Wie viel Zeit der IRS hat",
+    "s046": "Die Steuerfestsetzungsfrist endet frühestens drei Jahre, nachdem dem IRS die betreffenden Form-5472-Angaben vorliegen. Solange das Formular fehlt, hat diese Frist nicht begonnen. Beruht das Versäumnis auf reasonable cause und nicht auf vorsätzlicher Vernachlässigung, betrifft die Regel nur die damit verbundenen Positionen.",
+    "s047": "So berechnen wir dies",
+    "s048": "Wie ermittelt der Rechner die Schätzung?",
+    "s049": "Die Zahlen stammen aus IRC §6038A(d) und den IRS-Anweisungen. Jede Regel unten verlinkt ihre Primärquelle.",
+    "s050": "Zuletzt geprüft am ",
+    "s051": "anhand von IRC §6038A(d), Treas. Reg. §1.6038A-4, Form-5472-Anweisungen (Rev. 12/2024), IRM 20.1.9 und den verlinkten IRS-Seiten. Allgemeine Informationen, keine Steuerberatung.",
+    "s052": "Welche Bußgeldfragen werden häufig gestellt?",
+    "s053": "Bereit, versäumte Jahre nachzureichen?",
+    "s054": "Wir erstellen das fehlende Form-5472-Paket, pro forma Form 1120 und die Begründung für verspätete DIIRSP-Einreichungen.",
+    "s055": "Einreichung starten — ",
+    "s056": "Startseite",
+    "s057": "Bußgeldrechner"
+  },
+  "shared": {
+    "capsules": {
+      "cost": {
+        "question": "Was kostet Form5472 Prep?",
+        "answer": "Form5472 Prep kostet je Steuerjahr {amount1} mit Standard oder {amount2} mit Express, einschließlich IRS-Fax. Wir übernehmen die Arbeit: Sie beantworten einen Fragebogen, wir erstellen Form 5472 und pro forma 1120, und eine Steuerfachkraft mit IRS-PTIN prüft sie. Der Aufpreis von {amount3} gilt nur je weiterem früheren Steuerjahr, nie für das erste Jahr."
+      },
+      "automated": {
+        "question": "Ist Form5472 Prep eine automatisierte Software?",
+        "answer": "Nein. Form5472 Prep übernimmt die Einreichung, statt eine Software zur Eigenleistung anzubieten. Die Software entwirft Form 5472 und pro forma Form 1120 aus Ihren Antworten. Eine Steuerfachkraft mit IRS-PTIN prüft jedes Paket vor Ihrer Unterschrift. Sie prüfen und unterschreiben, wir faxen an die IRS Ogden PIN Unit mit Beleg und Zeitstempel."
+      },
+      "express": {
+        "question": "Wie schnell ist Form5472 Prep Express?",
+        "answer": "Form5472 Prep Express ({amount1}) ist in unter {days1} Tagen ab Bestellung zur Prüfung und Unterschrift bereit, an {days2} Tagen pro Woche. Danach faxen wir an den IRS. Standard ({amount2}) ist in {days3} Werktagen bereit. Beide Tarife enthalten dasselbe Paket, dieselbe Prüfung und IRS-Faxübermittlung."
+      },
+      "legit": {
+        "question": "Ist Form5472 Prep seriös?",
+        "answer": "Form5472 Prep ist ein 2025 gegründeter Form-5472-Einreichungsservice. Eine Steuerfachkraft mit IRS-PTIN prüft jedes Paket vor Ihrer Unterschrift. Wir sind keine CPA-Firma und bieten keine persönliche Steuer- oder Rechtsberatung. Daten werden bei Übertragung und Speicherung verschlüsselt. Kundenbewertungen finden Sie auf Trustpilot."
+      },
+      "snapfile": {
+        "question": "Ist Form5472 Prep dasselbe wie Snapfile?",
+        "answer": "Es sind getrennte Dienste desselben Teams. Laut snapfile.tax/pricing vom 24. Oktober 2026 verkauft Snapfile eine Einreichung für {amount1} (+{amount2} je weiterem früheren Jahr) mit KI-Prüfung ohne menschliche Steuerfachkraft. Bei Form5472 Prep prüft ab {amount3} eine Steuerfachkraft mit IRS-PTIN jedes Paket. Snapfiles Tarif mit menschlicher Prüfung wird von uns ausgeführt."
+      }
+    },
+    "serviceFaqs": {
+      "0": {
+        "question": "Ist Form5472 Prep Express in {hours1} Stunden bereit?",
+        "answer": "Nein. Express ist in unter {days1} Tagen unterschriftsbereit, gerechnet in Kalendertagen an {days2} Tagen pro Woche. Standard ist in {days3} Werktagen bereit. Nach Ihrer Prüfung und Unterschrift faxen wir Form 5472 und pro forma Form 1120 an den IRS.",
+        "learnMore": {
+          "label": "Bearbeitungszeiten vergleichen"
+        }
+      },
+      "1": {
+        "question": "Kostet Form5472 Prep {amount1}?",
+        "answer": "Nein. Ein Steuerjahr kostet {amount1} mit Standard oder {amount2} mit Express, einschließlich Erstellung, Prüfung und IRS-Fax. Die {amount3} gelten nur je weiterem früheren Steuerjahr derselben Bestellung, nie für das erste Jahr.",
+        "learnMore": {
+          "label": "Einreichungspreise ansehen"
+        }
+      },
+      "2": {
+        "question": "Ist Form5472 Prep eine Steuersoftware?",
+        "answer": "Nein. Wir übernehmen die Einreichung: Sie beantworten einen Fragebogen, unser Team erstellt Form 5472 und pro forma 1120, und eine Steuerfachkraft mit IRS-PTIN prüft sie. Sie prüfen und unterschreiben, wir faxen an den IRS.",
+        "learnMore": {
+          "label": "Ablauf einer Einreichung"
+        }
+      }
+    },
+    "tiers": {
+      "standard": {
+        "label": "Standard-Einreichung",
+        "subtitle": "Bereit in {days1} Werktagen",
+        "ctaLabel": "Ihre Einreichung starten",
+        "features": {
+          "0": "In {days1} Werktagen zur Prüfung und Unterschrift bereit",
+          "1": "Vor der Einreichung durch eine Steuerfachkraft mit IRS-PTIN geprüft",
+          "2": "Form 5472 + pro forma 1120 erstellt",
+          "3": "IRS-Fax nach Ogden mit Beleg und Zeitstempel",
+          "4": "Einreichungsbestätigung",
+          "5": "Begründung für verspätete Einreichungen",
+          "6": "Erinnerung für das Folgejahr in der zweiten Januarwoche",
+          "7": "E-Mail-Support"
+        }
+      },
+      "express": {
+        "label": "Express-Einreichung",
+        "subtitle": "Unterschriftsbereit in unter {days1} Tagen",
+        "ctaLabel": "Express-Einreichung starten",
+        "features": {
+          "0": "In unter {days1} Tagen zur Prüfung und Unterschrift bereit, an {days2} Tagen pro Woche",
+          "1": "Vor der Einreichung durch eine Steuerfachkraft mit IRS-PTIN geprüft",
+          "2": "Form 5472 + pro forma 1120 erstellt",
+          "3": "IRS-Fax nach Ogden mit Beleg und Zeitstempel",
+          "4": "Einreichungsbestätigung",
+          "5": "Begründung für verspätete Einreichungen",
+          "6": "Erinnerung für das Folgejahr in der zweiten Januarwoche",
+          "7": "Bevorzugter E-Mail-Support"
+        }
+      }
+    },
+    "proof": {
+      "s001": "Status: Zugestellt",
+      "s002": "Vom Anbieter gemeldete abgeschlossene Übertragung",
+      "s003": "Der abschließende Zustellstatus hält das Ergebnis des Faxanbieters fest. Er belegt keine Bearbeitung im IRS-Konto und keine Annahme der Erklärung.",
+      "s004": "Formulare",
+      "s005": "Beide Formulare gemeinsam übermittelt",
+      "s006": "Form 5472 und pro forma 1120 werden als ein Paket gefaxt, wie vom IRS vorgesehen.",
+      "s007": "Fax: +1-855-887-7737",
+      "s008": "Die offizielle Nummer der IRS Ogden PIN Unit",
+      "s009": "Vergleichen Sie das Ziel vor dem Senden mit den aktuellen Form-5472-Anweisungen für ausländisch gehaltene US-disregarded entities.",
+      "s010": "Zeitstempel (UTC)",
+      "s011": "Zeitstempel mit eindeutiger Zeitzone",
+      "s012": "Bewahren Sie den Abschlusszeitstempel des Anbieters mit der exakt eingereichten PDF-Datei auf. Er ist ein Übertragungsbeleg, keine rechtliche Feststellung der Fristwahrung.",
+      "s013": "Bestätigung",
+      "s014": "Beleg und eingereichtes Paket zusammenhalten",
+      "s015": "Bewahren Sie die Anbieterreferenz mit der exakten PDF-Datei und dem Schriftverkehr auf. Der Beleg stammt nicht vom IRS und sagt keinen Bußgelderlass zu.",
+      "s016": "Was Sie tatsächlich erhalten",
+      "s017": "Übertragungsbeleg Ihrer Einreichung aufbewahren",
+      "s018": "Ihr Faxbeleg gehört zum vollständig eingereichten Paket. Er dokumentiert das Ergebnis des Anbieters, keine IRS-Bearbeitung oder -Annahme.",
+      "s019": "Beispiel eines Anbieterbelegs mit fiktiven Daten, kein IRS-Dokument.",
+      "s020": "Jeder Tarif enthält diesen Beleg.",
+      "s021": "Mit dem unterschriebenen Paket und dem IRS-Schriftverkehr aufbewahren. Erfahren Sie,",
+      "s022": "was ein Faxbeleg nachweist und was nicht"
+    },
+    "summary": {
+      "s001": "Geschätzter Zeitaufwand",
+      "s002": "Was Sie benötigen",
+      "s003": "Hilfsmittel",
+      "s004": "Kosten",
+      "s005": "Bevor Sie beginnen",
+      "duration": "Etwa {minutes} Minuten",
+      "cost": "{value} Pauschalgebühr"
+    },
+    "comparison": {
+      "columns": {
+        "1": "Form5472 Prep",
+        "2": "CPA",
+        "3": "Eigenleistung"
+      },
+      "rows": {
+        "0": {
+          "0": "Vorbereitungszeit",
+          "1": "15 Minuten",
+          "2": "{weeks1} Wochen Abstimmung",
+          "3": "6 Std. 34 Min. (IRS-Schätzung, ohne Aufzeichnungen)"
+        },
+        "1": {
+          "0": "Kennt Form 5472",
+          "1": "Darauf spezialisiert",
+          "2": "Unterschiedlich",
+          "3": "Liegt bei Ihnen"
+        },
+        "2": {
+          "0": "Begründung bei verspäteter Einreichung (IRS-DIIRSP)",
+          "1": "Enthalten",
+          "2": "Meist gegen Aufpreis",
+          "3": "Eigenleistung"
+        },
+        "3": {
+          "0": "Einreichung beim IRS",
+          "1": "Wir faxen nach Ogden",
+          "2": "Per Post oder Fax",
+          "3": "Ihre Aufgabe"
+        },
+        "4": {
+          "0": "Einreichungsbeleg gespeichert",
+          "1": "Ja, automatisch",
+          "2": "Gelegentlich",
+          "3": "Ihre Aufgabe"
+        },
+        "5": {
+          "0": "Kosten",
+          "1": "Ab {amount1}",
+          "3": "Kostenlos (bis zu {amount1})"
+        }
+      }
+    },
+    "standardTurnaround": "{days} Werktagen",
+    "expressTurnaround": "unter {days} Tagen",
+    "additionalYear": "Weiteres früheres Steuerjahr"
+  }
+}

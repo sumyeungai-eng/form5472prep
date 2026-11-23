@@ -240,3 +240,14 @@ describe("formatDuration", () => {
     expect(formatDuration("PT1H30M")).toBe("About 1 hour 30 minutes");
   });
 });
+
+describe("localized page metadata", () => {
+  it("preserves canonical and RSS while adding languages, robots and OG locale", () => {
+    const languages = { en: SITE_URL + "/pricing", de: SITE_URL + "/de/pricing" };
+    const meta = pageMeta({ title: "Preise", description: "Preise", path: "/de/pricing", languages, robots: { index: false, follow: true }, ogLocale: "de_DE" });
+    expect(meta.alternates).toEqual({ canonical: SITE_URL + "/de/pricing", types: { "application/rss+xml": SITE_URL + "/feed.xml" }, languages });
+    expect(meta.robots).toEqual({ index: false, follow: true });
+    expect(meta.openGraph).toHaveProperty("locale", "de_DE");
+    expect(pageMeta({ title: "Pricing", description: "Pricing", path: "/pricing" })).not.toHaveProperty("robots");
+  });
+});

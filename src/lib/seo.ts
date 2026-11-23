@@ -56,6 +56,9 @@ export type PageMetaInput = {
   type?: "website" | "article";
   image?: string;
   alt?: string;
+  languages?: Record<string, string>;
+  robots?: Metadata["robots"];
+  ogLocale?: string;
   publishedTime?: string;
   modifiedTime?: string;
 };
@@ -103,12 +106,14 @@ export function pageMeta(input: PageMetaInput): Metadata {
   return {
     alternates: {
       canonical,
+      ...(input.languages ? { languages: input.languages } : {}),
       types: { "application/rss+xml": `${SITE_URL}/feed.xml` },
     },
+    ...(input.robots ? { robots: input.robots } : {}),
     openGraph: {
       type,
       siteName: SITE_NAME,
-      locale: "en_US",
+      locale: input.ogLocale ?? "en_US",
       title: input.title,
       description: input.description,
       url: canonical,

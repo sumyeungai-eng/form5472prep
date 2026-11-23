@@ -1,0 +1,968 @@
+{
+  "chrome": {
+    "englishAuthoritative": "English is authoritative. Translations are provided for convenience.",
+    "s001": "Form5472 Prep home",
+    "s002": "Pricing",
+    "s003": "EIN",
+    "s004": "ITIN",
+    "s005": "Form 7004",
+    "s006": "Guide",
+    "s007": "Contact",
+    "s008": "Sign in",
+    "s009": "Start filing",
+    "s010": "My filings",
+    "s011": "Done-for-you Form 5472 + pro forma 1120 filing for foreign-owned US LLCs. Every filing is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is submitted. We prepare and submit the forms from the information you give us; we do not provide personalised tax planning. You are responsible for the accuracy of what you submit.",
+    "s012": "Filed to the IRS Ogden PIN Unit · IRS fax +1-855-887-7737",
+    "s013": "Questions?",
+    "s014": "See our reviews on Trustpilot",
+    "s015": "Services",
+    "s016": "Form 5472 filing services",
+    "s017": "Form 5472 Filing",
+    "s018": "EIN Acquisition",
+    "s019": "ITIN Acquisition",
+    "s020": "Form 7004 extension",
+    "s021": "Become a Partner",
+    "s022": "Partner sign in",
+    "s023": "Guides",
+    "s024": "FAQ",
+    "s025": "About",
+    "s026": "Press kit",
+    "s027": "Free tools",
+    "s028": "Do I need to file?",
+    "s029": "Deadline calculator",
+    "s030": "Penalty calculator",
+    "s031": "IRS exchange rates",
+    "s032": "Reportable transactions",
+    "s033": "Late-filing checker",
+    "s034": "Compliance calendar",
+    "s035": "LLC fees by state",
+    "s036": "Form 5472 statistics",
+    "s037": "Legal",
+    "s038": "Terms of Service",
+    "s039": "Privacy Policy",
+    "s040": "Cookies",
+    "s041": "Editorial Policy",
+    "s042": "Data Retention",
+    "s043": "Security",
+    "s044": "Filing services",
+    "s045": "Compare providers",
+    "s046": "Compare filing services",
+    "s047": "What is IRS Form 5472?",
+    "s048": "Form 5472 by country",
+    "s049": "Form 5472 instructions",
+    "s050": "Form 5472 example",
+    "s051": "Form 5472 penalty",
+    "s052": "Reasonable cause statement",
+    "s053": "Where to file Form 5472",
+    "s054": "Pro forma 1120",
+    "s055": "Form 5472 deadline",
+    "s056": "What is Form 5472",
+    "s057": "© ",
+    "s058": "Form5472 Prep. All rights reserved.",
+    "language": "Language",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
+  },
+  "home": {
+    "s001": "What if I've missed prior years?",
+    "s002": "Pick all the years you need to file when you start. We'll auto-flag the filing as DIIRSP (Delinquent International Information Return Submission Procedure) and include a reasonable cause statement requesting penalty abatement. Pricing is +{value1} per additional past year on either tier.",
+    "s003": "Do I really need Form 5472 and Form 1120 if my LLC made no money?",
+    "s004": "Likely yes. Form 5472 reports reportable transactions, which includes any capital you put in or distributions you took out — not just revenue. The pro forma Form 1120 is always required as the attachment vehicle whenever Form 5472 is required, even with zero income.",
+    "s005": "Is fax filing really included?",
+    "s006": "Yes — every plan includes fax delivery to the IRS Ogden PIN Unit and a timestamped provider transmission receipt. Keep it with your submitted package; it is transmission evidence, not IRS acceptance or a guarantee of penalty relief. You don't need your own fax machine.",
+    "s007": "Why does the IRS require fax instead of e-file?",
+    "s008": "Foreign-owned U.S. disregarded entities cannot use ordinary corporate e-file for this Form 5472 and pro forma Form 1120 package. The special IRS instructions allow fax to +1-855-887-7737 or mail to the dedicated Ogden PIN Unit address. Our service uses fax and supplies the provider transmission receipt.",
+    "s009": "Are there any hidden fees?",
+    "s010": "No. The price you see is the price you pay. No setup fee, no monthly subscription, no per-page fax surcharge. Multi-year filings add a flat {value1} per additional past year — disclosed up front and shown in the checkout summary before you pay.",
+    "s011": "Do you store my bank statements or signed forms?",
+    "s012": "No. We process your bank statements in memory to extract transaction totals, then discard them — they are never written to permanent storage. The signed PDF you upload is held only long enough to fax to the IRS and deliver the fax confirmation receipt back to you, then it is deleted. The only thing we retain is the fax confirmation receipt itself (your proof of filing) and the basic entity / owner information needed to produce next year's filing.",
+    "s013": "What's your guarantee?",
+    "s014": "100% money-back guarantee if we fail to submit your filing to the IRS. If the fax doesn't deliver on the first send, we automatically retry. If it still fails, you get a full refund — no questions asked. And if the IRS ever assesses a penalty because of an error in our preparation, we handle the response with the IRS at no charge.",
+    "s015": "Form 5472 and pro forma 1120 filing for a foreign-owned US LLC, from {value1}. Prepared, reviewed, and filed by fax to the IRS Ogden PIN Unit.",
+    "s016": "Enter your LLC, owner, and money details",
+    "s017": "Answer the guided questions about your LLC (name, EIN, address, formation details), the foreign owner (name, tax ID, country of residence), and the year's money movements: capital in, distributions out, loans, and year-end total assets. It takes about fifteen minutes, and no accounting software is needed.",
+    "s018": "We prepare your filing package",
+    "s019": "After payment, we generate the package from your answers: the cover letter, pro forma Form 1120, Form 5472, Part V supporting statement, and, when the filing is late under the IRS DIIRSP procedure, a reasonable cause statement. Everything arrives as one PDF, so you never fill in an IRS form line by line.",
+    "s020": "A PTIN-holding tax accountant reviews it",
+    "s021": "Every filing is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is submitted. The accountant checks the package against the answers you gave, and if anything needs clarifying we message you on your filing page. Signing opens only after the review is approved, so you never sign an unchecked package.",
+    "s022": "You sign online",
+    "s023": "Once the review is approved, read the package and draw your signature once in your browser. We place it in every required signature box on the PDF, so there is no printing, scanning, or uploading. Nothing is sent to the IRS until you have signed.",
+    "s024": "We fax it to the IRS",
+    "s025": "After you sign, we fax the complete package to the IRS Ogden PIN Unit at +1-855-887-7737. Fax delivery is included with every plan, so you do not need your own fax machine, a separate fax service, or any IRS account. We email you when the fax is delivered.",
+    "s026": "You get the timestamped IRS fax receipt",
+    "s027": "You receive the fax provider's transmission receipt and can download it from your filing page. It records the destination number, the timestamp, the page count, and the reported result. Keep it with your submitted package: it is proof of what was sent and when, not an IRS acceptance notice.",
+    "s028": "Form5472 Prep filing questionnaire",
+    "s029": "IRS fax delivery to Ogden PIN Unit (+1-855-887-7737)",
+    "s030": "LLC and owner information",
+    "s031": "Reportable transaction totals",
+    "s032": "Year-end total assets",
+    "s033": "File IRS Form 5472 + Pro Forma 1120 — Form5472 Prep",
+    "s034": "For foreign-owned US single-member LLCs. We prepare, you sign once, we fax to the IRS. From {value1}, or {value2} for express, ready to sign in {value3}.",
+    "s035": "EIN — {value1}",
+    "s036": "Need an EIN for your LLC?",
+    "s037": "No SSN or ITIN? We prepare Form SS-4 and obtain your EIN directly from the IRS by fax or phone — typically in {days1} business days.",
+    "s038": "ITIN — {value1}",
+    "s039": "Need an ITIN for yourself?",
+    "s040": "Your identity documents are certified by an IRS Certifying Acceptance Agent and we file Form W-7 — no original passport mailing required.",
+    "s041": "Form 7004 — {value1}",
+    "s042": "Need more time to file?",
+    "s043": "We prepare Form 7004 for your foreign-owned LLC and fax it to the IRS Ogden PIN Unit. It must be filed by the original due date.",
+    "s044": "More for foreign founders",
+    "s045": "Do you need EIN, ITIN or extension help too?",
+    "s046": "Setting up a US LLC from abroad takes more than one form. We also obtain the two IRS identifiers non-resident owners need most, and file the Form 7004 extension.",
+    "s047": "United Kingdom · UAE · Singapore · India · Germany · Canada · Australia · Hong Kong",
+    "s048": "Form5472 Prep · For foreign-owned US LLCs",
+    "s049": "Flat-rate Form 5472 filing.",
+    "s050": "No hidden fees.",
+    "s051": "Done-for-you Form 5472 + pro forma 1120 for foreign-owned US LLCs. Avoid the {amount1}-per-form IRS penalty — with fax delivery to the IRS Ogden PIN Unit included on every plan.",
+    "s052": "This is a done-for-you service: our team prepares your forms and a tax accountant who holds an IRS PTIN reviews them before you sign.",
+    "s053": "Fax filing on every plan",
+    "s054": "Reviewed by a tax accountant",
+    "s055": "No US address needed",
+    "s056": "Trusted by founders in 40+ countries",
+    "s057": "packages faxed to the IRS Ogden PIN Unit",
+    "s058": "Every order reviewed by a tax accountant before we fax",
+    "s059": "Start filing now",
+    "s060": "Same filing either way — accountant review, IRS fax delivery, filing confirmation. Only the turnaround differs.",
+    "s061": "See what's included",
+    "s062": "Start filing",
+    "s063": "See all plans",
+    "s064": "No subscription. Pay once per filing.",
+    "s065": "15 min",
+    "s066": "IRS forms",
+    "s067": "Faxed for you",
+    "s068": "Receipt stored",
+    "s069": "Eligibility",
+    "s070": "Do you need to file Form 5472 and Form 1120?",
+    "s071": "If all three of these are true, the IRS requires you to file both forms every year — even if your LLC made zero revenue. Form 5472 reports the related-party transactions; the pro forma Form 1120 is the vehicle it attaches to.",
+    "s072": "Do you own a US LLC?",
+    "s073": "A single-member LLC organized in any US state — Wyoming, Delaware, New Mexico, Florida, etc.",
+    "s074": "Are you a non-US person?",
+    "s075": "You're not a US citizen, green card holder, or US tax resident. You live and pay tax outside the US.",
+    "s076": "Did you move money in or out?",
+    "s077": "You contributed capital, took distributions, paid yourself, or had any reportable transactions during the year.",
+    "s078": "The penalty is {amount1} per form, per year.",
+    "s079": "The penalty applies to late and missing Form 5472 filings, and the IRS can assess it systemically when a late Form 5472 is processed with a late Form 1120. If you've missed prior years, the Delinquent International Information Return Submission Procedure (DIIRSP) lets you catch up with a reasonable cause statement — we generate this for you.",
+    "s080": "Deadline",
+    "s081": "When is Form 5472 due?",
+    "s082": "For a calendar-year LLC, Form 5472 and the pro forma Form 1120 are due April 15 of the following year, or October 15 if Form 7004 is filed by April 15. A fiscal-year LLC files by the 15th day of the 4th month after year-end.",
+    "s083": "Work out your exact due date with the deadline calculator →",
+    "s084": "Who does the work",
+    "s085": "Who reviews each filing →",
+    "s086": "How it works",
+    "s087": "How does Form 5472 filing work?",
+    "s088": "Form 5472 filing works as a six-step flow: you enter your details, we prepare the package, a tax accountant reviews it, you sign online, we fax it to the IRS, and you get the timestamped fax receipt. The package includes the cover letter, pro forma Form 1120, Form 5472, supporting statement, and a late-filing reasonable cause statement when the IRS DIIRSP procedure applies.",
+    "s089": "Cover letter",
+    "s090": "Addressed to IRS Ogden Service Center, PIN Unit. Identifies your entity, EIN, and tax year(s) covered.",
+    "s091": "Reasonable Cause Statement",
+    "s092": "Only for DIIRSP filings. Explains why the prior year wasn't filed and requests penalty abatement.",
+    "s093": "Pro Forma Form 1120",
+    "s094": "Filled with your LLC name, EIN, address, formation date, and year-end total assets. Stamped \"Foreign-Owned U.S. DE\".",
+    "s095": "Form 5472",
+    "s096": "Parts I, II, III, IV, V, VII all completed. Line 1f calculated to include Part V transactions per IRS rules for foreign-owned DEs.",
+    "s097": "Part V Supporting Statement",
+    "s098": "Itemizes capital contributions and distributions, totals matching Form 5472 line 1f, with the regulatory closing language.",
+    "s099": "What you get",
+    "s100": "What is included in the filing package?",
+    "s101": "The package includes the cover letter, pro forma Form 1120, Form 5472, supporting statement, and reasonable cause statement when the filing is late. Every filing is reviewed by a tax accountant before it is submitted. Bundled as one PDF, ready for your signature.",
+    "s102": "vs. the alternatives",
+    "s103": "Why use Form5472 Prep instead of CPA or DIY?",
+    "s104": "Form5472 Prep is a fixed-fee specialist: {value1} ({value2}) or {value3} (ready to sign in {value4}), with tax-accountant review, IRS fax delivery and a timestamped receipt included.",
+    "s105": "Pricing",
+    "s106": "Most popular",
+    "s107": "/ filing",
+    "s108": "per additional past tax year, either tier",
+    "s109": "Saves you from the {amount1}-per-form IRS penalty",
+    "s110": "DIIRSP = IRS Delinquent International Information Return Submission Procedure.",
+    "s111": "Do I need to file Form 5472?",
+    "s112": "Six questions, a straight answer.",
+    "s113": "Deadline calculator",
+    "s114": "Your exact due date, including extensions and short years.",
+    "s115": "Penalty calculator",
+    "s116": "What late or missed filings cost under IRC §6038A.",
+    "s117": "IRS yearly average exchange rates",
+    "s118": "Every IRS yearly average rate for 2021–2025, plus a converter to U.S. dollars.",
+    "s119": "Is it a reportable transaction?",
+    "s120": "Check whether owner payments, loans or fees go on Form 5472.",
+    "s121": "Late-filing route checker",
+    "s122": "Missed Form 5472? See which IRS route applies to you.",
+    "s123": "Compliance calendar",
+    "s124": "Every federal and state deadline for your LLC, with a calendar download.",
+    "s125": "LLC annual fees by state",
+    "s126": "Annual fees, franchise taxes and due dates in 10 popular states.",
+    "s127": "How to file Form 5472",
+    "s128": "The {amount1} penalty explained",
+    "s129": "Filing late under DIIRSP",
+    "s130": "The pro forma Form 1120",
+    "s131": "What is Form 5472?",
+    "s132": "Form 5472 deadline for 2026",
+    "s133": "Does a foreign-owned LLC pay US tax?",
+    "s134": "Filed late or never filed?",
+    "s135": "Resources",
+    "s136": "What free tools and guides help before filing?",
+    "s137": "The free tools answer whether you need Form 5472, what counts as a reportable transaction, when everything is due, what it costs to keep your LLC in good standing, how to convert foreign-currency amounts at IRS rates, and which route applies if you filed late. The guides cover Form 5472, DIIRSP, the pro forma Form 1120, and late filings.",
+    "s138": "See all guides →",
+    "s139": "FAQ",
+    "s140": "What are common Form 5472 questions?",
+    "s141": "See all questions →",
+    "s142": "For accountants and formation agents",
+    "s143": "File Form 5472 for your clients",
+    "s144": "Prepare Form 5472 filings for every client from one partner dashboard. Our tax accountant reviews each package, your client checks and signs it with a secure link, and each filing costs exactly the same as it does for a direct customer.",
+    "s145": "Become a partner",
+    "s146": "Partner sign in",
+    "s147": "Already applied? Sign in with your partner email.",
+    "s148": "Stop worrying about the {amount1} penalty.",
+    "s149": "File this year's Form 5472 in fifteen minutes. Catch up on prior years in one sitting.",
+    "s150": "IRS Form 5472 and pro forma Form 1120 preparation and filing",
+    "s151": "Foreign-owned US single-member LLC owners",
+    "s152": "Done-for-you preparation, review by a PTIN-holding tax accountant and fax delivery to the IRS Ogden PIN Unit of IRS Form 5472 with pro forma Form 1120 for foreign-owned US single-member LLCs. Includes a reasonable-cause statement for late (DIIRSP) filings.",
+    "s153": "{value1} — {value2}",
+    "s154": "Home",
+    "s155": "How to file Form 5472 with Form5472 Prep",
+    "s156": "Form5472 Prep",
+    "extra1": "average completion",
+    "extra2": "filled, not redrawn",
+    "extra3": "to Ogden PIN Unit",
+    "extra4": "proof of filing"
+  },
+  "pricing": {
+    "s001": "Pricing for Form 5472 Filing",
+    "s002": "Pricing for Form 5472 + pro forma 1120 filing: Standard {value1} ready in {value2}, Express {value3} ready to sign in {value4}, IRS fax included.",
+    "s003": "Pricing — Form 5472 Filing for Foreign-Owned LLCs",
+    "s004": "October 26, 2026",
+    "s005": "What's the difference between the two tiers?",
+    "s006": "Only the turnaround. The filing itself is identical: we prepare your Form 5472 + pro forma 1120, a PTIN-holding tax accountant reviews it, we fax it to the IRS Ogden PIN Unit, and email you the timestamped confirmation. Both tiers also include a reasonable-cause letter on late / DIIRSP filings and a filing reminder in the second week of January for next year. {value1} ({value2}) is ready in {value3}; {value4} ({value5}) is ready to sign in {value6} and comes with priority email support.",
+    "s007": "Is fax filing really included?",
+    "s008": "Yes — every plan includes fax delivery to the IRS Ogden PIN Unit and the fax provider's transmission receipt (destination, timestamp, page count, result): evidence of transmission, not IRS acceptance. You don't need your own fax machine.",
+    "s009": "What if I'm filing for multiple past years (DIIRSP)?",
+    "s010": "Add {value1} per additional past year on either tier. We include a reasonable-cause statement on every late filing so the IRS Delinquent International Information Return Submission Procedure (DIIRSP) is invoked correctly.",
+    "s011": "Are there any hidden fees?",
+    "s012": "No. The price you see is the price you pay. No setup fee, no monthly subscription, no per-page fax surcharge.",
+    "s013": "Form 5472 + Pro Forma 1120 Filing Service",
+    "s014": "Done-for-you IRS Form 5472 and pro forma Form 1120 filing for foreign-owned single-member US LLCs. Fax delivery to the IRS Ogden PIN Unit is included on every plan.",
+    "s015": "{value1} — {value2}",
+    "s016": "filing",
+    "s017": "Flat add-on for each additional past tax year, on either tier.",
+    "s018": "additional tax year",
+    "s019": "Form 5472 filing pricing",
+    "s020": "Home",
+    "s021": "Pricing",
+    "s022": "For foreign-owned US LLCs",
+    "s023": "Form 5472 filing pricing:",
+    "s024": "and ",
+    "s025": ", nothing hidden.",
+    "s026": "Done-for-you Form 5472 + pro forma 1120 for foreign-owned US LLCs. Same filing either way — pick the turnaround you need:",
+    "s027": "ready in ",
+    "s028": ", or ready to sign in ",
+    "s029": "on Express. Fax delivery to the IRS Ogden PIN Unit is included on both plans.",
+    "s030": "Last reviewed ",
+    "s031": "Fax filing on every plan",
+    "s032": "Reviewed by a tax accountant",
+    "s033": "per additional past tax year, either tier",
+    "s034": "A missed or incomplete filing can cost a",
+    "s035": "{amount1}-per-form IRS penalty",
+    "s036": "Want the full breakdown? Read our guide to",
+    "s037": "Form 5472 filing cost",
+    "s038": ", or see",
+    "s039": "other services' published prices",
+    "s040": "One-time flat fee, billed in {currency} via Stripe. No subscription. Every filing is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is submitted. We prepare and submit the forms from the information you give us; we do not provide personalised tax planning.",
+    "s041": "How does Form5472 Prep compare with a CPA or DIY?",
+    "s042": "The table compares setup time, filing delivery, proof storage, and cost across Form5472 Prep, CPA, and DIY options.",
+    "s043": "More for foreign founders",
+    "s044": "Also need an EIN, ITIN or Form 7004 extension?",
+    "s045": "EIN — {value1}",
+    "s046": "Do you need an EIN for your LLC?",
+    "s047": "No SSN or ITIN required. We prepare Form SS-4 and obtain your EIN directly from the IRS in {days1} business days.",
+    "s048": "ITIN — {value1}",
+    "s049": "Do you need an ITIN for yourself?",
+    "s050": "Certified by an IRS Certifying Acceptance Agent — your documents are certified and we file Form W-7. No passport mailing.",
+    "s051": "Form 7004 — {value1}",
+    "s052": "Need more time to file?",
+    "s053": "We prepare Form 7004 and fax it to the IRS Ogden PIN Unit. It must be filed by the original due date.",
+    "s054": "What do filers ask before they pay?",
+    "s055": "Most popular",
+    "s056": "/ filing"
+  },
+  "services": {
+    "hub": {
+      "title": "Form 5472 Services by Situation | Form5472 Prep",
+      "metaDescription": "Form 5472 services by situation for foreign-owned US LLCs: annual, late, dormant and final-year filings, IRS fax delivery, partner filing, EIN and ITIN.",
+      "longDescription": "Form 5472 and pro forma Form 1120 filing services for foreign-owned US single-member LLCs: annual filings, late (DIIRSP) catch-up filings with reasonable-cause statements, dormant-LLC and final-year filings for dissolved LLCs, IRS Ogden PIN Unit fax delivery with timestamped receipts, white-label filing for formation and registered agents, plus EIN and ITIN application support.",
+      "h1": "Form 5472 services by situation",
+      "intro": "Every Form5472 Prep service here is one filing: Form 5472 with a pro forma Form 1120 for a US LLC with one foreign owner, at {amount1} (ready in {days1} business days) or {amount2} (ready to sign in under {days2} days) per year. A tax accountant who holds an IRS PTIN reviews every filing before we fax it to the IRS."
+    },
+    "categories": {
+      "0": {
+        "heading": "Which service do I need for the annual Form 5472 filing?",
+        "description": "The yearly Form 5472 and pro forma 1120 for a single-member LLC with one foreign owner is covered by the filing service, with separate pages on the pro forma 1120, federal scope, fax delivery, hiring someone and choosing a preparer."
+      },
+      "1": {
+        "heading": "Which service do I need for a missed, dormant or final year?",
+        "description": "A missed year needs a late filing with a reasonable-cause statement, a dormant LLC with no activity can still have a reportable transaction, and a dissolved LLC files a final short-year return. Each situation has its own page."
+      },
+      "2": {
+        "heading": "Which service is for accountants, bookkeepers, formation agents and registered agents?",
+        "description": "Accountants, bookkeepers, formation agents and registered agents can refer clients, run client filings from one partner account, or offer the filing under their own brand while we prepare, review and fax each package."
+      }
+    },
+    "identifiers": {
+      "0": {
+        "label": "Get a US EIN for your foreign-owned LLC",
+        "blurb": "We prepare Form SS-4 and obtain the EIN. No SSN or ITIN required."
+      },
+      "1": {
+        "label": "Check whether you may need an ITIN for a federal tax purpose",
+        "blurb": "ITIN application support for individuals with a qualifying federal tax reason."
+      },
+      "2": {
+        "label": "File a Form 5472 extension (Form 7004) for your foreign-owned LLC",
+        "blurb": "We prepare Form 7004 and fax it to the IRS Ogden PIN Unit, then email you the fax confirmation."
+      }
+    },
+    "pages": {
+      "form-5472-filing-service": {
+        "h1": "Form 5472 Filing Service for Foreign-Owned US LLCs",
+        "shortBlurb": "This year's Form 5472 and pro forma 1120, prepared, reviewed and faxed in one order."
+      },
+      "pro-forma-1120-filing-service": {
+        "h1": "Pro Forma 1120 Filing Service for Non-Resident LLC Owners",
+        "shortBlurb": "The Form 1120 cover your Form 5472 is attached to, box by box, filed with it as one set."
+      },
+      "late-form-5472-filing-service": {
+        "h1": "Late Form 5472 Filing Service for Missed Years",
+        "shortBlurb": "Catch-up filings for one or more missed years, with a reasonable-cause statement for each."
+      },
+      "foreign-owned-llc-tax-filing-service": {
+        "h1": "Foreign-Owned LLC Tax Filing Service for Non-Resident Owners",
+        "shortBlurb": "Which US filings a non-resident's LLC has, and the federal one we prepare and fax."
+      },
+      "form-5472-fax-filing-service": {
+        "h1": "Form 5472 Fax Filing Service With a Timestamped Receipt",
+        "shortBlurb": "Delivery to the IRS Ogden PIN Unit by fax, with the timestamped transmission receipt kept for you."
+      },
+      "white-label-form-5472-filing": {
+        "h1": "White Label Form 5472 Filing for Formation and Registered Agents",
+        "shortBlurb": "Your clients deal only with you: you send their links; we prepare, review and fax behind you."
+      },
+      "form-5472-filing-for-dormant-llc": {
+        "h1": "Form 5472 Filing for Dormant LLC Owners",
+        "shortBlurb": "When an LLC with no business activity still files, and which owner-paid costs count."
+      },
+      "final-form-5472-for-dissolved-llc": {
+        "h1": "Final Form 5472 for Dissolved LLC Owners",
+        "shortBlurb": "The last Form 5472 and pro forma 1120 for the short year that ends on dissolution."
+      },
+      "hire-someone-to-file-form-5472": {
+        "h1": "Hire Someone to File Form 5472 for Your Foreign-Owned LLC",
+        "shortBlurb": "The handover in plain terms: what you give, what comes back, and the two things you still do."
+      },
+      "form-5472-preparer": {
+        "h1": "A Form 5472 Preparer for Foreign-Owned US LLCs",
+        "shortBlurb": "How to choose who prepares your Form 5472: the four kinds of preparer and six questions to ask."
+      },
+      "form-5472-for-accountants": {
+        "h1": "Form 5472 for Accountants, CPAs and Tax Preparers",
+        "shortBlurb": "For firms deciding between referring a client and running filings from a partner account."
+      },
+      "form-5472-for-bookkeepers": {
+        "h1": "Form 5472 for Bookkeepers: Hand Off the Filing, Keep the Books",
+        "shortBlurb": "Which records to hand over for a client's Form 5472, and how the filing handoff works."
+      }
+    },
+    "s001": "Which pages cover Form 5472 for clients of formation services?",
+    "s002": "A formation or registered-agent plan may or may not include the yearly Form 5472, so each page shows where the filing fits next to what that provider sells and how the package reaches the IRS.",
+    "s003": "Do I need an EIN, ITIN or extension before filing?",
+    "s004": "A foreign-owned LLC needs an EIN to file Form 5472, and its owner needs an ITIN only when there is a qualifying federal tax reason. We help with both, and file Form 7004 when you need more time.",
+    "s005": "Home",
+    "s006": "Services",
+    "s007": "Breadcrumb",
+    "s008": "Last reviewed ",
+    "s009": "Read more",
+    "s010": "Start your Form 5472 filing",
+    "s011": "About 15 minutes of questions. Every filing is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is submitted, then faxed to the IRS with a timestamped receipt.",
+    "s012": "Start your filing",
+    "s013": "See pricing",
+    "formation": {
+      "clemta-form-5472": {
+        "label": "Clemta customer? Get written clarity on Form 5472.",
+        "blurb": "Clemta lists Federal Tax Filing, but public pages do not clearly itemize Form 5472. Learn what to confirm and how to file if needed."
+      },
+      "doola-form-5472": {
+        "label": "Formed your LLC with doola? Check what is actually included.",
+        "blurb": "Formed an LLC with doola? See what doola's own pages say about Form 5472 price and coverage, and compare a flat-fee filing-only option."
+      },
+      "firstbase-form-5472": {
+        "label": "Using Firstbase for your US company? Put Form 5472 in context.",
+        "blurb": "Firstbase lists an {amount1}/yr tax package for non-US-owned single-member LLCs that names Form 5472. See what it covers and when a filing-only service fits."
+      },
+      "northwest-registered-agent-form-5472": {
+        "label": "Used Northwest Registered Agent? Form 5472 is a separate federal filing.",
+        "blurb": "Used Northwest Registered Agent? Form 5472 is a separate federal filing. See what to confirm in writing and how to file the IRS package."
+      },
+      "startglobal-form-5472": {
+        "label": "StartGlobal formed the LLC. Now confirm the 5472 filing.",
+        "blurb": "StartGlobal sells Federal Tax Filing, but its pricing and federal tax pages do not name Form 5472. See what to verify and how filing-only help works."
+      },
+      "zenind-form-5472": {
+        "label": "Zenind explains Form 5472. Filing it is the next step.",
+        "blurb": "Zenind publishes a Form 5472 guide, and its pricing page lists no Form 5472 filing. Learn the next step for foreign-owned LLCs."
+      },
+      "form-5472-fax-number": {
+        "label": "Where to File Form 5472: Fax Number and Mailing Address",
+        "blurb": "Where to file Form 5472: the IRS fax number (+1-855-887-7737) and Ogden mailing address for foreign-owned US LLCs, what to send, and which proof to keep."
+      }
+    }
+  },
+  "faq": {
+    "items": {
+      "express-ready-in-24-hours": {
+        "q": "Is Form5472 Prep's Express filing ready in {hours1} hours?",
+        "a": "No. Express is ready to sign in under {days1} days, counted in calendar days, {days2} days a week. Standard is ready in {days3} business days. After you check and sign your prepared Form 5472 and pro forma Form 1120, we fax the package to the IRS.",
+        "learnMore": "Compare filing turnarounds"
+      },
+      "additional-year-is-not-first-year-price": {
+        "q": "Does Form5472 Prep cost {amount1}?",
+        "a": "No. One tax year costs {amount1} for Standard or {amount2} for Express, including preparation, review and IRS fax delivery. The {amount3} additional-year price applies only to each additional past tax year in the same order; it is never the price for the first year.",
+        "learnMore": "See filing prices"
+      },
+      "is-form5472-prep-tax-software": {
+        "q": "Is Form5472 Prep tax software?",
+        "a": "No. It is a done-for-you service: you answer a guided intake form, our team prepares Form 5472 and the pro forma 1120, and a tax accountant who holds an IRS PTIN reviews them. You then check and sign, and we fax the package to the IRS.",
+        "learnMore": "How a filing works"
+      },
+      "what-is-form-5472-who-files": {
+        "q": "What is Form 5472, and who has to file it?",
+        "a": "Form 5472 is the information return that reports related-party transactions. A foreign-owned US single-member LLC treated as a disregarded entity usually files Form 5472 with a pro forma Form 1120 when it has a reportable transaction during the tax year.",
+        "learnMore": "Check whether you need to file"
+      },
+      "no-income-form-5472-form-1120": {
+        "q": "Do I really need Form 5472 and a Form 1120 if my LLC made no money?",
+        "a": "Form 5472 and the pro forma Form 1120 are likely still needed even when your LLC made no money. No income is different from no reportable transactions, and formation costs, owner contributions, reimbursements, loans, or owner draws can create a filing requirement."
+      },
+      "can-you-tell-me-whether-i-need-to-file": {
+        "q": "Can you tell me whether I need to file?",
+        "a": "We can confirm whether your described situation fits our filing profile. If your US LLC is a single-member LLC owned by a non-US person and it had any reportable transaction during the year, including money moved in to open its bank account, it must file Form 5472 with a pro forma Form 1120.",
+        "learnMore": "Use the filing checker"
+      },
+      "how-much-does-it-cost": {
+        "q": "How much does Form5472 Prep cost?",
+        "a": "Form5472 Prep costs {amount1} Standard or {amount2} Express per tax year, IRS fax delivery included. Done-for-you, not DIY software: you answer a guided intake form, we prepare Form 5472 and pro forma 1120, and a tax accountant who holds an IRS PTIN reviews them. The {amount3} add-on applies only to each additional past tax year, never to the first year.",
+        "learnMore": "See pricing"
+      },
+      "standard-vs-express": {
+        "q": "What's the difference between Standard and Express?",
+        "a": "Standard and Express differ only by turnaround. Standard is ready in {days1} business days at {amount1}, while Express is ready for you to check and sign in under {days2} days from your order, {days3} days a week, at {amount2}, and adds priority email support. We fax Express filings once you sign, the same as Standard. Both include the same documents, accountant review, and IRS fax delivery."
+      },
+      "whats-included-for-the-price": {
+        "q": "What's included for the price?",
+        "a": "The filing price includes Form 5472, pro forma Form 1120, the Part V supporting statement, review by a PTIN-holding tax accountant, a reasonable cause letter if you are late, IRS fax delivery, a timestamped receipt, filing confirmation, and a reminder before next year’s deadline."
+      },
+      "hidden-fees": {
+        "q": "Are there any hidden fees?",
+        "a": "We do not add hidden fees. The price you see is the price you pay, with no setup fee, no monthly subscription, and no per-page fax surcharge. Multi-year filings add a flat {amount1} per additional past year, disclosed up front."
+      },
+      "information-to-have-ready": {
+        "q": "What information do I need to have ready?",
+        "a": "You should have your LLC name, EIN, address, formation date, NAICS code, owner name, foreign tax ID, residential address, country of citizenship, country of tax residence, capital contributions, distributions, and year-end total assets ready. These are standard fields and simple manual entry."
+      },
+      "guarantee": {
+        "q": "What's your guarantee?",
+        "a": "We offer a 100% money-back guarantee if we fail to submit your filing to the IRS. If the fax does not deliver on the first send, we automatically retry, and if it still fails after those submission attempts, you get a full refund."
+      },
+      "are-you-a-cpa-firm": {
+        "q": "Are you a CPA firm? Who prepares my filing?",
+        "a": "Every filing is reviewed by a PTIN-holding tax accountant before it is submitted. We prepare and submit the forms from the information you give us; we do not provide personalised tax planning. Our role is preparation and submission, not tax-position advice.",
+        "learnMore": "Read about Form5472 Prep"
+      },
+      "who-reviews-my-filing": {
+        "q": "Who reviews my Form 5472 filing?",
+        "a": "Every package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is faxed. A PTIN is the identification number the IRS requires of every paid tax return preparer; it is not a licence or IRS approval. We are not a CPA firm and we do not give tax advice.",
+        "learnMore": "How we review filings"
+      },
+      "is-form5472-prep-automated-software": {
+        "q": "Is Form5472 Prep automated software?",
+        "a": "No. Form5472 Prep is a done-for-you filing service, not do-it-yourself software. Our software drafts the Form 5472 and pro forma Form 1120 from your answers; a tax accountant who holds an IRS PTIN reviews every package before you can sign. You check and sign it, and we fax it to the IRS Ogden PIN Unit with a timestamped receipt.",
+        "learnMore": "How a filing works"
+      },
+      "is-form5472-prep-legit": {
+        "q": "Is Form5472 Prep legit?",
+        "a": "Form5472 Prep is a Form 5472 filing service founded in 2025. A tax accountant who holds an IRS PTIN reviews every package before you sign it. We are not a CPA firm and give no personalised tax or legal advice. Data is encrypted in transit and at rest, and customer reviews are on Trustpilot.",
+        "learnMore": "About Form5472 Prep"
+      },
+      "is-form5472-prep-same-as-snapfile": {
+        "q": "Is Form5472 Prep the same as Snapfile?",
+        "a": "They are separate services run by the same team. Snapfile sells a {amount1} filing (+{amount2} per additional past year) with an AI system review and no human tax professional, per snapfile.tax/pricing on 24 October 2026. At Form5472 Prep, from {amount3}, a tax accountant who holds an IRS PTIN reviews every package; Snapfile's human-review tier is fulfilled by us."
+      },
+      "what-is-pro-forma-form-1120": {
+        "q": "What is the pro forma Form 1120, and why is it attached?",
+        "a": "The pro forma Form 1120 is the cover document that lets Form 5472 be submitted as a valid IRS package. For foreign-owned single-member LLCs, Form 5472 is filed as an attachment to the pro forma Form 1120; neither form alone is valid for this filing.",
+        "learnMore": "Read the 1120 pro forma instructions"
+      },
+      "what-counts-as-reportable-transaction": {
+        "q": "What counts as a reportable transaction?",
+        "a": "Reportable transactions are defined broadly and can include capital in, distributions out, any payment between you and the LLC, any loan, and any related-party transaction. Form 5472 reports those related-party transactions in dollar amounts, and Part V is where capital contributions, distributions, and most owner-to-LLC payments are reported."
+      },
+      "capital-contributions-owner-reimbursements": {
+        "q": "Do capital contributions and owner reimbursements count as reportable transactions?",
+        "a": "Capital contributions and owner reimbursements can count as reportable transactions. Capital contributions and distributions count, the seed money wired to open the bank account counts, and a reimbursement you took out for a business expense counts, even when the LLC had zero revenue."
+      },
+      "can-form-5472-be-e-filed": {
+        "q": "Can Form 5472 be filed electronically, or only by fax or mail?",
+        "a": "Only by fax or mail for a foreign-owned LLC. The IRS Form 5472 instructions say a foreign-owned U.S. disregarded entity cannot file Form 5472 electronically, so it goes with its pro forma Form 1120 by fax to +1-855-887-7737 or by mail to the IRS Ogden PIN Unit. Form5472 Prep prepares the package, faxes it there and sends you the transmission receipt."
+      },
+      "first-year-llc-file": {
+        "q": "Does a first-year LLC still have to file?",
+        "a": "A first-year LLC still has to file if it had reportable transactions during its formation year. Review activity from formation onward, including formation costs paid by the owner. The year of formation counts, and the Form 5472 package follows the same deadline rules as other years."
+      },
+      "dissolved-llc-still-file": {
+        "q": "My LLC was dissolved this year — do I still file?",
+        "a": "A dissolved LLC still files Form 5472 for the partial year ending at dissolution. The deadline is generally the 15th day of the 4th month after the LLC’s final month; a short year ending in June of a tax year that began before 2026 is due the 15th day of the 3rd month instead.",
+        "learnMore": "Final Form 5472 for a dissolved LLC"
+      },
+      "form-5472-deadline": {
+        "q": "What is the Form 5472 deadline?",
+        "a": "The Form 5472 deadline for a calendar-year LLC is generally April 15, filed with the pro forma Form 1120. If Form 7004 is filed on time, the deadline can extend to October 15 because Form 5472 is attached to Form 1120. The extension process must be handled correctly.",
+        "learnMore": "Calculate your deadline"
+      },
+      "form-7004-extension": {
+        "q": "How does the Form 7004 extension work?",
+        "a": "Form 7004 must be filed by the original April 15 deadline. If Form 7004 is timely, it extends the Form 5472 package due date to October 15 because Form 5472 is attached to Form 1120. Without it, the April 15 deadline remains. We file it as a separate paid service: we fax it to the IRS Ogden PIN Unit and email the fax confirmation, which is not IRS acceptance.",
+        "learnMore": "Form 7004 extension filing"
+      },
+      "no-income-no-transactions-deadline": {
+        "q": "Does having no income or no transactions change the deadline?",
+        "a": "No income or no transactions does not change the Form 5472 deadline. The deadline itself does not change; Form 5472 is triggered by reportable transactions, not income, and if reportable transactions exist, the same due date applies even when the LLC had zero revenue."
+      },
+      "missed-form-5472": {
+        "q": "What happens if Form 5472 is missed?",
+        "a": "The IRS penalty is generally {amount1} for a missing or incomplete Form 5472. If the IRS sends a notice and the filing is still not corrected, another {amount2} can be added every {days1} days. Late filings can sometimes include a reasonable cause explanation under DIIRSP.",
+        "learnMore": "Estimate the penalty"
+      },
+      "automatic-penalty": {
+        "q": "Is the penalty really automatic?",
+        "a": "The Form 5472 penalty is automatic. IRC §6038A(d) provides an initial {amount1} penalty when a reporting corporation fails to furnish required Form 5472 information on time or files an incomplete return. The IRS computer system can assess it without a human reviewing the case first."
+      },
+      "can-penalty-be-abated": {
+        "q": "Can the penalty be abated?",
+        "a": "The Form 5472 penalty can be abated, but there are no guarantees. Many late filers pursue reasonable-cause relief through DIIRSP by submitting the late return with a Reasonable Cause Statement. The IRS decides each case on its facts, and Treas. Reg. §1.6038A-4(b) requires showing reasonable cause and good faith."
+      },
+      "cp15-notice": {
+        "q": "What is a CP 215 notice?",
+        "a": "CP 215 is the IRS Notice of Penalty Charge for business accounts. The IRS manual (IRM 20.1.9.5.2) says a CP 215 is generated once a Form 5472 penalty is assessed; CP 15 is the equivalent notice for individual accounts. Check the amount, tax year and response date on it, and do not ignore it."
+      },
+      "statute-of-limitations": {
+        "q": "Is there a statute of limitations?",
+        "a": "There is effectively no statute of limitations until a complete or substantially complete Form 5472 return is filed. Filing the return, even late, is what starts the clock; until then the year stays open indefinitely. That is why the missing package still matters."
+      },
+      "missed-prior-years": {
+        "q": "What if I've missed prior years?",
+        "a": "If you missed prior years, you can pick all the years you need to file when you start. We auto-flag the filing as DIIRSP and include a reasonable cause statement requesting penalty abatement, with additional past tax years priced at {amount1} each.",
+        "learnMore": "See multi-year pricing"
+      },
+      "deadline-already-passed": {
+        "q": "The deadline already passed this year — what should I do now?",
+        "a": "If the Form 5472 deadline already passed, DIIRSP with a reasonable-cause statement is the standard remedy for a late Form 5472 package. If April 15 was missed without Form 7004, file the actual return under DIIRSP with the late filing package."
+      },
+      "irs-notice-help": {
+        "q": "I've received an IRS notice — can you still help, and what do you need from me?",
+        "a": "We can help owners who received an IRS CP 215 penalty notice or §6038A letter and need a properly prepared late filing. Send the notice number, such as CP 215, and the tax year it covers; we will explain the filing path before you pay. We prepare the late filing itself; we do not handle penalty appeals.",
+        "learnMore": "Contact support"
+      },
+      "ein-needed-for-form-5472": {
+        "q": "Do I need an EIN to file Form 5472?",
+        "a": "Yes, Form 5472 requires your LLC’s EIN in the header. The EIN identifies the LLC as the reporting corporation on the package. We can handle both an EIN and a Form 5472 filing if you need both, so the identifier and filing package stay aligned."
+      },
+      "what-is-an-ein": {
+        "q": "What is an EIN, and why does my LLC need one?",
+        "a": "An EIN is a 9-digit US tax ID issued by the IRS to business entities. Your LLC needs an EIN to open a US business bank account, set up Stripe or PayPal, hire US contractors, file Form 5472, and sign certain contracts.",
+        "learnMore": "Read about EINs"
+      },
+      "apply-for-ein-myself": {
+        "q": "Can't I just apply for an EIN myself on the IRS website?",
+        "a": "The online EIN application on irs.gov is only available if you have a US Social Security Number or ITIN. Foreign nationals without a US tax ID cannot use the online tool, so the remaining route is Form SS-4 by fax or phone."
+      },
+      "ssn-itin-needed-for-ein": {
+        "q": "Do I need a US Social Security Number or ITIN to get an EIN?",
+        "a": "No, a non-resident owner without an SSN or ITIN can obtain an EIN. Form SS-4 allows the responsible party’s tax ID to be marked “Foreign,” and the application goes to the IRS international unit. The online EIN tool is different and is only available if you already have a US SSN or ITIN."
+      },
+      "ein-timing": {
+        "q": "How long does the EIN take?",
+        "a": "An EIN typically takes {days1} business days once we have your documents. We call the IRS Business & Specialty Tax Line on your behalf and can often obtain the EIN on the call, while complex cases may take slightly longer."
+      },
+      "already-have-ein": {
+        "q": "What if my LLC already has an EIN?",
+        "a": "If your LLC already has an EIN, you do not need the EIN service. Use that EIN for the LLC on the Form 5472 package. Form 5472 identifies the LLC as the reporting corporation and includes the LLC name, EIN, address, and total assets. We can also help retrieve a lost or forgotten EIN; contact support@form5472prep.com."
+      },
+      "what-is-itin": {
+        "q": "What is an ITIN, and do I need one to run my US LLC?",
+        "a": "An ITIN is a 9-digit tax ID issued by the IRS to individuals who need to file or be identified on a US tax return but are not eligible for a Social Security Number. Many foreign-owned US LLC owners operate with just an EIN and never need an ITIN.",
+        "learnMore": "Read about ITINs"
+      },
+      "ein-vs-itin": {
+        "q": "What is the difference between an EIN and an ITIN?",
+        "a": "An EIN is assigned to a business entity, while an ITIN is assigned to an individual. Your LLC has an EIN; you as a person would have an ITIN or SSN. Most foreign-owned single-member LLC owners need an EIN but may or may not need an ITIN."
+      },
+      "certifying-acceptance-agent": {
+        "q": "What is a Certifying Acceptance Agent, and how do you work with one?",
+        "a": "A Certifying Acceptance Agent (CAA) can authenticate permitted identity documents for an ITIN application. We forward your application to an IRS-authorized CAA for the applicable document checks. A plain uploaded copy is not itself sufficient certification; follow the CAA's instructions. This route can avoid mailing an original passport to the IRS, but it does not guarantee ITIN eligibility or approval."
+      },
+      "itin-timing": {
+        "q": "How long does the ITIN take?",
+        "a": "The IRS says to allow {weeks1} weeks for an ITIN application status notice, or {weeks2} weeks when applying from overseas or during January 15 through April 30. These are processing estimates, not a guaranteed issuance date; requests for additional information can delay a decision."
+      },
+      "itin-and-ein-same-time": {
+        "q": "Can I apply for an ITIN and an EIN at the same time?",
+        "a": "Yes, contact us to coordinate separate EIN and ITIN applications when both are actually needed. The LLC's EIN and the individual's ITIN serve different purposes. Each application has its own eligibility, documentation and IRS processing timeline; obtaining one does not guarantee or automatically require the other."
+      },
+      "process-start-to-finish": {
+        "q": "How does the process work, start to finish?",
+        "a": "You provide LLC and owner information, related-party transactions and year-end assets. We prepare the supported package for review, resolve signing requirements, and arrange IRS fax delivery. Keep the exact submitted package and provider transmission receipt together; the receipt documents transmission, not an IRS determination that the filing is complete or accepted."
+      },
+      "fax-filing-included": {
+        "q": "Is fax filing to the IRS really included?",
+        "a": "Yes, fax delivery to the IRS Ogden PIN Unit is included on every plan with no separate fee, so you do not need your own fax machine. The provider's timestamped receipt is transmission evidence, not an IRS-issued acceptance or a guarantee of penalty relief."
+      },
+      "how-do-i-sign": {
+        "q": "How do I sign the forms?",
+        "a": "Review the completed package and establish who is authorized to sign. Form 5472 has no taxpayer signature block; the pro forma Form 1120 has the relevant block. Ink signing the completed cover and scanning it for fax is a conservative approach. A browser signature feature does not by itself establish IRS authorization for every document or submission route; contact us to resolve the method before submission."
+      },
+      "how-long-whole-thing": {
+        "q": "How fast is Form5472 Prep Express filing?",
+        "a": "Form5472 Prep Express filing ({amount1}) is ready for you to check and sign in under {days1} days from your order, {days2} days a week, and we fax it to the IRS once you sign. Standard filing ({amount2}) is ready in {days3} business days. Both tiers get the same package, accountant review and IRS fax delivery."
+      },
+      "store-bank-statements-signed-forms": {
+        "q": "Do you store my bank statements or signed forms?",
+        "a": "No, we do not permanently store bank statements or signed forms. Bank statements are processed in memory to extract transaction totals and discarded; signed PDFs are held only long enough to fax to the IRS and deliver the fax confirmation receipt, then deleted.",
+        "learnMore": "Read the data retention policy"
+      },
+      "message-reply-time": {
+        "q": "How quickly will you reply to a message?",
+        "a": "We reply to messages within one business day, Monday to Friday, from support@form5472prep.com. The reply comes from that support address, so search for that sender if it is not in your inbox. Check your spam folder if you do not see the reply after you contact us.",
+        "learnMore": "Contact Form5472 Prep"
+      },
+      "accountants-formation-agents": {
+        "q": "Do you work with accountants and formation agents?",
+        "a": "Yes, we work with formation agencies, registered agents, CPA and accounting firms, and consultants who manage US LLCs for multiple foreign-owned clients. Our partner program groups client filings under one partner account so one login shows live status for every client filing.",
+        "learnMore": "Read about partners"
+      },
+      "irs-received-filing-proof": {
+        "q": "How do I know the IRS received my filing?",
+        "a": "Inspect the provider receipt for the destination, timestamp, page count and reported transmission result. Keep it with the exact submitted package. That record is transmission evidence, not an IRS-issued acknowledgment of processing or acceptance. If delivery is uncertain or an IRS notice arrives, contact us and follow the notice's instructions and deadline."
+      },
+      "irs-confirmation": {
+        "q": "Will the IRS send me a confirmation?",
+        "a": "The current Form 5472 instructions do not describe a routine acceptance acknowledgment for this faxed package. A provider receipt and IRS processing are different things; silence proves neither acceptance nor rejection. Save your own submitted package and receipt rather than relying on indefinite portal storage, and do not resend solely because you have heard nothing."
+      },
+      "next-year-reminder": {
+        "q": "Will you remind me next year?",
+        "a": "Yes, we send a reminder in the second week of January for the next filing obligation, with a further reminder in March if it is still outstanding. The January reminder gives over three months’ notice, and for returning customers we pre-fill LLC and owner details from your most recent paid filing."
+      },
+      "keep-records": {
+        "q": "How long should I keep my records?",
+        "a": "Keep the filed package, the IRS Fax Transmission Receipt, and our confirmation message with your LLC records for at least six years. If the filing was a final return for a dissolved LLC, keep the same documents with your permanent tax records for at least six years."
+      },
+      "refund-policy": {
+        "q": "What is your refund policy?",
+        "a": "Fees are non-refundable once a PDF has been generated, except as expressly stated. Read that as the cutoff tied to the generated PDF for your filing package. Fees are refundable if we are unable to transmit your filing to the IRS after three attempts.",
+        "learnMore": "Read the terms"
+      },
+      "data-retention": {
+        "q": "How long do you keep my data?",
+        "a": "We retain fax transmission receipts for 7 years from the filing date, aggregated contribution and distribution totals for 7 years, entity and owner identification data for 7 years from last filing, payment records for 7 years, account email and login records for active use plus 12 months, and server access logs for {days1} days.",
+        "learnMore": "Read the data retention policy"
+      }
+    },
+    "categories": {
+      "before-you-order": {
+        "title": "Before You Order",
+        "eyebrow": "Basics",
+        "blurb": "What it is, whether you need it, what it costs."
+      },
+      "the-filing": {
+        "title": "The Filing",
+        "eyebrow": "The forms",
+        "blurb": "What the forms are and how they are submitted."
+      },
+      "deadlines-penalties": {
+        "title": "Deadlines & Penalties",
+        "eyebrow": "Dates & penalties",
+        "blurb": "When it is due and what a miss costs."
+      },
+      "ein-itin": {
+        "title": "EIN & ITIN",
+        "eyebrow": "Tax IDs",
+        "blurb": "The numbers your LLC and its owner need."
+      },
+      "how-our-service-works": {
+        "title": "How Our Service Works",
+        "eyebrow": "Our process",
+        "blurb": "From questionnaire to fax."
+      },
+      "after-we-file": {
+        "title": "After We File",
+        "eyebrow": "Afterwards",
+        "blurb": "Proof, records, and next year."
+      }
+    },
+    "s001": "Canonical short answers for Form 5472 filing, deadlines, penalties, EIN, ITIN, proof, records, and how Form5472 Prep works.",
+    "s002": "Form 5472 FAQ: Filing, Deadlines, EIN & ITIN",
+    "s003": "Form 5472 FAQ",
+    "s004": "Home",
+    "s005": "FAQ",
+    "s006": "Central FAQ",
+    "s007": "Form 5472 questions, answered.",
+    "s008": "Short, source-bound answers to the Form 5472, pro forma Form 1120, deadline, penalty, EIN, ITIN, filing proof, and records questions customers ask before and after filing.",
+    "s009": "FAQ sections",
+    "s010": "Last reviewed ",
+    "s011": "Ready to file",
+    "s012": "Start with the filing flow, or ask a question first.",
+    "s013": "Start your filing",
+    "s014": "Contact us"
+  },
+  "penalty": {
+    "calculator": {
+      "s001": "Calculator inputs",
+      "s002": "Number of LLCs",
+      "s003": "Tax years unfiled per LLC",
+      "s004": "Received an IRS penalty notice (e.g. CP 215)?",
+      "s005": "Turn this on only if the IRS has already sent a penalty notice for the late filing.",
+      "s006": "Notice date",
+      "s007": "Statutory exposure estimate",
+      "s008": "Initial penalty",
+      "s009": "Continuation penalty",
+      "s010": "× {periodDays}-day period(s) since",
+      "s011": "days after your notice",
+      "s012": "statutory exposure — accrues until filed",
+      "s013": "Total statutory exposure",
+      "s014": "Based on the counts and notice status entered above.",
+      "s015": "Link copied",
+      "s016": "Copy link to this result",
+      "s017": "Copy this link:",
+      "s018": "The fix",
+      "s019": "If you're not under IRS examination and the IRS hasn't contacted you about the missing returns, its Delinquent International Information Return Submission Procedures (DIIRSP) say to file them through normal filing procedures, and you may attach a reasonable-cause statement. The IRS can excuse these penalties for reasonable cause, deciding each case on its facts; there is no guarantee, and First Time Abate generally does not apply.",
+      "s020": "Read the late-filing overview",
+      "s021": "for DIIRSP late-filing steps",
+      "s022": "and the reasonable-cause letter guide",
+      "s023": "for abatement letter requirements",
+      "s024": "File the late years — ",
+      "s025": "Statutory exposure under IRC §6038A(d), not a prediction of what the IRS will assess.",
+      "s026": "How we calculate this"
+    },
+    "s001": "Form 5472 Penalty Calculator — What Late Filing Costs",
+    "s002": "Estimate Form 5472 late-filing exposure, see IRS penalty citations, and review the DIIRSP reasonable-cause path for catching up.",
+    "s003": "Is the Form 5472 penalty really automatic?",
+    "s004": "It can be. IRC §6038A(d) sets an initial {value1} penalty when a reporting corporation doesn't furnish the required Form 5472 information on time, and a substantially incomplete Form 5472 counts as not filed. The IRS manual says the penalty may be assessed systemically when a late Form 5472 is processed with a late Form 1120.",
+    "s005": "Can the penalty be abated?",
+    "s006": "Possibly, but there is no guarantee. Treas. Reg. §1.6038A-4(b) lets the IRS excuse a late Form 5472 for reasonable cause, decided case by case. First Time Abate generally does not apply to Form 5472 penalties.",
+    "s007": "What is a CP 215 notice?",
+    "s008": "It is the IRS's Notice of Penalty Charge. The IRS manual says a CP 215 is generated and sent once a Form 5472 penalty is assessed. Once the IRS has notified you of the failure, continuation penalties can start {days1} days later if the filing is still not corrected.",
+    "s009": "Does having no income exempt me from the penalty?",
+    "s010": "No. A foreign-owned disregarded LLC can still have a Form 5472 and pro forma Form 1120 filing obligation even when it had no income, because reportable transactions can include contributions, distributions, and other owner-LLC activity.",
+    "s011": "Is there a statute of limitations?",
+    "s012": "Under IRC §6501(c)(8), the time to assess tax for a return or period the Form 5472 information relates to does not expire until 3 years after the IRS is furnished that information.",
+    "s013": "Read the Form 5472 statute of limitations guide.",
+    "s014": "Form 5472 penalty calculator",
+    "s015": "Free tool",
+    "s016": "Form 5472 penalty calculator.",
+    "s017": "The IRS can assess {amount1} per Form 5472, per year, often automatically when a late return is processed, and another {amount2} per {days1} days once {days2} days pass after a notice.",
+    "s018": "Use this as a statutory exposure estimate, then compare it with the ordinary catch-up route: file the missing Form 5472 package and include a reasonable-cause statement under DIIRSP. How relief works is in our guide to the",
+    "s019": "IRS penalty for late filing of Form 5472",
+    "s020": "Calm next step",
+    "s021": "Estimate first, then fix the filing.",
+    "s022": "The number below is not a prediction. It is a statutory framework calculator paired with the IRS's route for filing late information returns.",
+    "s023": "File the late years — ",
+    "s024": "What is the initial penalty?",
+    "s025": "The initial penalty is {value1} per Form 5472, per year. We use it as a statutory exposure estimate because the IRS can assess it when required Form 5472 information is late, missing, or substantially incomplete (often automatically when a late return is processed), before you compare the number with the ordinary catch-up route.",
+    "s026": "What happens after a notice?",
+    "s027": "After an IRS notice, there is a {value1}-day correction period. If the filing is still not fixed after that window, the statute adds {value2} for each {periodDays}-day period or part of one, so we treat the notice timeline separately from the initial per-form, per-year penalty estimate.",
+    "s028": "What are common triggers?",
+    "s029": "Common triggers are never filing, filing Form 5472 without the required pro forma Form 1120, or sending an incomplete package. We also flag no-income cases, since a foreign-owned disregarded LLC can still have a filing obligation when reportable transactions include contributions, distributions, and other owner-LLC activity.",
+    "s030": "What is the relief path?",
+    "s031": "If the IRS has not contacted you yet, the relief path is a DIIRSP filing that pairs late information returns with a reasonable-cause statement. We follow the ordinary catch-up route described above: file the missing Form 5472 package, include the statement, and ask the IRS to abate penalties when the facts support reasonable cause.",
+    "s032": "How the penalty works",
+    "s033": "How does the Form 5472 penalty rule work?",
+    "s034": "The initial penalty applies per Form 5472, per year, and continuation penalties can add more after an IRS notice. We show both pieces together because the calculator is a statutory exposure estimate, not a prediction, and the ordinary next step is still to fix the filing with the missing package and reasonable-cause statement.",
+    "s035": "Initial penalty: {value1} × LLCs × unfiled years",
+    "s036": "The statute sets {value1} for each taxable year a reporting corporation fails to furnish the information, and the IRS applies it to each failure to file a complete and correct Form 5472. We count one Form 5472 per LLC per year, which assumes one related party (usually the foreign owner). The IRS manual asserts the initial penalty once per related party per taxable year, so an LLC that dealt with more related parties can face more.",
+    "s037": "Continuation penalty: counted from your notice date",
+    "s038": "If the failure continues more than {value1} days after the IRS mails notice of it, another {value2} applies for each {periodDays}-day period or part of one. The statute counts from the day the notice is mailed; we use the notice date you enter. Day {value3} starts the first period and each further {days1} days (or part) adds one, per LLC per year, up to today. The IRS says there is no maximum penalty amount.",
+    "s039": "How the IRS assesses it",
+    "s040": "The IRS manual says the penalty may be assessed systemically during initial processing of a late Form 5472 attached to a late Form 1120, and that a CP 215 Notice of Penalty Charge is sent once a penalty is assessed. That is why the calculator treats the initial penalty as exposure from the day a return is late.",
+    "s041": "What the estimate leaves out",
+    "s042": "Relief. The IRS can excuse a late Form 5472 for reasonable cause, case by case, and must apply that rule liberally to small corporations that meet its conditions. If reasonable cause existed, the {graceDays}-day period starts no earlier than the last day it did. First Time Abate isn't on the IRS's list of eligible penalties. The calculator shows none of these reductions.",
+    "s043": "Filing late before the IRS contacts you",
+    "s044": "If you're not under IRS examination or investigation and haven't been contacted about the missing returns, the IRS says to file them through normal filing procedures, and you may attach a reasonable-cause statement. Penalties may still be assessed.",
+    "s045": "How long the IRS has",
+    "s046": "The time to assess tax for a return or period the Form 5472 information relates to doesn't expire until 3 years after the IRS is furnished that information, so that 3-year period hasn't started while the form is unfiled. If the failure was due to reasonable cause and not willful neglect, the rule covers only the related items.",
+    "s047": "How we calculate this",
+    "s048": "How does the calculator work out the estimate?",
+    "s049": "The figures come from IRC §6038A(d) and the IRS's own guidance. Each rule below links to its primary source.",
+    "s050": "Last reviewed ",
+    "s051": "against IRC §6038A(d), Treas. Reg. §1.6038A-4, the Form 5472 instructions (Rev. 12/2024), IRM 20.1.9 and the IRS pages linked above. General information, not tax advice.",
+    "s052": "What are common penalty questions?",
+    "s053": "Ready to file the late years?",
+    "s054": "We prepare the missing Form 5472 package, pro forma Form 1120, and reasonable-cause statement for DIIRSP catch-up filings.",
+    "s055": "Start filing — ",
+    "s056": "Home",
+    "s057": "Penalty calculator"
+  },
+  "shared": {
+    "capsules": {
+      "cost": {
+        "question": "How much does Form5472 Prep cost?",
+        "answer": "Form5472 Prep costs {amount1} Standard or {amount2} Express per tax year, IRS fax delivery included. Done-for-you, not DIY software: you answer a guided intake form, we prepare Form 5472 and pro forma 1120, and a tax accountant who holds an IRS PTIN reviews them. The {amount3} add-on applies only to each additional past tax year, never to the first year."
+      },
+      "automated": {
+        "question": "Is Form5472 Prep automated software?",
+        "answer": "No. Form5472 Prep is a done-for-you filing service, not do-it-yourself software. Our software drafts the Form 5472 and pro forma Form 1120 from your answers; a tax accountant who holds an IRS PTIN reviews every package before you can sign. You check and sign it, and we fax it to the IRS Ogden PIN Unit with a timestamped receipt."
+      },
+      "express": {
+        "question": "How fast is Form5472 Prep Express filing?",
+        "answer": "Form5472 Prep Express filing ({amount1}) is ready for you to check and sign in under {days1} days from your order, {days2} days a week, and we fax it to the IRS once you sign. Standard filing ({amount2}) is ready in {days3} business days. Both tiers get the same package, accountant review and IRS fax delivery."
+      },
+      "legit": {
+        "question": "Is Form5472 Prep legit?",
+        "answer": "Form5472 Prep is a Form 5472 filing service founded in 2025. A tax accountant who holds an IRS PTIN reviews every package before you sign it. We are not a CPA firm and give no personalised tax or legal advice. Data is encrypted in transit and at rest, and customer reviews are on Trustpilot."
+      },
+      "snapfile": {
+        "question": "Is Form5472 Prep the same as Snapfile?",
+        "answer": "They are separate services run by the same team. Snapfile sells a {amount1} filing (+{amount2} per additional past year) with an AI system review and no human tax professional, per snapfile.tax/pricing on 24 October 2026. At Form5472 Prep, from {amount3}, a tax accountant who holds an IRS PTIN reviews every package; Snapfile's human-review tier is fulfilled by us."
+      }
+    },
+    "serviceFaqs": {
+      "0": {
+        "question": "Is Form5472 Prep's Express filing ready in {hours1} hours?",
+        "answer": "No. Express is ready to sign in under {days1} days, counted in calendar days, {days2} days a week. Standard is ready in {days3} business days. After you check and sign your prepared Form 5472 and pro forma Form 1120, we fax the package to the IRS.",
+        "learnMore": {
+          "label": "Compare filing turnarounds"
+        }
+      },
+      "1": {
+        "question": "Does Form5472 Prep cost {amount1}?",
+        "answer": "No. One tax year costs {amount1} for Standard or {amount2} for Express, including preparation, review and IRS fax delivery. The {amount3} additional-year price applies only to each additional past tax year in the same order; it is never the price for the first year.",
+        "learnMore": {
+          "label": "See filing prices"
+        }
+      },
+      "2": {
+        "question": "Is Form5472 Prep tax software?",
+        "answer": "No. It is a done-for-you service: you answer a guided intake form, our team prepares Form 5472 and the pro forma 1120, and a tax accountant who holds an IRS PTIN reviews them. You then check and sign, and we fax the package to the IRS.",
+        "learnMore": {
+          "label": "How a filing works"
+        }
+      }
+    },
+    "tiers": {
+      "standard": {
+        "label": "Standard filing",
+        "subtitle": "Ready in {days1} business days",
+        "ctaLabel": "Start your filing",
+        "features": {
+          "0": "Prepared and filed in {days1} business days",
+          "1": "Reviewed by a PTIN-holding tax accountant before submission",
+          "2": "Form 5472 + pro forma 1120 prepared",
+          "3": "IRS Ogden fax delivery + timestamped receipt",
+          "4": "Filing confirmation",
+          "5": "Reasonable-cause statement for late filings",
+          "6": "Next-year filing reminder (second week of January)",
+          "7": "Email support"
+        }
+      },
+      "express": {
+        "label": "Express filing",
+        "subtitle": "Ready to sign in under {days1} days",
+        "ctaLabel": "Start express filing",
+        "features": {
+          "0": "Ready for you to check and sign in under {days1} days, {days2} days a week",
+          "1": "Reviewed by a PTIN-holding tax accountant before submission",
+          "2": "Form 5472 + pro forma 1120 prepared",
+          "3": "IRS Ogden fax delivery + timestamped receipt",
+          "4": "Filing confirmation",
+          "5": "Reasonable-cause statement for late filings",
+          "6": "Next-year filing reminder (second week of January)",
+          "7": "Priority email support"
+        }
+      }
+    },
+    "proof": {
+      "s001": "Status: Delivered",
+      "s002": "Provider-reported completed transmission",
+      "s003": "A final delivery status records the fax provider's result. It does not establish IRS account processing or acceptance of the return.",
+      "s004": "Forms",
+      "s005": "Both forms transmitted together",
+      "s006": "Form 5472 and pro forma 1120 are faxed as one package — exactly how the IRS expects them to arrive.",
+      "s007": "Fax: +1-855-887-7737",
+      "s008": "The official IRS Ogden PIN Unit number",
+      "s009": "Compare the destination with the current Form 5472 instructions for foreign-owned U.S. disregarded entities before sending.",
+      "s010": "Timestamp (UTC)",
+      "s011": "A timestamp with a clear time zone",
+      "s012": "Keep the provider's completion timestamp with the exact submitted PDF. It is useful transmission evidence, not a legal determination of timely filing.",
+      "s013": "Confirmation",
+      "s014": "Connect the record to the submitted package",
+      "s015": "Keep the provider reference with the exact PDF and supporting correspondence. This provider-derived record is not IRS-issued and does not guarantee penalty relief.",
+      "s016": "What you actually receive",
+      "s017": "Keep a record of your filing transmission",
+      "s018": "Your fax-transmission receipt belongs with the complete submitted package. It records the provider's result, not IRS processing or acceptance.",
+      "s019": "Illustrative provider-derived record — dummy data, not an IRS document.",
+      "s020": "Every plan includes this receipt.",
+      "s021": "Keep it with your signed package and any IRS correspondence. Learn",
+      "s022": "what a fax receipt can and cannot establish"
+    },
+    "summary": {
+      "s001": "Estimated time",
+      "s002": "What you need",
+      "s003": "Tools",
+      "s004": "Cost",
+      "s005": "Before you start",
+      "duration": "About {minutes} minutes",
+      "cost": "{value} flat fee"
+    },
+    "comparison": {
+      "columns": {
+        "1": "Form5472 Prep",
+        "2": "CPA",
+        "3": "DIY"
+      },
+      "rows": {
+        "0": {
+          "0": "Setup time",
+          "1": "15 minutes",
+          "2": "{weeks1} weeks back-and-forth",
+          "3": "6 hr 34 min (IRS estimate, before recordkeeping)"
+        },
+        "1": {
+          "0": "Knows Form 5472",
+          "1": "Built only for this",
+          "2": "Hit or miss",
+          "3": "Up to you"
+        },
+        "2": {
+          "0": "Late-filing reasonable cause statement (IRS DIIRSP procedure)",
+          "1": "Included",
+          "2": "Usually extra",
+          "3": "DIY"
+        },
+        "3": {
+          "0": "Files with the IRS",
+          "1": "We fax to Ogden",
+          "2": "By mail or fax",
+          "3": "Your problem"
+        },
+        "4": {
+          "0": "Stores filing proof",
+          "1": "Yes, automatic",
+          "2": "Sometimes",
+          "3": "Your problem"
+        },
+        "5": {
+          "0": "Cost",
+          "1": "From {amount1}",
+          "3": "Free (until {amount1})"
+        }
+      }
+    },
+    "standardTurnaround": "{days} business days",
+    "expressTurnaround": "under {days} days",
+    "additionalYear": "Additional past tax year"
+  }
+}

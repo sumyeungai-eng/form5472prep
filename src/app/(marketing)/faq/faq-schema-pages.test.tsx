@@ -2,6 +2,8 @@ import type { ComponentType } from "react";
 import { describe, expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import FaqPage from "./page";
+import GermanFaqPage from "../../(marketing-intl)/de/faq/page";
+import ChineseFaqPage from "../../(marketing-intl)/zh-hans/faq/page";
 import AboutPage from "../about/page";
 import Form5472StatisticsPage from "../form-5472-statistics/page";
 import DoINeedToFileForm5472Page from "../do-i-need-to-file-form-5472/page";
@@ -19,6 +21,8 @@ import LlcAnnualFeesPage from "../llc-annual-fees-by-state/page";
 // question by the 2026-10-30 audit, so tool FAQs wrap it in an <h3>.
 const PAGES: Array<[string, ComponentType]> = [
   ["/faq", FaqPage],
+  ["/de/faq", GermanFaqPage],
+  ["/zh-hans/faq", ChineseFaqPage],
   ["/about", AboutPage],
   ["/form-5472-statistics", Form5472StatisticsPage],
   ["/do-i-need-to-file-form-5472", DoINeedToFileForm5472Page],

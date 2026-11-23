@@ -1,3 +1,4 @@
+import { MARKETING_LOCALES_INDEXABLE, MARKETING_LOCALES, LOCALIZED_MARKETING_PATHS, localizedPath, marketingLanguageAlternates } from "@/i18n/marketing/config";
 import type { MetadataRoute } from "next";
 import { env } from "@/lib/env";
 import { getAllPosts } from "@/lib/blog";
@@ -164,5 +165,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     }));
 
-  return [...staticUrls, ...landingUrls, ...postUrls, ...tagUrls];
+  const urls = [...staticUrls, ...landingUrls, ...postUrls, ...tagUrls];
+  if (!MARKETING_LOCALES_INDEXABLE) return urls;
+  for (const path of LOCALIZED_MARKETING_PATHS) {
+    const languages = marketingLanguageAlternates(path)!;
+    const english = urls.find(entry => entry.url === `${base}${path}`);
+    if (english) english.alternates = { languages };
+    for (const locale of MARKETING_LOCALES) {
+      urls.push({ url: `${base}${localizedPath(locale, path)}`, lastModified: english?.lastModified, alternates: { languages } });
+    }
+  }
+  return urls;
 }

@@ -1,5 +1,9 @@
 "use client";
 
+import { useLocale, useTranslations } from "next-intl";
+import { MarketingIntlProvider } from "@/components/marketing/MarketingIntlProvider";
+import { getMarketingMessages } from "@/i18n/marketing";
+import { localizedPath, type MarketingLocale } from "@/i18n/marketing/config";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import {
@@ -48,6 +52,7 @@ function parseNoticeDate(value: string): Date | null {
 }
 
 type PenaltyCalculatorProps = {
+ locale?: "en" | MarketingLocale;
   /** Embed mode (iframe on third-party sites): compact padding, no share-link
    *  button, and every link is absolute and opens in a new tab. */
   embedded?: boolean;
@@ -55,7 +60,13 @@ type PenaltyCalculatorProps = {
   siteUrl?: string;
 };
 
-export function PenaltyCalculator({ embedded = false, siteUrl = "" }: PenaltyCalculatorProps = {}) {
+export function PenaltyCalculator({ locale = "en", ...props }: PenaltyCalculatorProps = {}) {
+ return <MarketingIntlProvider locale={locale} messages={getMarketingMessages(locale)}><CalculatorUI {...props} /></MarketingIntlProvider>;
+}
+function CalculatorUI({ embedded = false, siteUrl = "" }: PenaltyCalculatorProps) {
+ const locale = useLocale() as "en" | MarketingLocale;
+ const t = useTranslations("penalty.calculator");
+ const money = (value: number) => locale === "en" ? formatPrice(value) : new Intl.NumberFormat(locale, { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(value / 100);
   const linkBase = embedded ? siteUrl : "";
   const linkTarget = embedded ? ({ target: "_blank", rel: "noopener" } as const) : {};
   const [formCount, setFormCount] = useState(1);
@@ -145,13 +156,13 @@ export function PenaltyCalculator({ embedded = false, siteUrl = "" }: PenaltyCal
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
             <div className="flex items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-accent">
               <Calculator className="h-3.5 w-3.5" />
-              Calculator inputs
+              {t("s001")}
             </div>
 
             <div className="mt-6 space-y-5">
               <label className="block">
                 <span className="text-sm font-medium text-slate-900">
-                  Number of LLCs
+                  {t("s002")}
                 </span>
                 <select
                   value={formCount}
@@ -168,7 +179,7 @@ export function PenaltyCalculator({ embedded = false, siteUrl = "" }: PenaltyCal
 
               <label className="block">
                 <span className="text-sm font-medium text-slate-900">
-                  Tax years unfiled per LLC
+                  {t("s003")}
                 </span>
                 <select
                   value={yearCount}
@@ -195,11 +206,10 @@ export function PenaltyCalculator({ embedded = false, siteUrl = "" }: PenaltyCal
                   />
                   <span>
                     <span className="block text-sm font-medium text-slate-900">
-                      Received an IRS penalty notice (e.g. CP 215)?
+                      {t("s004")}
                     </span>
                     <span className="mt-1 block text-xs leading-relaxed text-slate-500">
-                      Turn this on only if the IRS has already sent a penalty
-                      notice for the late filing.
+                      {t("s005")}
                     </span>
                   </span>
                 </label>
@@ -207,7 +217,7 @@ export function PenaltyCalculator({ embedded = false, siteUrl = "" }: PenaltyCal
                 {noticeReceived ? (
                   <label className="mt-4 block">
                     <span className="text-sm font-medium text-slate-900">
-                      Notice date
+                      {t("s006")}
                     </span>
                     <input
                       type="date"
@@ -227,22 +237,22 @@ export function PenaltyCalculator({ embedded = false, siteUrl = "" }: PenaltyCal
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
             <div className="flex items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-accent">
               <FileWarning className="h-3.5 w-3.5" />
-              Statutory exposure estimate
+              {t("s007")}
             </div>
 
             <div className="mt-6 divide-y divide-slate-100">
               <div className="flex items-start justify-between gap-5 py-4 first:pt-0">
                 <div>
                   <p className="text-sm font-semibold text-slate-900">
-                    Initial penalty
+                    {t("s008")}
                   </p>
                   <p className="mt-1 text-sm leading-relaxed text-slate-500">
                     {formCount} × {yearCount} ×{" "}
-                    {formatPrice(PENALTY_PER_FORM_CENTS)}
+                    {money(PENALTY_PER_FORM_CENTS)}
                   </p>
                 </div>
                 <p className="shrink-0 font-serif text-2xl font-semibold tracking-tight text-ink">
-                  {formatPrice(initialPenalty)}
+                  {money(initialPenalty)}
                 </p>
               </div>
 
@@ -250,18 +260,17 @@ export function PenaltyCalculator({ embedded = false, siteUrl = "" }: PenaltyCal
                 <div className="flex items-start justify-between gap-5 py-4">
                   <div>
                     <p className="text-sm font-semibold text-slate-900">
-                      Continuation penalty
+                      {t("s009")}
                     </p>
                     <p className="mt-1 text-sm leading-relaxed text-slate-500">
-                      {continuationPeriodCount} × 30-day period(s) since{" "}
-                      {CONTINUATION_GRACE_DAYS} days after your notice
-                    </p>
+                      {continuationPeriodCount} {t("s010", { periodDays: 30 })}{" "}
+                      {CONTINUATION_GRACE_DAYS} {t("s011")}</p>
                     <p className="mt-2 inline-flex rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700">
-                      statutory exposure — accrues until filed
+                      {t("s012")}
                     </p>
                   </div>
                   <p className="shrink-0 font-serif text-2xl font-semibold tracking-tight text-ink">
-                    {formatPrice(continuationPenalty)}
+                    {money(continuationPenalty)}
                   </p>
                 </div>
               ) : null}
@@ -270,14 +279,14 @@ export function PenaltyCalculator({ embedded = false, siteUrl = "" }: PenaltyCal
                 <div className="flex flex-wrap items-end justify-between gap-4">
                   <div>
                     <p className="text-sm font-semibold text-slate-900">
-                      Total statutory exposure
+                      {t("s013")}
                     </p>
                     <p className="mt-1 text-sm leading-relaxed text-slate-500">
-                      Based on the counts and notice status entered above.
+                      {t("s014")}
                     </p>
                   </div>
                   <p className="font-serif text-5xl font-semibold tracking-tight text-ink">
-                    {formatPrice(totalExposure)}
+                    {money(totalExposure)}
                   </p>
                 </div>
                 <div className={embedded ? "hidden" : "mt-4"}>
@@ -293,12 +302,11 @@ export function PenaltyCalculator({ embedded = false, siteUrl = "" }: PenaltyCal
                     ) : (
                       <Link2 className="h-3.5 w-3.5" aria-hidden />
                     )}
-                    {copyState === "copied" ? "Link copied" : "Copy link to this result"}
+                    {copyState === "copied" ? t("s015") : t("s016")}
                   </Button>
                   {copyState === "manual" ? (
                     <label className="mt-3 block text-xs text-slate-600">
-                      Copy this link:
-                      <input
+                      {t("s017")}<input
                         readOnly
                         value={shareUrl()}
                         onFocus={(event) => event.currentTarget.select()}
@@ -313,43 +321,37 @@ export function PenaltyCalculator({ embedded = false, siteUrl = "" }: PenaltyCal
             <div className="mt-2 rounded-xl border border-emerald-200 bg-emerald-50 p-5">
               <div className="flex items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.16em] text-emerald-700">
                 <ShieldCheck className="h-3.5 w-3.5" />
-                The fix
+                {t("s018")}
               </div>
               <p className="mt-3 text-sm leading-relaxed text-emerald-950">
-                If you&apos;re not under IRS examination and the IRS hasn&apos;t
-                contacted you about the missing returns, its Delinquent
-                International Information Return Submission Procedures (DIIRSP)
-                say to file them through normal filing procedures, and you may
-                attach a reasonable-cause statement. The IRS can excuse these penalties for reasonable
-                cause, deciding each case on its facts; there is no guarantee, and
-                First Time Abate generally does not apply.
+                {t("s019")}
               </p>
               <p className="mt-3 text-sm leading-relaxed text-emerald-950">
-                Read the late-filing overview{" "}
+                {t("s020")}{" "}
                 <Link
-                  href={`${linkBase}/blog/form-5472-filed-late-never-filed`}
+                  href={localizedPath(locale, `${linkBase}/blog/form-5472-filed-late-never-filed`)}
                   {...linkTarget}
                   className="font-medium underline decoration-emerald-700/40 underline-offset-4 hover:text-emerald-800"
                 >
-                  for DIIRSP late-filing steps
+                  {t("s021")}
                 </Link>{" "}
-                and the reasonable-cause letter guide{" "}
+                {t("s022")}{" "}
                 <Link
-                  href={`${linkBase}/blog/form-5472-reasonable-cause-letter`}
+                  href={localizedPath(locale, `${linkBase}/blog/form-5472-reasonable-cause-letter`)}
                   {...linkTarget}
                   className="font-medium underline decoration-emerald-700/40 underline-offset-4 hover:text-emerald-800"
                 >
-                  for abatement letter requirements
+                  {t("s023")}
                 </Link>
                 .
               </p>
               <Link
-                href={`${linkBase}/start?src=${embedded ? "embed-penalty" : "tool-penalty"}`}
+                href={localizedPath(locale, `${linkBase}/start?src=${embedded ? "embed-penalty" : "tool-penalty"}`)}
                 {...linkTarget}
                 className="group mt-5 inline-block"
               >
                 <Button className="min-h-12 gap-2 bg-emerald-700 px-5 text-white hover:bg-emerald-800">
-                  File the late years — {formatPrice(TIERS.standard.priceCents)}
+                  {t("s024")}{money(TIERS.standard.priceCents)}
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
@@ -357,21 +359,20 @@ export function PenaltyCalculator({ embedded = false, siteUrl = "" }: PenaltyCal
 
             <div className="mt-5 border-t border-slate-100 pt-5">
               <p className="text-xs leading-relaxed text-slate-500">
-                Statutory exposure under IRC §6038A(d), not a prediction of what
-                the IRS will assess.{" "}
+                {t("s025")}{" "}
                 <a
-                  href={embedded ? `${siteUrl}/form-5472-penalty-calculator#how-we-calculate` : "#how-we-calculate"}
+                  href={localizedPath(locale, embedded ? `${siteUrl}/form-5472-penalty-calculator#how-we-calculate` : "#how-we-calculate")}
                   {...linkTarget}
                   className="font-medium text-accent underline underline-offset-4 hover:no-underline"
                 >
-                  How we calculate this
+                  {t("s026")}
                 </a>
               </p>
               <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs">
                 {RESULT_SOURCES.map((id) => (
                   <li key={id} className="min-w-0">
                     <a
-                      href={SOURCES[id].url}
+                      href={localizedPath(locale, SOURCES[id].url)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="break-words font-medium text-accent hover:underline"

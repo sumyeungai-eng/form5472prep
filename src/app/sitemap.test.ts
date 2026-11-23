@@ -7,6 +7,11 @@ vi.mock("@/lib/blog", () => ({
   slugify: (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, ""),
 }));
 
+const gate = vi.hoisted(() => ({ enabled: false }));
+vi.mock("@/i18n/marketing/config", async (original) => {
+  const actual = await original<typeof import("@/i18n/marketing/config")>();
+  return { ...actual, get MARKETING_LOCALES_INDEXABLE() { return gate.enabled; }, marketingLanguageAlternates: (path: string) => gate.enabled ? { en: "https://www.form5472prep.com" + path, de: "https://www.form5472prep.com" + actual.localizedPath("de", path), "zh-Hans": "https://www.form5472prep.com" + actual.localizedPath("zh-Hans", path), "x-default": "https://www.form5472prep.com" + path } : undefined };
+});
 import sitemap from "./sitemap";
 
 const fakePosts = (tag: string, n: number) =>
@@ -54,5 +59,22 @@ describe("sitemap country hub", () => {
     const row = (await sitemap()).find((r) => new URL(r.url).pathname === "/form-5472-by-country");
     expect(row).toBeDefined();
     expect(new Date(row!.lastModified as Date | string).toISOString().slice(0, 10)).toBe("2026-09-18");
+  });
+});
+
+describe("marketing indexing gate", () => {
+  it.each([false, true])("indexable=%s", async (enabled) => {
+    gate.enabled = enabled;
+    try {
+      getAllPosts.mockResolvedValue([]);
+      const rows = await sitemap();
+      const translated = rows.filter(row => /^\/(de|zh-hans)(\/|$)/.test(new URL(row.url).pathname));
+      expect(translated).toHaveLength(enabled ? 10 : 0);
+      for (const path of ["/", "/pricing", "/services", "/faq", "/form-5472-penalty-calculator"]) {
+        const row = rows.find(row => new URL(row.url).pathname === path)!;
+        expect(!!row.alternates?.languages).toBe(enabled);
+      }
+      for (const row of translated) expect(Object.keys(row.alternates!.languages!)).toEqual(["en", "de", "zh-Hans", "x-default"]);
+    } finally { gate.enabled = false; }
   });
 });
