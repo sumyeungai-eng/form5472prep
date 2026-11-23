@@ -17,7 +17,7 @@ export default function DataRetentionPage() {
     <LegalLayout title="Data Retention Policy" lastUpdated="2026-11-24">
       <h2>Our principle</h2>
       <p>
-        We keep the data needed to prepare, file and support your filing, and delete it when you ask. Uploaded bank statement files
+        We keep the data needed to prepare, file and support your filing, and delete it when you ask, except records we are required to keep, such as payment records. Uploaded bank statement files
         and the transactions taken from them are stored with your filing records. Your signed forms,
         the exact PDF we fax to the IRS, and the fax receipt are kept in your account for
         up to 7 years; we delete them sooner if you ask.
