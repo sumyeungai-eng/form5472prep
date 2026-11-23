@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { DependencyList, MouseEvent, MutableRefObject } from "react";
+import type { DependencyList, FocusEvent, MouseEvent, MutableRefObject } from "react";
 import { jsx, jsxs } from "react/jsx-runtime";
 import { jsxDEV } from "react/jsx-dev-runtime";
 import { renderToStaticMarkup } from "react-dom/server";
@@ -12,7 +12,9 @@ const navigation = vi.hoisted(() => ({ pathname: "/" as string | null }));
 const hooks = vi.hoisted(() => ({
   enabled: false,
   open: false,
-  effects: [] as Array<() => void | (() => void)>,
+  effectIndex: 0,
+  effects: [] as Array<{ deps?: DependencyList; cleanup?: () => void }>,
+  pendingEffects: [] as Array<{ index: number; effect: () => void | (() => void); deps?: DependencyList }>,
 }));
 vi.mock("next/navigation", () => ({ usePathname: () => navigation.pathname }));
 vi.mock("react", async original => {
@@ -25,8 +27,13 @@ vi.mock("react", async original => {
       }]
       : react.useState(initial),
     useEffect: (effect: () => void | (() => void), deps?: DependencyList) => {
-      if (hooks.enabled) hooks.effects.push(effect);
-      else react.useEffect(effect, deps);
+      if (!hooks.enabled) return react.useEffect(effect, deps);
+      const index = hooks.effectIndex++;
+      const previous = hooks.effects[index];
+      if (!previous || !deps || !previous.deps || deps.length !== previous.deps.length
+        || deps.some((dep, i) => !Object.is(dep, previous.deps![i]))) {
+        hooks.pendingEffects.push({ index, effect, deps: deps?.slice() });
+      }
     },
   };
 });
@@ -40,10 +47,10 @@ vi.mock("react/jsx-dev-runtime", async original => {
   return { ...runtime, jsxDEV: vi.fn(runtime.jsxDEV) };
 });
 
-let cleanups: Array<() => void> = [];
 function cleanupEffects() {
-  cleanups.forEach(cleanup => cleanup());
-  cleanups = [];
+  hooks.effects.forEach(({ cleanup }) => cleanup?.());
+  hooks.effects = [];
+  hooks.pendingEffects = [];
 }
 afterEach(() => {
   cleanupEffects();
@@ -51,7 +58,7 @@ afterEach(() => {
   vi.clearAllMocks();
   hooks.enabled = false;
   hooks.open = false;
-  hooks.effects = [];
+  hooks.effectIndex = 0;
   navigation.pathname = "/";
 });
 
@@ -75,17 +82,27 @@ function interactionHarness() {
   vi.stubGlobal("Node", TestNode);
   const inside = new TestNode();
   const focus = vi.fn();
+  const wrapperNode = { contains: (target: unknown) => target === inside };
   function render() {
-    cleanupEffects();
-    vi.mocked(jsx).mockClear();
-    vi.mocked(jsxs).mockClear();
-    vi.mocked(jsxDEV).mockClear();
-    const html = renderToStaticMarkup(<LanguageMenu />);
-    const trigger = hostProps("button")[0];
-    const wrapper = hostProps("div").find(props => props.className === "relative")!;
-    (trigger.ref as MutableRefObject<unknown>).current = { focus };
-    (wrapper.ref as MutableRefObject<unknown>).current = { contains: (target: unknown) => target === inside };
-    cleanups = hooks.effects.splice(0).map(effect => effect()).filter((cleanup): cleanup is () => void => typeof cleanup === "function");
+    let html: string;
+    let renderedOpen: boolean;
+    do {
+      renderedOpen = hooks.open;
+      hooks.effectIndex = 0;
+      vi.mocked(jsx).mockClear();
+      vi.mocked(jsxs).mockClear();
+      vi.mocked(jsxDEV).mockClear();
+      html = renderToStaticMarkup(<LanguageMenu />);
+      const trigger = hostProps("button")[0];
+      const wrapper = hostProps("div").find(props => props.className === "relative");
+      if (trigger) (trigger.ref as MutableRefObject<unknown>).current = { focus };
+      if (wrapper) (wrapper.ref as MutableRefObject<unknown>).current = wrapperNode;
+      for (const { index, effect, deps } of hooks.pendingEffects.splice(0)) {
+        hooks.effects[index]?.cleanup?.();
+        const cleanup = effect();
+        hooks.effects[index] = { deps, cleanup: typeof cleanup === "function" ? cleanup : undefined };
+      }
+    } while (hooks.open !== renderedOpen);
     return html;
   }
   function clickTrigger() {
@@ -96,7 +113,13 @@ function interactionHarness() {
     listeners.get(type)?.(event as Event);
     return render();
   }
-  return { render, clickTrigger, dispatch, listeners, document, focus, inside, outside: new TestNode() };
+  function blur(relatedTarget: unknown) {
+    hostProps("div").find(props => props.className === "relative")!.onBlur!({
+      currentTarget: wrapperNode, relatedTarget,
+    } as FocusEvent<HTMLDivElement>);
+    return render();
+  }
+  return { render, clickTrigger, dispatch, blur, listeners, document, focus, inside, outside: new TestNode() };
 }
 
 describe("marketing language menu", () => {
@@ -113,15 +136,18 @@ describe("marketing language menu", () => {
   });
   it("includes all language links in the closed SSR panel", () => {
     const html = renderToStaticMarkup(<LanguageMenu label="Choose language" />);
-    expect(html).toContain('aria-label="Choose language"');
-    expect(html).toContain('aria-haspopup="true"');
+    expect(html).toContain('aria-label="Choose language: English"');
+    expect(html).not.toContain('aria-haspopup');
+    const panelId = hostProps("div").find(props => props.id)?.id;
+    expect(panelId).toBeTruthy();
+    expect(hostProps("button")[0]["aria-controls"]).toBe(panelId);
     expect(html).toContain('aria-expanded="false"');
     expect(html).toContain('shadow-lg hidden');
     expect(hostProps("a").map(props => [props.children, props.hrefLang, props.lang])).toEqual([
       ["English", "en", "en"], ["简体中文", "zh-Hans", "zh-Hans"], ["Deutsch", "de", "de"],
     ]);
   });
-  it.each([["en", "EN"], ["de", "DE"], ["zh-Hans", "中文"]] as const)("marks %s as the current language", (locale, shortLabel) => {
+  it.each([["en", "EN", "English"], ["de", "DE", "Deutsch"], ["zh-Hans", "中文", "简体中文"]] as const)("marks %s as the current language", (locale, shortLabel, currentName) => {
     navigation.pathname = localizedPath(locale, "/pricing");
     const html = renderToStaticMarkup(<LanguageMenu />);
     const current = hostProps("a").filter(props => props["aria-current"] === "true");
@@ -129,6 +155,7 @@ describe("marketing language menu", () => {
     expect(current[0].lang).toBe(locale);
     expect(current[0].className).toContain("font-medium");
     expect(html).toContain(`<span class="hidden sm:inline">${shortLabel}</span>`);
+    expect(hostProps("button")[0]["aria-label"]).toBe(`Language: ${currentName}`);
   });
   it("falls back to English when the pathname is unavailable", () => {
     navigation.pathname = null;
@@ -177,6 +204,56 @@ describe("marketing language menu", () => {
     expect(menu.focus).not.toHaveBeenCalled();
     expect(menu.dispatch("keydown", { key: "Escape" })).toContain('aria-expanded="false"');
     expect(menu.focus).toHaveBeenCalledOnce();
+    expect(menu.listeners.size).toBe(0);
+  });
+  it("attaches document listeners only while open and preserves them when deps are unchanged", () => {
+    const menu = interactionHarness();
+    menu.render();
+    menu.render();
+    expect(menu.document.addEventListener).not.toHaveBeenCalled();
+    expect(menu.document.removeEventListener).not.toHaveBeenCalled();
+    menu.clickTrigger();
+    const mouseListener = menu.listeners.get("mousedown");
+    const keyListener = menu.listeners.get("keydown");
+    expect(mouseListener).toBeTypeOf("function");
+    expect(keyListener).toBeTypeOf("function");
+    menu.render();
+    expect(menu.document.addEventListener).toHaveBeenCalledTimes(2);
+    expect(menu.document.removeEventListener).not.toHaveBeenCalled();
+    menu.clickTrigger();
+    expect(menu.document.removeEventListener).toHaveBeenCalledTimes(2);
+    expect(menu.document.removeEventListener).toHaveBeenCalledWith("mousedown", mouseListener);
+    expect(menu.document.removeEventListener).toHaveBeenCalledWith("keydown", keyListener);
+    expect(menu.listeners.size).toBe(0);
+    menu.render();
+    expect(menu.document.removeEventListener).toHaveBeenCalledTimes(2);
+    menu.clickTrigger();
+    expect(menu.document.addEventListener).toHaveBeenCalledTimes(4);
+  });
+  it.each(["/pricing", "/de", "/blog"])("closes an open menu when the pathname changes to %s", pathname => {
+    const menu = interactionHarness();
+    menu.render();
+    menu.clickTrigger();
+    navigation.pathname = pathname;
+    const html = menu.render();
+    expect(hooks.open).toBe(false);
+    expect(menu.listeners.size).toBe(0);
+    if (pathname === "/blog") expect(html).toBe("");
+    else expect(html).toContain('aria-expanded="false"');
+  });
+  it("keeps the menu open when focus moves to a link inside", () => {
+    const menu = interactionHarness();
+    menu.render();
+    menu.clickTrigger();
+    expect(hostProps("a")).toHaveLength(3);
+    expect(menu.blur(menu.inside)).toContain('aria-expanded="true"');
+    expect(menu.listeners.size).toBe(2);
+  });
+  it.each(["outside", "null"] as const)("closes when focus moves to %s", target => {
+    const menu = interactionHarness();
+    menu.render();
+    menu.clickTrigger();
+    expect(menu.blur(target === "outside" ? menu.outside : null)).toContain('aria-expanded="false"');
     expect(menu.listeners.size).toBe(0);
   });
   it("closes only on outside mousedown and cleans up listeners on unmount", () => {

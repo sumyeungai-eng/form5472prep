@@ -48,7 +48,7 @@ describe.each([false, true])("real marketing indexing gate: %s", enabled => {
       state.pathname = path;
       const html = renderToStaticMarkup(<MarketingChrome><p>Content</p></MarketingChrome>);
       const supported = LOCALIZED_MARKETING_PATHS.some(localized => localized === path);
-      expect(html.includes('aria-label="Language"'), path).toBe(enabled && supported);
+      expect(html.includes('aria-label="Language: '), path).toBe(enabled && supported);
       expect(html.includes('hrefLang="de"'), path).toBe(enabled && supported);
     }
   });
