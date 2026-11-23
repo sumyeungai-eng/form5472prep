@@ -53,8 +53,9 @@ export function LanguageMenu({ label = "Language" }: { label?: string }) {
     <div
       ref={wrapperRef}
       className="relative"
+      // Safari on Mac can blur with a null target before a link click; outside clicks use mousedown.
       onBlur={event => {
-        if (!(event.relatedTarget instanceof Node) || !event.currentTarget.contains(event.relatedTarget)) {
+        if (event.relatedTarget instanceof Node && !event.currentTarget.contains(event.relatedTarget)) {
           setOpen(false);
         }
       }}

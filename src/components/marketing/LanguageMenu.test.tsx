@@ -249,11 +249,18 @@ describe("marketing language menu", () => {
     expect(menu.blur(menu.inside)).toContain('aria-expanded="true"');
     expect(menu.listeners.size).toBe(2);
   });
-  it.each(["outside", "null"] as const)("closes when focus moves to %s", target => {
+  it("keeps the menu open when blur has a null relatedTarget", () => {
     const menu = interactionHarness();
     menu.render();
     menu.clickTrigger();
-    expect(menu.blur(target === "outside" ? menu.outside : null)).toContain('aria-expanded="false"');
+    expect(menu.blur(null)).toContain('aria-expanded="true"');
+    expect(menu.listeners.size).toBe(2);
+  });
+  it("closes when focus moves to an outside node", () => {
+    const menu = interactionHarness();
+    menu.render();
+    menu.clickTrigger();
+    expect(menu.blur(menu.outside)).toContain('aria-expanded="false"');
     expect(menu.listeners.size).toBe(0);
   });
   it("closes only on outside mousedown and cleans up listeners on unmount", () => {
