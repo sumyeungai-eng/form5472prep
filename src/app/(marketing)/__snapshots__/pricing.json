@@ -1,0 +1,34 @@
+{
+  "title": "Pricing for Form 5472 Filing",
+  "description": "Pricing for Form 5472 + pro forma 1120 filing: Standard $149 ready in 5-7 business days, Express $199 ready to sign in under 3 days, IRS fax included.",
+  "alternates": {
+    "canonical": "http://localhost:3000/pricing",
+    "types": {
+      "application/rss+xml": "http://localhost:3000/feed.xml"
+    }
+  },
+  "openGraph": {
+    "type": "website",
+    "siteName": "Form5472 Prep",
+    "locale": "en_US",
+    "title": "Pricing — Form 5472 Filing for Foreign-Owned LLCs",
+    "description": "Pricing for Form 5472 + pro forma 1120 filing: Standard $149 ready in 5-7 business days, Express $199 ready to sign in under 3 days, IRS fax included.",
+    "url": "http://localhost:3000/pricing",
+    "images": [
+      {
+        "url": "http://localhost:3000/opengraph-image",
+        "width": 1200,
+        "height": 630,
+        "alt": "Form5472 Prep"
+      }
+    ]
+  },
+  "twitter": {
+    "card": "summary_large_image",
+    "title": "Pricing — Form 5472 Filing for Foreign-Owned LLCs",
+    "description": "Pricing for Form 5472 + pro forma 1120 filing: Standard $149 ready in 5-7 business days, Express $199 ready to sign in under 3 days, IRS fax included.",
+    "images": [
+      "http://localhost:3000/opengraph-image"
+    ]
+  }
+}

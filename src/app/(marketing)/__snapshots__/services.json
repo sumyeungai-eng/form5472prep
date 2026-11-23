@@ -1,0 +1,40 @@
+{
+  "title": {
+    "absolute": "Form 5472 Services by Situation | Form5472 Prep"
+  },
+  "description": "Form 5472 services by situation for foreign-owned US LLCs: annual, late, dormant and final-year filings, IRS fax delivery, partner filing, EIN and ITIN.",
+  "alternates": {
+    "canonical": "http://localhost:3000/services",
+    "types": {
+      "application/rss+xml": "http://localhost:3000/feed.xml"
+    }
+  },
+  "openGraph": {
+    "type": "website",
+    "siteName": "Form5472 Prep",
+    "locale": "en_US",
+    "title": "Form 5472 Services by Situation | Form5472 Prep",
+    "description": "Form 5472 and pro forma Form 1120 filing services for foreign-owned US single-member LLCs: annual filings, late (DIIRSP) catch-up filings with reasonable-cause statements, dormant-LLC and final-year filings for dissolved LLCs, IRS Ogden PIN Unit fax delivery with timestamped receipts, white-label filing for formation and registered agents, plus EIN and ITIN application support.",
+    "url": "http://localhost:3000/services",
+    "images": [
+      {
+        "url": "http://localhost:3000/opengraph-image",
+        "width": 1200,
+        "height": 630,
+        "alt": "Form5472 Prep"
+      }
+    ]
+  },
+  "twitter": {
+    "card": "summary_large_image",
+    "title": "Form 5472 Services by Situation | Form5472 Prep",
+    "description": "Form 5472 and pro forma Form 1120 filing services for foreign-owned US single-member LLCs: annual filings, late (DIIRSP) catch-up filings with reasonable-cause statements, dormant-LLC and final-year filings for dissolved LLCs, IRS Ogden PIN Unit fax delivery with timestamped receipts, white-label filing for formation and registered agents, plus EIN and ITIN application support.",
+    "images": [
+      "http://localhost:3000/opengraph-image"
+    ]
+  },
+  "robots": {
+    "index": true,
+    "follow": true
+  }
+}

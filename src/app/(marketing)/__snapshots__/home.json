@@ -1,0 +1,36 @@
+{
+  "title": {
+    "absolute": "File IRS Form 5472 + Pro Forma 1120 — Form5472 Prep"
+  },
+  "description": "Form 5472 and pro forma 1120 filing for a foreign-owned US LLC, from $149. Prepared, reviewed, and filed by fax to the IRS Ogden PIN Unit.",
+  "alternates": {
+    "canonical": "http://localhost:3000/",
+    "types": {
+      "application/rss+xml": "http://localhost:3000/feed.xml"
+    }
+  },
+  "openGraph": {
+    "type": "website",
+    "siteName": "Form5472 Prep",
+    "locale": "en_US",
+    "title": "File IRS Form 5472 + Pro Forma 1120 — Form5472 Prep",
+    "description": "Form 5472 and pro forma 1120 filing for a foreign-owned US LLC, from $149. Prepared, reviewed, and filed by fax to the IRS Ogden PIN Unit.",
+    "url": "http://localhost:3000/",
+    "images": [
+      {
+        "url": "http://localhost:3000/opengraph-image",
+        "width": 1200,
+        "height": 630,
+        "alt": "Form5472 Prep"
+      }
+    ]
+  },
+  "twitter": {
+    "card": "summary_large_image",
+    "title": "File IRS Form 5472 + Pro Forma 1120 — Form5472 Prep",
+    "description": "For foreign-owned US single-member LLCs. We prepare, you sign once, we fax to the IRS. From $149, or $199 for express, ready to sign in under 3 days.",
+    "images": [
+      "/opengraph-image"
+    ]
+  }
+}

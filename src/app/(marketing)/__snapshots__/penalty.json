@@ -1,0 +1,40 @@
+{
+  "title": {
+    "absolute": "Form 5472 Penalty Calculator — What Late Filing Costs"
+  },
+  "description": "Estimate Form 5472 late-filing exposure, see IRS penalty citations, and review the DIIRSP reasonable-cause path for catching up.",
+  "alternates": {
+    "canonical": "http://localhost:3000/form-5472-penalty-calculator",
+    "types": {
+      "application/rss+xml": "http://localhost:3000/feed.xml"
+    }
+  },
+  "openGraph": {
+    "type": "website",
+    "siteName": "Form5472 Prep",
+    "locale": "en_US",
+    "title": "Form 5472 Penalty Calculator — What Late Filing Costs",
+    "description": "Estimate Form 5472 late-filing exposure, see IRS penalty citations, and review the DIIRSP reasonable-cause path for catching up.",
+    "url": "http://localhost:3000/form-5472-penalty-calculator",
+    "images": [
+      {
+        "url": "http://localhost:3000/opengraph-image",
+        "width": 1200,
+        "height": 630,
+        "alt": "Form5472 Prep"
+      }
+    ]
+  },
+  "twitter": {
+    "card": "summary_large_image",
+    "title": "Form 5472 Penalty Calculator — What Late Filing Costs",
+    "description": "Estimate Form 5472 late-filing exposure, see IRS penalty citations, and review the DIIRSP reasonable-cause path for catching up.",
+    "images": [
+      "http://localhost:3000/opengraph-image"
+    ]
+  },
+  "robots": {
+    "index": true,
+    "follow": true
+  }
+}
