@@ -574,7 +574,7 @@
       },
       "irs-notice-help": {
         "q": "I've received an IRS penalty notice — can you still help?",
-        "a": "Not with the penalty itself. We handle preventative late filings, made before the IRS sends a penalty notice. If you have already received a CP 215 notice or a §6038A penalty letter, contact a tax attorney or enrolled agent who handles international information return penalties. Separately, if an error in our own preparation ever causes a penalty, we handle the IRS response at no charge.",
+        "a": "No. We handle preventative late filings, made before the IRS sends a penalty notice. If you have already received a CP 215 notice or a §6038A penalty letter, contact a tax attorney or enrolled agent who handles international information return penalties. Separately, if an error in our own preparation ever causes a penalty, we handle the IRS response at no charge.",
         "learnMore": "Contact support"
       },
       "ein-needed-for-form-5472": {
@@ -773,7 +773,7 @@
     "s014": "Form 5472 penalty calculator",
     "s015": "Free tool",
     "s016": "Form 5472 penalty calculator.",
-    "s017": "The IRS can assess {amount1} per Form 5472, per year, often automatically when a late return is processed, and another {amount2} per {days1} days once {days2} days pass after a notice.",
+    "s017": "The IRS can assess {amount1} per Form 5472, per year, including systemically when a late return is processed, and another {amount2} per {days1} days once {days2} days pass after a notice.",
     "s018": "Use this as a statutory exposure estimate, then compare it with the ordinary catch-up route: file the missing Form 5472 package and include a reasonable-cause statement under DIIRSP. How relief works is in our guide to the",
     "s019": "IRS penalty for late filing of Form 5472",
     "s020": "Calm next step",
@@ -781,7 +781,7 @@
     "s022": "The number below is not a prediction. It is a statutory framework calculator paired with the IRS's route for filing late information returns.",
     "s023": "File the late years — ",
     "s024": "What is the initial penalty?",
-    "s025": "The initial penalty is {value1} per Form 5472, per year. We use it as a statutory exposure estimate because the IRS can assess it when required Form 5472 information is late, missing, or substantially incomplete (often automatically when a late return is processed), before you compare the number with the ordinary catch-up route.",
+    "s025": "The initial penalty is {value1} per Form 5472, per year. We use it as a statutory exposure estimate because the IRS can assess it when required Form 5472 information is late, missing, or substantially incomplete (including systemically when a late return is processed), before you compare the number with the ordinary catch-up route.",
     "s026": "What happens after a notice?",
     "s027": "After an IRS notice, there is a {value1}-day correction period. If the filing is still not fixed after that window, the statute adds {value2} for each {periodDays}-day period or part of one, so we treat the notice timeline separately from the initial per-form, per-year penalty estimate.",
     "s028": "What are common triggers?",

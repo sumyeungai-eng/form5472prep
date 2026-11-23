@@ -2,7 +2,7 @@
 title: "How to Correct a Mistake on a Filed Form 5472"
 description: "Found an error after filing Form 5472? Review corrected-package considerations, amendment labelling, supporting records and the limits of current instructions."
 date: 2026-08-15
-updated: 2026-09-11
+updated: 2026-11-24
 author: "Form5472 Prep"
 tags: ["form-5472", "amended-return", "correction", "penalty", "foreign-owned-llc"]
 draft: false

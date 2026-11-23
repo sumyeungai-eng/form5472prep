@@ -2,7 +2,7 @@
 title: "Form 5472 Extension: How to Get More Time (Form 7004)"
 description: "Request a Form 5472 extension with Form 7004 by the regular due date. Learn the foreign-owned disregarded LLC route, timing and pending-EIN limits."
 date: 2026-07-05
-updated: 2026-09-11
+updated: 2026-11-24
 author: "Form5472 Prep"
 tags: ["form-5472", "form-7004", "extension", "deadline", "foreign-owned-llc"]
 draft: false

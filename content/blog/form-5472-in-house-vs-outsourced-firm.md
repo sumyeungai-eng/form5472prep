@@ -2,7 +2,7 @@
 title: "Form 5472 In-House or Outsourced: How Firms Should Decide"
 description: "A firm's build-or-buy decision on Form 5472: side-by-side comparison, the true in-house cost lines, and a five-question test that resolves either way."
 date: 2026-09-18
-updated: 2026-09-18
+updated: 2026-11-24
 author: "Form5472 Prep"
 tags: ["partner-program", "form-5472", "accounting-firms", "outsourcing"]
 draft: false

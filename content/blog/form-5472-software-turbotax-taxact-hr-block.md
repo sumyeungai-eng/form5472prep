@@ -4,7 +4,7 @@ seoTitle: "Form 5472 Software: TurboTax, TaxAct, H&R Block"
 description: "What TurboTax, TaxAct and H&R Block's own sites say about Form 5472 (checked 7 Oct 2026), and why a foreign-owned LLC's package cannot be e-filed anyway."
 date: 2026-10-14
 publishAt: "2026-10-14T09:00:00+01:00"
-updated: 2026-10-07
+updated: 2026-11-24
 author: "Form5472 Prep"
 tags: ["form-5472", "tax-software", "e-file", "diy", "foreign-owned-llc"]
 draft: false

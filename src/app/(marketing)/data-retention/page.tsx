@@ -17,9 +17,7 @@ export default function DataRetentionPage() {
     <LegalLayout title="Data Retention Policy" lastUpdated="2026-11-24">
       <h2>Our principle</h2>
       <p>
-        We retain the minimum amount of data needed to (a) prove that your IRS filing was
-        transmitted, (b) reproduce next year&apos;s filing without you re-entering everything,
-        and (c) meet our own records-retention obligations. Uploaded bank statement files
+        We keep the data needed to prepare, file and support your filing, and delete it when you ask. Uploaded bank statement files
         and the transactions taken from them are stored with your filing records. Your signed forms,
         the exact PDF we fax to the IRS, and the fax receipt are kept in your account for
         up to 7 years; we delete them sooner if you ask.
@@ -90,11 +88,6 @@ export default function DataRetentionPage() {
             <td>Generated unsigned PDFs</td>
             <td>Kept with your filing records; deleted on request</td>
             <td>Saved for staff review and release; downloading does not delete the PDF</td>
-          </tr>
-          <tr>
-            <td>Fax transmission receipts</td>
-            <td>7 years from filing date</td>
-            <td>Proof of filing; matches IRS records retention (26 CFR section 1.6001-1)</td>
           </tr>
           <tr>
             <td>Records of what was signed and when, including consent version</td>

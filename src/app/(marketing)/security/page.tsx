@@ -132,8 +132,10 @@ export default function SecurityPage() {
         <li>Managed PostgreSQL database</li>
       </ul>
       <p>
-        We do not share customer data with any third party other than for the purpose of
-        completing the customer&apos;s filing or processing their payment.
+        We do not sell your data. We share limited hashed identifiers with advertising
+        partners to measure ads as described in our <a href="/privacy">Privacy Policy</a>;
+        we share a one-way hash of your email address with Meta only if you allow Meta
+        advertising cookies.
       </p>
 
       <h2>6. Payment handling</h2>
@@ -149,7 +151,7 @@ export default function SecurityPage() {
         automatically after import. Transactions are fetched for review; only rows the
         customer confirms are saved with the filing. Kept with your filing records; deleted
         on request. Customers may request deletion of their
-        account and data at any time via the customer portal or by emailing{" "}
+        account and data at any time by emailing{" "}
         <a href="mailto:support@form5472prep.com">support@form5472prep.com</a>.
       </p>
 

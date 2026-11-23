@@ -176,13 +176,13 @@ HOW THE FLOW WORKS
    totals, reportable transactions.
 2. They pay via Stripe Checkout.
 3. We generate the PDF in the portal.
-4. The owner draws their signature once in the browser (no print/scan/upload).
-   We place it on the pro forma Form 1120. Form 5472 has no taxpayer signature
-   block, and we never sign for the owner.
-5. ACCOUNTANT REVIEW — a PTIN-holding tax accountant on our team reviews the completed
-   package end-to-end before anything is faxed. Nothing goes to the IRS
+4. ACCOUNTANT REVIEW — a PTIN-holding tax accountant on our team reviews the completed
+   package end-to-end before the customer reads and signs it. Nothing goes to the IRS
    on autopilot.
-6. If they chose fax delivery, we fax it to the IRS Ogden PIN Unit and
+5. The owner reads the reviewed package, then draws their signature once in the browser
+   (no print/scan/upload). We place it in the pro forma Form 1120 signature box.
+   Form 5472 has no taxpayer signature block, and we never sign for the owner.
+6. After they sign, if they chose fax delivery, we fax it to the IRS Ogden PIN Unit and
    save a timestamped IRS Fax Transmission Receipt in their portal: proof of
    when the package reached the IRS fax line, not an IRS acceptance (and not
    proof of on-time filing for a late return). If self-fax, they fax it themselves.

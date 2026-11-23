@@ -574,7 +574,7 @@
       },
       "irs-notice-help": {
         "q": "Ich habe einen Bußgeldbescheid vom IRS erhalten — können Sie mir noch helfen?",
-        "a": "Nicht beim Bußgeld selbst. Wir kümmern uns um vorsorgliche verspätete Einreichungen, bevor der IRS einen Bußgeldbescheid versendet. Wenn Sie bereits einen CP 215-Bescheid oder ein §6038A-Bußgeldschreiben erhalten haben, wenden Sie sich an einen Steueranwalt oder Enrolled Agent, der Bußgelder im Zusammenhang mit internationalen Informationsmeldungen bearbeitet. Unabhängig davon übernehmen wir die Antwort an den IRS kostenlos, falls ein Fehler bei unserer eigenen Vorbereitung jemals ein Bußgeld verursacht.",
+        "a": "Nein. Wir kümmern uns um vorsorgliche verspätete Einreichungen, bevor der IRS einen Bußgeldbescheid versendet. Wenn Sie bereits einen CP 215-Bescheid oder ein §6038A-Bußgeldschreiben erhalten haben, wenden Sie sich an einen Steueranwalt oder Enrolled Agent, der Bußgelder im Zusammenhang mit internationalen Informationsmeldungen bearbeitet. Unabhängig davon übernehmen wir die Antwort an den IRS kostenlos, falls ein Fehler bei unserer eigenen Vorbereitung jemals ein Bußgeld verursacht.",
         "learnMore": "Support kontaktieren"
       },
       "ein-needed-for-form-5472": {
@@ -773,7 +773,7 @@
     "s014": "Form 5472 Bußgeldrechner",
     "s015": "Kostenloses Tool",
     "s016": "Form 5472 Bußgeldrechner.",
-    "s017": "Der IRS kann je Form 5472 und Jahr {amount1} festsetzen, oft automatisch bei Bearbeitung einer verspäteten Erklärung. Nach Ablauf von {days2} Tagen seit einem Bescheid können weitere {amount2} je {days1} Tage hinzukommen.",
+    "s017": "Der IRS kann je Form 5472 und Jahr ein Bußgeld von {amount1} festsetzen, auch automatisch bei Bearbeitung einer verspäteten Erklärung. Nach Ablauf von {days2} Tagen seit einem Bescheid können weitere {amount2} je {days1} Tage hinzukommen.",
     "s018": "Nutzen Sie dies als Schätzung des gesetzlichen Risikos und vergleichen Sie dann den üblichen Weg: fehlendes Form-5472-Paket mit DIIRSP-Begründung nachreichen. Informationen zum Erlass finden Sie im Ratgeber zum",
     "s019": "IRS-Bußgeld bei verspäteter Form 5472",
     "s020": "Nächster Schritt mit Ruhe",
@@ -781,7 +781,7 @@
     "s022": "Die Zahl unten ist keine Vorhersage. Der Rechner bildet den gesetzlichen Rahmen ab und erklärt den IRS-Weg für verspätete Informationserklärungen.",
     "s023": "Versäumte Jahre nachreichen — ",
     "s024": "Wie hoch ist das anfängliche Bußgeld?",
-    "s025": "Das anfängliche Bußgeld beträgt {value1} je Form 5472 und Jahr. Es dient hier als Risikoschätzung, da der IRS bei verspäteten, fehlenden oder wesentlich unvollständigen Angaben ein Bußgeld festsetzen kann, oft automatisch bei Verarbeitung einer verspäteten Erklärung. Vergleichen Sie dies mit dem üblichen Nachreichungsweg.",
+    "s025": "Das anfängliche Bußgeld beträgt {value1} je Form 5472 und Jahr. Es dient hier als Risikoschätzung, da der IRS bei verspäteten, fehlenden oder wesentlich unvollständigen Angaben ein Bußgeld festsetzen kann, auch automatisch bei Verarbeitung einer verspäteten Erklärung. Vergleichen Sie dies mit dem üblichen Nachreichungsweg.",
     "s026": "Was geschieht nach einem Bescheid?",
     "s027": "Nach einem IRS-Bescheid gilt eine Korrekturfrist von {value1} Tagen. Ist danach weiterhin nicht korrigiert, kommen gesetzlich {value2} je begonnenem Zeitraum von {periodDays} Tagen hinzu. Deshalb wird die Bescheidfrist getrennt vom anfänglichen Bußgeld je Formular und Jahr berechnet.",
     "s028": "Was sind häufige Auslöser?",

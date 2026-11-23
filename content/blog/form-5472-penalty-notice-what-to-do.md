@@ -2,7 +2,7 @@
 title: "I Got a $25,000 Form 5472 Penalty Notice — Now What?"
 description: "Got a $25,000 Form 5472 penalty notice? Here's what CP215 means, why a reasonable-cause letter gets ignored, and how to respond before the deadline."
 date: 2026-08-15
-updated: 2026-09-05
+updated: 2026-11-24
 author: "Form5472 Prep"
 tags: ["form-5472", "penalty", "diirsp", "reasonable-cause", "foreign-owned-llc"]
 draft: false
@@ -12,7 +12,7 @@ draft: false
 
 The notice usually arrives as a **CP215, "Notice of Civil Penalty Charge."** It names your LLC, cites a tax year, and shows a $25,000 charge with a short response window. It is frightening precisely because it arrives with no warning and no explanation of what you did wrong.
 
-This guide explains what triggered the penalty, why the letter you may have already written did not stop it, and what an effective response actually contains. If you still have unfiled years alongside the penalized one, [we prepare and fax complete Form 5472 packages from {{price.standard}}](/start) — filing the missing years is usually the first step in any abatement request.
+This guide explains what triggered the penalty, why the letter you may have already written did not stop it, and what an effective response actually contains. If you already received a CP 215 notice or §6038A penalty letter, contact a tax attorney or enrolled agent. We only prepare preventative late filings before the IRS sends a penalty notice; we do not appeal or negotiate penalties.
 
 ## What should I do if I get an IRS CP15 notice for Form 5472?
 

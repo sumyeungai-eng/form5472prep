@@ -2,7 +2,7 @@
 title: "What Is IRS Form 5472? A Jargon-Free Guide"
 description: "Form 5472 is an IRS return foreign-owned US LLCs must file yearly, even with zero revenue. See who must file it and what a missed filing actually costs."
 date: 2026-05-19
-updated: 2026-10-11
+updated: 2026-11-24
 author: "Form5472 Prep"
 tags: ["form-5472", "foreign-owned-llc", "getting-started"]
 draft: false
@@ -124,4 +124,4 @@ That's exactly what [Form5472 Prep does](/start) — generates the filled forms,
 
 We are not a CPA firm and do not give tax advice; we prepare and submit the filing package accurately.
 
-Whatever route you take: the worst thing is not filing. $25,000 per year compounds fast.
+Whatever route you take: the worst thing is not filing. $25,000 per missed form per year can add up fast, plus a flat $25,000 for each 30-day period or part of one if the failure continues more than 90 days after the IRS mails notice.

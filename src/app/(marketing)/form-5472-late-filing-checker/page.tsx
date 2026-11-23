@@ -228,8 +228,8 @@ function HowWeDecide() {
         <p>
           The IRS&apos;s list of penalties eligible for First Time Abate doesn&apos;t include
           §6038A(d), and the Internal Revenue Manual names Form 5472 among returns where the waiver
-          isn&apos;t applicable. The manual describes one narrow exception: when the penalty was
-          assessed automatically because Form 5472 was attached to a late-filed Form 1120, relief may
+          isn&apos;t applicable. The manual describes one narrow exception: a penalty can be assessed systemically
+          because Form 5472 was attached to a late-filed Form 1120, and relief may
           follow First Time Abate on that Form 1120 if the prior three periods are clean. The same
           manual section recommends that reasonable cause not be considered for any year until all
           delinquent returns have been filed.

@@ -4,7 +4,7 @@ seoTitle: "Form 5472 Extension vs Filing Late"
 description: "Request a Form 7004 extension on time, or file Form 5472 late on reasonable cause? A worked comparison of the real costs and the $25,000 exposure."
 date: 2026-11-03
 publishAt: "2026-11-03T09:00:00+00:00"
-updated: 2026-10-30
+updated: 2026-11-24
 author: "Form5472 Prep"
 tags: ["form-5472", "form-7004", "extension", "late-filing", "penalty"]
 draft: false

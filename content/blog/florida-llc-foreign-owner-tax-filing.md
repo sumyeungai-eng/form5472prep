@@ -2,7 +2,7 @@
 title: "Florida LLC Filing Checklist for Foreign Owners"
 description: "A foreign-owned Florida LLC may need the Sunbiz annual report and federal Form 5472 with a pro forma 1120. See the 2026 deadlines."
 date: 2026-08-19
-updated: 2026-09-05
+updated: 2026-11-24
 author: "Form5472 Prep"
 tags: ["form-5472", "florida-llc", "foreign-owned-llc", "annual-report"]
 draft: false

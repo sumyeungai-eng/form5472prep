@@ -2,7 +2,7 @@
 title: "Form 5472: How to Fill It Out Part by Part"
 description: "A part-by-part walkthrough of Form 5472 and the pro forma 1120 — which boxes to complete, which to skip, and the errors that trigger the $25,000 penalty."
 date: 2026-08-15
-updated: 2026-11-04
+updated: 2026-11-24
 author: "Form5472 Prep"
 tags: ["form-5472", "filing-guide", "diy", "pro-forma-1120", "foreign-owned-llc"]
 draft: false

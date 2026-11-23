@@ -35,8 +35,8 @@ const CONTACT_FAQS: { q: string; a: string }[] = [
     a: `Yes. We prepare the past years together as a late filing, with one reasonable-cause statement covering every late year. The IRS may still assess penalties, so no one can promise relief. Additional past tax years are ${formatPrice(MULTI_YEAR_ADDON_CENTS)} each.`,
   },
   {
-    q: "I've received an IRS notice — what do you need from me?",
-    a: "For a CP 215 notice or §6038A penalty letter, we can't help with the penalty itself; contact a tax attorney or enrolled agent. For any other IRS letter about a filing we prepared, send us the notice number and tax year. If an error in our own preparation ever causes a penalty, we handle the IRS response at no charge.",
+    q: "I've received an IRS penalty notice — can you still help?",
+    a: "No. For a CP 215 notice or §6038A penalty letter, contact a tax attorney or enrolled agent. For any other IRS letter about a filing we prepared, send us the notice number and tax year. If an error in our own preparation ever causes a penalty, we handle the IRS response at no charge.",
   },
 ];
 
