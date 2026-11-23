@@ -22,6 +22,11 @@ export function getMarketingMessages(locale: MarketingLocale | "en") {
         recover(value, target[key] as Messages, path);
         continue;
       }
+      const translation = target[key];
+      if (value.trim() !== "" && (typeof translation !== "string" || translation.trim() === "")) {
+        target[key] = value;
+        continue;
+      }
       const values: Record<string, number | ((chunks: React.ReactNode) => React.ReactNode)> = {};
       for (const match of Array.from(value.matchAll(/\{(\w+)(?:\}|,)/g))) values[match[1]] = 1;
       for (const match of Array.from(value.matchAll(/<([A-Za-z][\w-]*)>/g))) values[match[1]] = chunks => chunks;
@@ -32,6 +37,11 @@ export function getMarketingMessages(locale: MarketingLocale | "en") {
   }
   recover(en, messages);
   return messages as typeof en;
+}
+// Server callers pass only this recovered namespace across the client boundary.
+export function getCalculatorMessages(locale: MarketingLocale | "en") {
+  const { penalty: { calculator } } = getMarketingMessages(locale);
+  return { penalty: { calculator } };
 }
 export function getMarketingTranslator(locale: MarketingLocale | "en") {
   const messages: Messages = getMarketingMessages(locale);

@@ -1,12 +1,19 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import { readFileSync } from "node:fs";
 import { createTranslator } from "next-intl";
 import en from "./en.json";
 import de from "./de.json";
 import zh from "./zh-Hans.json";
-import { getMarketingMessages, getMarketingTranslator } from "./index";
+import { getCalculatorMessages, getMarketingMessages, getMarketingTranslator } from "./index";
 import { localizedPath, marketingLanguageAlternates } from "./config";
 import { TIERS, STANDARD_TURNAROUND, EXPRESS_TURNAROUND, MULTI_YEAR_ADDON_CENTS } from "@/lib/pricing";
 import { formatPrice } from "@/lib/utils";
+
+// Recovery tests mutate an in-memory clone, leaving the source catalog intact.
+vi.mock("./de.json", async (importOriginal) => {
+  const original = await importOriginal<{ default: typeof de }>();
+  return { default: structuredClone(original.default) };
+});
 
 function flatten(value: object, prefix = ""): Record<string, string> {
   return Object.fromEntries(Object.entries(value).flatMap(([key, item]) => {
@@ -25,6 +32,12 @@ describe("marketing catalog contracts", () => {
     for (const [key, text] of Object.entries(english)) {
       expect(placeholders(translated[key]), key).toEqual(placeholders(text));
       expect(tags(translated[key]), key).toEqual(tags(text));
+    }
+  });
+  it.each([["de", de], ["zh-Hans", zh]] as const)("%s has no blank translations for non-blank English", (_locale, catalog) => {
+    const translated = flatten(catalog);
+    for (const [key, text] of Object.entries(english)) {
+      if (text.trim() !== "") expect(translated[key]?.trim(), key).toBeTruthy();
     }
   });
   it.each([["en", en], ["de", de], ["zh-Hans", zh]] as const)("%s keeps facts out of prose and every message renders", (locale, catalog) => {
@@ -63,8 +76,37 @@ describe("marketing catalog contracts", () => {
     const original = de.penalty.calculator.s001;
     try {
       de.penalty.calculator.s001 = "{invalid";
-      expect(getMarketingMessages("de").penalty.calculator.s001).toBe(en.penalty.calculator.s001);
+      expect(getCalculatorMessages("de").penalty.calculator.s001).toBe(en.penalty.calculator.s001);
     } finally { de.penalty.calculator.s001 = original; }
+  });
+  it.each(["", " \t\n"])("recovers blank translations (%j) before rendering or passing client messages", (blank) => {
+    const originalHome = de.home.s050;
+    const originalCalculator = de.penalty.calculator.s001;
+    try {
+      de.home.s050 = blank;
+      de.penalty.calculator.s001 = blank;
+      expect(getMarketingMessages("de").home.s050).toBe(en.home.s050);
+      expect(getMarketingTranslator("de")("home.s050")).toBe(en.home.s050);
+      expect(getCalculatorMessages("de").penalty.calculator.s001).toBe(en.penalty.calculator.s001);
+    } finally {
+      de.home.s050 = originalHome;
+      de.penalty.calculator.s001 = originalCalculator;
+    }
+  });
+  it.each(["en", "de", "zh-Hans"] as const)("%s sends only the calculator namespace to the client", (locale) => {
+    const messages = getCalculatorMessages(locale);
+    expect(Object.keys(messages)).toEqual(["penalty"]);
+    expect(Object.keys(messages.penalty)).toEqual(["calculator"]);
+    expect(messages.penalty.calculator).toEqual(getMarketingMessages(locale).penalty.calculator);
+  });
+  it("keeps the calculator client free of catalog imports", () => {
+    const source = readFileSync(new URL("../../components/tools/PenaltyCalculator.tsx", import.meta.url), "utf8");
+    const imports = Array.from(source.matchAll(/(?:from\s*|import\s*(?:\(\s*)?|require\s*\(\s*)["']([^"']+)["']/g), match => match[1]);
+    expect(imports).not.toHaveLength(0);
+    for (const path of imports) {
+      expect(path).not.toMatch(/^@\/i18n\/marketing(?:\/index(?:\.ts)?)?$/);
+      expect(path).not.toMatch(/\.json$/);
+    }
   });
   it("localizes only supported routes and leaves the indexing gate closed", () => {
     expect(localizedPath("de", "/")).toBe("/de");

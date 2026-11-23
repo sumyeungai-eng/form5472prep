@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { EmbedShell } from "@/components/embed/EmbedShell";
 import { PenaltyCalculator } from "@/components/tools/PenaltyCalculator";
+import { getCalculatorMessages } from "@/i18n/marketing";
 import { SITE_URL } from "@/lib/seo";
 
 const TOOL_URL = `${SITE_URL}/form-5472-penalty-calculator`;
@@ -17,7 +18,7 @@ export default function EmbedPenaltyCalculatorPage() {
       poweredByHref={TOOL_URL}
       poweredByLabel="Form5472 Prep — Form 5472 penalty calculator"
     >
-      <PenaltyCalculator embedded siteUrl={SITE_URL} />
+      <PenaltyCalculator messages={getCalculatorMessages("en")} embedded siteUrl={SITE_URL} />
     </EmbedShell>
   );
 }

@@ -223,7 +223,16 @@
     "extra1": "average completion",
     "extra2": "filled, not redrawn",
     "extra3": "to Ogden PIN Unit",
-    "extra4": "proof of filing"
+    "extra4": "proof of filing",
+    "absoluteTitle": "File IRS Form 5472 + Pro Forma 1120 — Form5472 Prep",
+    "heroDeliverables": {
+      "forms": "Filled IRS Form 5472 + pro forma 1120",
+      "reasonableCause": "Reasonable cause statement (if late)",
+      "review": "Reviewed by a PTIN-holding tax accountant",
+      "fax": "Faxed to IRS Ogden PIN Unit",
+      "moneyBack": "100% money-back if we fail to submit"
+    },
+    "diirspTag": "If DIIRSP"
   },
   "pricing": {
     "s001": "Pricing for Form 5472 Filing",

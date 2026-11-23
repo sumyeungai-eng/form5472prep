@@ -27,7 +27,7 @@ import {
 } from "@/lib/tools/penalty/sources";
 import { EmbedThisCalculator } from "@/components/embed/EmbedThisCalculator";
 import { PenaltyCalculator } from "@/components/tools/PenaltyCalculator";
-import { getMarketingTranslator, type MarketingTranslator } from "@/i18n/marketing";
+import { getCalculatorMessages, getMarketingTranslator, type MarketingTranslator } from "@/i18n/marketing";
 import { localizedPath, type MarketingLocale } from "@/i18n/marketing/config";
 import { translateData, localizedMetadata, LocalizedJsonLd } from "@/components/marketing/translation";
 
@@ -85,7 +85,7 @@ function createPenalty(locale: "en" | MarketingLocale, t: MarketingTranslator) {
         <PenaltyCalculatorStructuredData />
         <main className="bg-white">
           <Hero />
-          <PenaltyCalculator locale={locale} />
+          <PenaltyCalculator locale={locale} messages={getCalculatorMessages(locale)} />
           <HowPenaltyWorks />
           <HowWeCalculate />
           {locale === "en" && <EmbedThisCalculator

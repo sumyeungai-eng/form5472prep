@@ -223,7 +223,16 @@
     "extra1": "平均完成时间",
     "extra2": "直接填写，无需重绘",
     "extra3": "发送至 Ogden PIN Unit",
-    "extra4": "申报凭证"
+    "extra4": "申报凭证",
+    "absoluteTitle": "申报 IRS Form 5472 + pro forma 1120 — Form5472 Prep",
+    "heroDeliverables": {
+      "forms": "填妥的 IRS Form 5472 + pro forma 1120",
+      "reasonableCause": "合理理由说明（如逾期申报）",
+      "review": "由持有IRS PTIN的税务会计师审核",
+      "fax": "传真至 IRS Ogden PIN Unit",
+      "moneyBack": "如未能提交，提供100%退款承诺"
+    },
+    "diirspTag": "适用 DIIRSP 时"
   },
   "pricing": {
     "s001": "Form 5472 申报价格",

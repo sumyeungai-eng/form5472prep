@@ -223,7 +223,16 @@
     "extra1": "durchschnittlicher Zeitaufwand",
     "extra2": "ausgefüllt, nicht neu gezeichnet",
     "extra3": "an die Ogden PIN Unit",
-    "extra4": "Einreichungsnachweis"
+    "extra4": "Einreichungsnachweis",
+    "absoluteTitle": "IRS Form 5472 + pro forma 1120 einreichen — Form5472 Prep",
+    "heroDeliverables": {
+      "forms": "Ausgefüllte IRS Form 5472 + pro forma 1120",
+      "reasonableCause": "Begründung der Verspätung (bei verspäteter Einreichung)",
+      "review": "Geprüft von einer Steuerfachkraft mit IRS-PTIN",
+      "fax": "Per Fax an die IRS Ogden PIN Unit gesendet",
+      "moneyBack": "100% Geld-zurück-Garantie, falls wir nicht einreichen"
+    },
+    "diirspTag": "Bei DIIRSP"
   },
   "pricing": {
     "s001": "Preise für die Form 5472 Einreichung",

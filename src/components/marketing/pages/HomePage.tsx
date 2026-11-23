@@ -147,7 +147,7 @@ function createHome(locale: "en" | MarketingLocale, t: MarketingTranslator) {
   const metadata: Metadata = {
     // `absolute` skips the layout's "%s · Form5472 Prep" template — the homepage title
     // already brands the product, so we don't want the suffix appended.
-    title: { absolute: "File IRS Form 5472 + Pro Forma 1120 — Form5472 Prep" },
+    title: { absolute: t("home.absoluteTitle") },
     description: HOME_DESCRIPTION,
     ...pageMeta({
       title: t("home.s033"),
@@ -381,11 +381,11 @@ function createHome(locale: "en" | MarketingLocale, t: MarketingTranslator) {
 
                 <ul className="mt-6 space-y-2.5 text-sm">
                   {[
-                    "Filled IRS Form 5472 + pro forma 1120",
-                    "Reasonable cause statement (if late)",
-                    "Reviewed by a PTIN-holding tax accountant",
-                    "Faxed to IRS Ogden PIN Unit",
-                    "100% money-back if we fail to submit",
+                    t("home.heroDeliverables.forms"),
+                    t("home.heroDeliverables.reasonableCause"),
+                    t("home.heroDeliverables.review"),
+                    t("home.heroDeliverables.fax"),
+                    t("home.heroDeliverables.moneyBack"),
                   ].map((it) => (
                     <li key={it} className="flex items-start gap-2.5 text-slate-700">
                       <CheckCircle2 className="mt-0.5 h-4 w-4 flex-none text-emerald-500" />
@@ -573,7 +573,7 @@ function createHome(locale: "en" | MarketingLocale, t: MarketingTranslator) {
       {
         name: t("home.s091"),
         body: t("home.s092"),
-        tag: "If DIIRSP",
+        tag: t("home.diirspTag"),
       },
       {
         name: t("home.s093"),

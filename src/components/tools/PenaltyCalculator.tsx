@@ -2,7 +2,6 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { MarketingIntlProvider } from "@/components/marketing/MarketingIntlProvider";
-import { getMarketingMessages } from "@/i18n/marketing";
 import { localizedPath, type MarketingLocale } from "@/i18n/marketing/config";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -52,7 +51,9 @@ function parseNoticeDate(value: string): Date | null {
 }
 
 type PenaltyCalculatorProps = {
- locale?: "en" | MarketingLocale;
+  locale?: "en" | MarketingLocale;
+  /** Only this locale's calculator messages, recovered on the server. */
+  messages: { penalty: { calculator: Record<string, string> } };
   /** Embed mode (iframe on third-party sites): compact padding, no share-link
    *  button, and every link is absolute and opens in a new tab. */
   embedded?: boolean;
@@ -60,10 +61,10 @@ type PenaltyCalculatorProps = {
   siteUrl?: string;
 };
 
-export function PenaltyCalculator({ locale = "en", ...props }: PenaltyCalculatorProps = {}) {
- return <MarketingIntlProvider locale={locale} messages={getMarketingMessages(locale)}><CalculatorUI {...props} /></MarketingIntlProvider>;
+export function PenaltyCalculator({ locale = "en", messages, ...props }: PenaltyCalculatorProps) {
+ return <MarketingIntlProvider locale={locale} messages={messages}><CalculatorUI {...props} /></MarketingIntlProvider>;
 }
-function CalculatorUI({ embedded = false, siteUrl = "" }: PenaltyCalculatorProps) {
+function CalculatorUI({ embedded = false, siteUrl = "" }: Pick<PenaltyCalculatorProps, "embedded" | "siteUrl">) {
  const locale = useLocale() as "en" | MarketingLocale;
  const t = useTranslations("penalty.calculator");
  const money = (value: number) => locale === "en" ? formatPrice(value) : new Intl.NumberFormat(locale, { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(value / 100);
