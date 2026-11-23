@@ -68,6 +68,7 @@ export function MarketingChrome({ children, locale = "en" }: { children: React.R
             </Link>
             {/* Buttons are rendered here (server) so the client island does not
                 ship Button's cn()/tailwind-merge code — see HeaderAuthButtons. */}
+            {(locale !== "en" || MARKETING_LOCALES_INDEXABLE) && <LanguageMenu label={t("chrome.language")} />}
             <HeaderAuthButtons
               signInButton={<Button variant="ghost" size="sm">{t("chrome.s008")}</Button>}
               startButton={<Button size="sm">{t("chrome.s009")}</Button>}
@@ -76,7 +77,6 @@ export function MarketingChrome({ children, locale = "en" }: { children: React.R
           </nav>
         </div>
       </header>
-      {(locale !== "en" || MARKETING_LOCALES_INDEXABLE) && <LanguageMenu label={t("chrome.language")} />}
       <main className="flex-1">{children}</main>
       <footer className="border-t border-paper-edge bg-paper text-xs text-slate-500">
         <div className="mx-auto max-w-6xl px-6 py-14">
