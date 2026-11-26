@@ -193,7 +193,7 @@ describe("render-check", () => {
         label: "2025 still unaware",
       },
     );
-    // Paid preparer block on both revisions: text plus Yes ticked, No and
+    // Paid preparer block: name is handwritten later; typed firm details plus Yes ticked, No and
     // self-employed empty (PDF bottom-left coordinates of each 8pt box).
     const boxes = {
       2024: { yes: { x: 522, y: 104 }, no: { x: 552, y: 104 }, selfEmployed: { x: 482, y: 82 } },
@@ -202,7 +202,8 @@ describe("render-check", () => {
     const checkboxes: Array<{ page: number; rect: number[]; checked: boolean; label: string }> = [];
     for (const taxYear of [2024, 2025] as const) {
       const page = findPage(pkg.record, "Form 1120", taxYear);
-      for (const value of ["Pat Q. Synthetic", "P00000001", "Synthetic Preparer Firm LLC", "00-0000001", "1 Synthetic Way, Example City, ST 00000", "555-0100"]) {
+      absent.push({ page, value: env.HOUSE_PREPARER_NAME, label: `${taxYear} name stays blank for handwriting` });
+      for (const value of ["P00000001", "Synthetic Preparer Firm LLC", "00-0000001", "1 Synthetic Way, Example City, ST 00000", "555-0100"]) {
         text.push({ page, value, label: `${taxYear} 1120 preparer ${value}` });
       }
       const box = (at: { x: number; y: number }) => rasterRect({ ...at, width: 8, height: 8 });

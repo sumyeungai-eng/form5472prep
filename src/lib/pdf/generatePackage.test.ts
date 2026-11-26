@@ -1154,7 +1154,7 @@ describe("generator 2.3.0: preflight-generator spec", () => {
   });
 
   // ── Item 8: optional house paid preparer block ──
-  it("item 8: house preparer fills the 2024 and 2025 Paid Preparer blocks; signature/date/self-employed stay blank", async () => {
+  it("item 8: house preparer fills the 2024 and 2025 Paid Preparer blocks; handwritten name/signature/date/self-employed stay blank", async () => {
     const pkg = await generatePackage(
       { ...F11, paidPreparerMode: "house", irsMayDiscussWithPreparer: "yes" },
       lateCatchUpFinalisedAt,
@@ -1167,7 +1167,7 @@ describe("generator 2.3.0: preflight-generator spec", () => {
       const m = form1120PaidPreparerFieldMaps[revision];
       const value = (field: string) => year.form1120.fields.find((w) => w.field === field)?.value;
       expect(year.form1120Revision).toBe(String(revision));
-      expect(value(m.preparerName)).toBe("Pat Q. Synthetic");
+      expect(value(m.preparerName)).toBeUndefined();
       expect(value(m.ptin)).toBe("P00000001");
       expect(value(m.firmName)).toBe("Synthetic Preparer Firm LLC");
       expect(value(m.firmEin)).toBe("00-0000001");
@@ -1182,6 +1182,34 @@ describe("generator 2.3.0: preflight-generator spec", () => {
     expect(form1120PaidPreparerFieldMaps[2024].preparerName).not.toBe(form1120PaidPreparerFieldMaps[2025].preparerName);
     expect((await runPreflight(pkg.record, pkg.bytes)).failures).toEqual([]);
   }, PDF_TIMEOUT);
+
+  it.each([2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025] as const)(
+    "leaves the house preparer name blank in the %s map, keeps firm fields typed and passes preflight",
+    async (taxYear) => {
+      const pkg = await generatePackage({
+        ...F1, taxYears: [taxYear], paidPreparerMode: "house",
+        llcDateIncorporated: new Date("2015-01-01T00:00:00.000Z"),
+        llcBusinessCode: "999000", llcBusinessActivity: "Unclassified establishments",
+        extensionFiled: "no", extensionTransmittedAt: null,
+        yearData: [{ ...F1.yearData[0], taxYear, reportableTransactions: [
+          { date: `${taxYear}-01-10`, description: "Owner contribution", amountCents: 100_00, category: "contribution" },
+        ] }],
+      }, new Date(`${taxYear + 1}-01-10T12:00:00.000Z`), { env: PREPARER_ENV });
+      const year = pkg.record.taxYears[0];
+      const map = form1120PaidPreparerFieldMaps[taxYear];
+      const value = (field: string) => year.form1120.fields.find((w) => w.field === field)?.value;
+      expect(year.form1120Revision).toBe(String(taxYear));
+      expect(value(map.preparerName)).toBeUndefined();
+      expect(value(map.ptin)).toBe(PREPARER_ENV.HOUSE_PREPARER_PTIN);
+      expect(value(map.firmName)).toBe(PREPARER_ENV.HOUSE_PREPARER_FIRM_NAME);
+      expect(value(map.firmAddress)).toBe(PREPARER_ENV.HOUSE_PREPARER_FIRM_ADDRESS);
+      expect(value(map.firmEin)).toBe(PREPARER_ENV.HOUSE_PREPARER_FIRM_EIN);
+      expect(value(map.phone)).toBe(PREPARER_ENV.HOUSE_PREPARER_PHONE);
+      const preflight = await runPreflight(pkg.record, pkg.bytes);
+      expect(preflight.failures).toEqual([]);
+      expect(preflight.warnings.filter((w) => w.id === "W41")).toEqual([]);
+    }, PDF_TIMEOUT,
+  );
 
   it("item 8: discuss No / blank, no preparer by default, and incomplete config leaves the block blank", async () => {
     const no = await generatePackage({ ...F11, paidPreparerMode: "house", irsMayDiscussWithPreparer: "no" }, lateCatchUpFinalisedAt, {

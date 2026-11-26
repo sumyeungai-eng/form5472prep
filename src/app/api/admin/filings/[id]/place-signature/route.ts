@@ -17,11 +17,11 @@ export const maxDuration = 60;
 // saves the result as the signed PDF. Bumps status to SIGNED_UPLOADED so
 // the existing "Send fax to IRS" button enables.
 //
-// Optional preparer signature (Form 1120 "Paid Preparer Use Only"): the
-// signing admin's OWN drawn signature — sent as `preparerSignaturePng` (PNG
-// data URL) or `useSavedPreparerSignature: true` to reuse the one saved on
-// their admin account. A copy is kept per filing and the change log records
-// who signed. It is never the client's signature, and vice versa.
+// Optional preparer signature and handwritten name (Form 1120 "Paid Preparer Use Only"): the
+// signing admin's OWN drawings, sent as `preparerSignaturePng` / `preparerNamePng`
+// or `useSavedPreparerSignature` / `useSavedPreparerName` to reuse personal
+// account copies. Each is kept per filing and audited by key, never image data.
+// Neither drawing is interchangeable with the other or the client signature.
 export async function POST(req: Request, { params }: { params: { id: string } }) {
   const principal = await getAdminPrincipal(req).catch(() => null);
   if (!principal) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
@@ -41,6 +41,9 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     preparerSignaturePng?: unknown;
     useSavedPreparerSignature?: unknown;
     rememberPreparerSignature?: unknown;
+    preparerNamePng?: unknown;
+    useSavedPreparerName?: unknown;
+    rememberPreparerName?: unknown;
   };
   const parsed = parsePlacements(body, { allowPreparerSignature: true });
   if (!parsed.ok) return NextResponse.json({ error: parsed.error }, { status: 400 });
@@ -54,28 +57,37 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     );
   }
 
-  // Preparer signature: drawn now, or the admin's saved one.
-  const needsPreparerImage = placements.some((p) => p.kind === "preparerSignature");
-  let preparerPng: Uint8Array | null = null;
-  if (needsPreparerImage) {
-    if (body.preparerSignaturePng !== undefined) {
-      preparerPng = decodePngDataUrl(body.preparerSignaturePng);
-      if (!preparerPng || !(await isReadablePng(preparerPng))) {
-        return NextResponse.json({ error: "The preparer signature image is invalid. Draw it again." }, { status: 400 });
-      }
-    } else if (body.useSavedPreparerSignature === true && principal.adminId) {
+  // Resolve each admin image independently; never fall back to another kind.
+  const preparerImages = [
+    { kind: "preparerSignature", label: "signature", png: body.preparerSignaturePng, saved: body.useSavedPreparerSignature,
+      remember: body.rememberPreparerSignature, keyField: "preparerSignatureKey", field: "preparer_signature" },
+    { kind: "preparerName", label: "name", png: body.preparerNamePng, saved: body.useSavedPreparerName,
+      remember: body.rememberPreparerName, keyField: "preparerNameKey", field: "preparer_name" },
+  ] as const;
+  const imageBytes: Partial<Record<"preparerSignature" | "preparerName", Uint8Array>> = {};
+  for (const image of preparerImages) {
+    if (!placements.some((p) => p.kind === image.kind)) continue;
+    let bytes: Uint8Array | null = null;
+    if (image.png !== undefined) {
+      bytes = decodePngDataUrl(image.png);
+    } else if (image.saved === true && principal.adminId) {
       const admin = await prisma.admin.findUnique({
         where: { id: principal.adminId },
-        select: { preparerSignatureKey: true },
+        select: { preparerSignatureKey: true, preparerNameKey: true },
       });
-      if (admin?.preparerSignatureKey) preparerPng = await getStorageObject(admin.preparerSignatureKey);
+      const key = admin?.[image.keyField];
+      if (key) bytes = await getStorageObject(key).catch(() => null);
     }
-    if (!preparerPng) {
+    if (!bytes) {
       return NextResponse.json(
-        { error: "Draw the preparer signature (or use your saved one) before placing it." },
+        { error: `Draw the preparer ${image.label} (or use your saved one) before placing it.` },
         { status: 400 },
       );
     }
+    if (!(await isReadablePng(bytes))) {
+      return NextResponse.json({ error: `The preparer ${image.label} image is invalid. Draw it again.` }, { status: 400 });
+    }
+    imageBytes[image.kind] = bytes;
   }
 
   const [pdfBytes, pngBytes] = await Promise.all([
@@ -97,7 +109,10 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       }
       pagesTouched++;
     }
-    outBytes = await stampPlacements(pdfBytes, needsSignatureImage ? pngBytes : null, placements, preparerPng);
+    outBytes = await stampPlacements(
+      pdfBytes, needsSignatureImage ? pngBytes : null, placements,
+      imageBytes.preparerSignature ?? null, imageBytes.preparerName ?? null,
+    );
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error("[place-signature] embed failed", { filingId: filing.id, error: msg });
@@ -116,32 +131,33 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   });
   const signed = { pagesSigned: pagesTouched, bytes: outBytes };
 
-  if (preparerPng) {
-    // Timestamp + random suffix: two saves in the same millisecond must not
-    // overwrite each other's copy (the change log points at this key).
+  for (const image of preparerImages) {
+    const bytes = imageBytes[image.kind];
+    if (!bytes) continue;
+    // Timestamp + random suffix keeps every filing's audit copy immutable.
     const stamp = `${Date.now()}_${randomUUID().slice(0, 8)}`;
-    const filingCopyKey = `${filing.id}_preparer_signature_${stamp}.png`;
-    await put(filingCopyKey, preparerPng, "image/png");
-    if (body.rememberPreparerSignature === true && principal.adminId) {
-      const adminKey = `admin_${principal.adminId}_preparer_signature_${stamp}.png`;
-      await put(adminKey, preparerPng, "image/png");
-      await prisma.admin.update({ where: { id: principal.adminId }, data: { preparerSignatureKey: adminKey } });
+    const filingCopyKey = `${filing.id}_${image.field}_${stamp}.png`;
+    await put(filingCopyKey, bytes, "image/png");
+    if (image.remember === true && principal.adminId) {
+      const adminKey = `admin_${principal.adminId}_${image.field}_${stamp}.png`;
+      await put(adminKey, bytes, "image/png");
+      await prisma.admin.update({ where: { id: principal.adminId }, data: { [image.keyField]: adminKey } });
     }
     try {
       await logFilingChange({
         filingId: filing.id,
         adminId: principal.adminId,
         source: "admin",
-        field: "preparer_signature",
+        field: image.field,
         before: null,
         after: {
-          preparerSignatureKey: filingCopyKey,
+          [image.keyField]: filingCopyKey,
           signedBy: principal.email ?? "shared admin session",
-          placements: placements.filter((p) => p.kind === "preparerSignature").length,
+          placements: placements.filter((p) => p.kind === image.kind).length,
         },
       });
     } catch (err) {
-      console.error("[place-signature] preparer signature change-log write failed", err);
+      console.error(`[place-signature] preparer ${image.label} change-log write failed`, err);
     }
   }
 

@@ -1,6 +1,6 @@
-import { PDFDocument } from "pdf-lib";
+import { PDFDocument, PDFPage } from "pdf-lib";
 import sharp from "sharp";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { parsePlacements, stampPlacements } from "@/lib/pdf/stampPlacements";
 
 describe("stampPlacements", () => {
@@ -111,15 +111,52 @@ describe("stampPlacements", () => {
       ],
       await png(60),
     );
-    // A preparer placement with no preparer image draws nothing extra.
-    const preparerMissing = await stampPlacements(pdfBytes, await png(20), [
+    // Missing images are rejected, never silently replaced by the client image.
+    await expect(stampPlacements(pdfBytes, await png(20), [
       { kind: "signature", page: 1, x: 10, y: 20, width: 80, height: 24 },
       { kind: "preparerSignature", page: 1, x: 10, y: 120, width: 80, height: 24 },
-    ]);
+    ])).rejects.toThrow("Missing image for preparerSignature placement");
 
     const base = await countImages(clientOnly);
     expect(base).toBeGreaterThan(0);
     expect(await countImages(both)).toBeGreaterThan(base);
-    expect(await countImages(preparerMissing)).toBe(base);
+  });
+
+  it("only accepts handwritten preparer names on the 5472/1120 route", () => {
+    const placement = { kind: "preparerName", page: 1, x: 5, y: 5, width: 200, height: 32 };
+    expect(parsePlacements({ placements: [placement] })).toEqual({ ok: false, error: "preparer names are not supported here" });
+    expect(parsePlacements({ placements: [placement] }, { allowPreparerSignature: true })).toEqual({ ok: true, placements: [placement] });
+    for (const width of [0, -1, 613, NaN]) {
+      expect(parsePlacements({ placements: [{ ...placement, width }] }, { allowPreparerSignature: true }).ok).toBe(false);
+    }
+  });
+
+  it("stamps each drawing with only its own image, including a name-only placement", async () => {
+    const doc = await PDFDocument.create();
+    doc.addPage([612, 792]);
+    const pdf = await doc.save();
+    const png = async (width: number) => new Uint8Array(await sharp({
+      create: { width, height: 2, channels: 4, background: "#123456" },
+    }).png().toBuffer());
+    const [client, signature, name] = await Promise.all([png(3), png(5), png(7)]);
+    const draw = vi.spyOn(PDFPage.prototype, "drawImage");
+    try {
+      const placement = { page: 1, x: 10, y: 10, width: 200, height: 32 };
+      await stampPlacements(pdf, client, [
+        { ...placement, kind: "signature" },
+        { ...placement, kind: "preparerSignature" },
+        { ...placement, kind: "preparerName" },
+      ], signature, name);
+      expect(draw.mock.calls.map(([image]) => image.width)).toEqual([3, 5, 7]);
+      draw.mockClear();
+      await stampPlacements(pdf, client, [{ ...placement, kind: "preparerName" }], signature, name);
+      expect(draw.mock.calls.map(([image]) => image.width)).toEqual([7]);
+      await expect(stampPlacements(pdf, client, [{ ...placement, kind: "preparerName" }], signature))
+        .rejects.toThrow("Missing image for preparerName placement");
+      await expect(stampPlacements(pdf, null, [{ ...placement, kind: "signature" }], signature, name))
+        .rejects.toThrow("Missing image for signature placement");
+    } finally {
+      draw.mockRestore();
+    }
   });
 });

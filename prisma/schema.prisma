@@ -34,9 +34,10 @@ model Admin {
   createdAt    DateTime           @default(now())
   lastLoginAt  DateTime?
   loginNonce   String?
-  // This admin's own drawn signature for the Form 1120 "Paid Preparer Use
-  // Only" box (place-signature tool). Never a client's signature.
+  // This admin's own drawn signature and handwritten name for Form 1120
+  // "Paid Preparer Use Only" (place-signature). Never client drawings.
   preparerSignatureKey String?
+  preparerNameKey      String?
   deviceTokens AdminDeviceToken[]
   changeLog    FilingChangeLog[]
 }

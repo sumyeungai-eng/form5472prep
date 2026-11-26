@@ -1,7 +1,7 @@
 import sharp from "sharp";
 
-// Decodes the preparer's drawn signature sent by the place-signature tool as a
-// PNG data URL (or bare base64). Returns null for anything that isn't a
+// Decodes the preparer's drawn signature or handwritten name from the
+// place-signature tool as a PNG data URL (or bare base64). Returns null for anything that isn't a
 // reasonably sized PNG, so the route can reject it with a clear message.
 const PNG_MAGIC = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a];
 export const MAX_PREPARER_SIGNATURE_BYTES = 1024 * 1024;
@@ -20,6 +20,7 @@ export function decodePngDataUrl(input: unknown): Uint8Array | null {
 // actually read it (and that it's a sane size) so a bad upload is a 400, not a
 // stamping crash.
 export async function isReadablePng(bytes: Uint8Array): Promise<boolean> {
+  if (bytes.length > MAX_PREPARER_SIGNATURE_BYTES) return false;
   try {
     const meta = await sharp(Buffer.from(bytes)).metadata();
     return meta.format === "png" && !!meta.width && !!meta.height && meta.width <= 4000 && meta.height <= 2000;

@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 vi.mock("./validatePackage", () => ({ validatePackage: async () => ({ failures: [], warnings: [] }) }));
 import { PDFDocument } from "pdf-lib";
 import { AUTHORED_DOC_SIGNATURE_HEADING, COVER_LETTER_CLOSING, COVER_LETTER_ENCLOSURE_PHRASE, GENERATOR_VERSION } from "@/config/filingPackage";
-import { form5472FieldMap, form1120_2025FieldMap } from "./fieldMaps";
+import { form5472FieldMap, form1120_2025FieldMap, form1120PaidPreparerFieldMaps } from "./fieldMaps";
 import { isValidBrazilianCpf, isValidCanadianSin, runPreflight } from "./preflight";
 import { generatePackage, type PackageRecord, type RcsYearRecord } from "./generatePackage";
 import { CUSTOMER_INTAKE_TEXT, F11, lateCatchUpFinalisedAt } from "./__fixtures__/filings";
@@ -721,6 +721,23 @@ describe("pre-flight 2.3.0: totals, preparer, prior years (items 7, 8, 10)", () 
     const noPreparer = lateRecord({ narrative: "I prepared these returns myself once I learned of the requirement." });
     expect((await preflightOf(noPreparer)).failures.some((f) => f.id === "A35")).toBe(false);
   });
+
+  it.each([2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025] as const)(
+    "A35 expects the %s house preparer name to stay blank for handwriting",
+    async (revision) => {
+      const record = lateRecord();
+      record.paidPreparerMode = "house";
+      record.housePreparer = { configComplete: true, missing: [], invalid: [] };
+      const year = record.taxYears[0];
+      year.form1120Revision = String(revision);
+      year.paidPreparer = { shown: true, discuss: null, fitFailures: [] };
+      expect((await preflightOf(record)).failures.filter((f) => f.id === "A35")).toEqual([]);
+      year.form1120.fields.push({ form: `1120-${revision}`, field: form1120PaidPreparerFieldMaps[revision].preparerName, value: "Typed preparer" });
+      expect((await preflightOf(record)).failures.find((f) => f.id === "A35")?.message).toContain("typed preparer name must stay blank");
+      year.form1120.fields[year.form1120.fields.length - 1].value = "";
+      expect((await preflightOf(record)).failures.filter((f) => f.id === "A35")).toEqual([]);
+    },
+  );
 
   // goodRecord's only year is its formation year; add a later year to test W15.
   function twoYearRecord(): PackageRecord {

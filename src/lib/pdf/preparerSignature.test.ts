@@ -1,6 +1,6 @@
 import sharp from "sharp";
 import { describe, expect, it } from "vitest";
-import { decodePngDataUrl, MAX_PREPARER_SIGNATURE_BYTES } from "./preparerSignature";
+import { decodePngDataUrl, isReadablePng, MAX_PREPARER_SIGNATURE_BYTES } from "./preparerSignature";
 
 describe("decodePngDataUrl", () => {
   it("accepts a PNG data URL or bare base64", async () => {
@@ -17,5 +17,18 @@ describe("decodePngDataUrl", () => {
     const big = Buffer.alloc(MAX_PREPARER_SIGNATURE_BYTES + 10);
     Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]).copy(big);
     expect(decodePngDataUrl(big.toString("base64"))).toBeNull();
+  });
+});
+
+
+describe("shared preparer signature/name image validation", () => {
+  it("requires a readable PNG with the same dimension limits for either drawing", async () => {
+    const png = async (width: number, height: number) => new Uint8Array(await sharp({
+      create: { width, height, channels: 4, background: "#fff" },
+    }).png().toBuffer());
+    expect(await isReadablePng(await png(600, 160))).toBe(true);
+    expect(await isReadablePng(await png(4001, 1))).toBe(false);
+    expect(await isReadablePng(await png(1, 2001))).toBe(false);
+    expect(await isReadablePng(new Uint8Array([0x89, 0x50, 0x4e, 0x47]))).toBe(false);
   });
 });

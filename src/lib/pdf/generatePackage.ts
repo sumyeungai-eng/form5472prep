@@ -1188,7 +1188,7 @@ type Form1120FillOptions = {
 };
 
 // Fill the "Paid Preparer Use Only" block and the "May the IRS discuss"
-// boxes. Signature, date and the self-employed box are never written.
+// boxes. Handwritten name, signature, date and self-employed stay blank.
 function fillPaidPreparerBlock(
   pdf: PDFDocument,
   revision: Form1120Revision,
@@ -1206,7 +1206,8 @@ function fillPaidPreparerBlock(
     setTextWithRecordedFontSize(form, field, value, recorder, fit.fontSize);
   };
   const p = opts.preparer;
-  if (p.name) write(m.preparerName, p.name, "Paid preparer name");
+  // Staff handwrite the name in place-signature; typing it would overlap the image.
+  // Keep HOUSE_PREPARER_NAME available in config for other consumers.
   write(m.ptin, p.ptin, "Paid preparer PTIN");
   write(m.firmName, p.firmName, "Paid preparer firm name");
   write(m.firmEin, p.firmEin, "Paid preparer firm EIN");

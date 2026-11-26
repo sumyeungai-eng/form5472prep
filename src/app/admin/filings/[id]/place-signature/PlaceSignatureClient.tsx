@@ -9,29 +9,24 @@ import { Loader2 } from "lucide-react";
 const RENDER_SCALE = 1.5;
 const DEFAULT_SIG_CSS_WIDTH = 180;
 const DEFAULT_SIG_CSS_HEIGHT = 45;
+const DEFAULT_NAME_CSS_WIDTH = 200;
+const DEFAULT_NAME_CSS_HEIGHT = 32;
+
+type DrawnPlacement<Kind extends "signature" | "preparer" | "preparerName"> = {
+  id: string;
+  kind: Kind;
+  pageIndex: number; // 0-based
+  // CSS pixels relative to the rendered canvas, top-left origin.
+  cssX: number;
+  cssY: number;
+  cssWidth: number;
+  cssHeight: number;
+};
 
 type Placement =
-  | {
-      id: string;
-      // The signing admin's OWN signature for the 1120 "Paid Preparer Use Only"
-      // box — a different image from the client's, shown in violet.
-      kind: "preparer";
-      pageIndex: number;
-      cssX: number;
-      cssY: number;
-      cssWidth: number;
-      cssHeight: number;
-    }
-  | {
-      id: string;
-      kind: "signature";
-      pageIndex: number; // 0-based
-      // CSS pixel coords relative to the rendered canvas, top-left origin
-      cssX: number;
-      cssY: number;
-      cssWidth: number;
-      cssHeight: number;
-    }
+  | DrawnPlacement<"signature">
+  | DrawnPlacement<"preparer">
+  | DrawnPlacement<"preparerName">
   | {
       id: string;
       kind: "date";
@@ -55,7 +50,7 @@ type Placement =
       cssFontSize: number;
     };
 
-type Mode = "signature" | "preparer" | "date" | "text";
+type Mode = "signature" | "preparer" | "preparerName" | "date" | "text";
 type PlaceSignatureEndpoints = {
   pdf: string;
   signedPdf: string;
@@ -122,7 +117,10 @@ export function PlaceSignatureClient({
   // "drawn" = drawn on the pad just now (PNG data URL, sent on save).
   const [preparerSig, setPreparerSig] = useState<{ url: string; source: "saved" | "drawn" } | null>(null);
   const [hasSavedPreparerSig, setHasSavedPreparerSig] = useState(false);
-  const [showPreparerPad, setShowPreparerPad] = useState(false);
+  const [padKind, setPadKind] = useState<"preparer" | "preparerName" | null>(null);
+  const [preparerName, setPreparerName] = useState<{ url: string; source: "saved" | "drawn" } | null>(null);
+  const [hasSavedPreparerName, setHasSavedPreparerName] = useState(false);
+  const [rememberPreparerName, setRememberPreparerName] = useState(canSavePreparerSignature);
   const [rememberPreparerSig, setRememberPreparerSig] = useState(canSavePreparerSignature);
   const [placements, setPlacements] = useState<Placement[]>([]);
   const [saving, setSaving] = useState(false);
@@ -220,24 +218,33 @@ export function PlaceSignatureClient({
     // time pdfjs needs them.
   }, [filingId, resolvedEndpoints.pdf, resolvedEndpoints.signaturePng]);
 
-  // Load the admin's saved preparer signature, if any (404 = none saved).
+  // Load the admin's own saved drawings independently (404 = none saved).
   useEffect(() => {
     if (!allowPreparerSignature) return;
     let cancelled = false;
-    (async () => {
-      try {
-        const res = await fetch("/api/admin/preparer-signature", { cache: "no-store" });
-        if (!res.ok || cancelled) return;
-        const url = URL.createObjectURL(await res.blob());
-        if (cancelled) return;
-        setHasSavedPreparerSig(true);
-        setPreparerSig((cur) => cur ?? { url, source: "saved" });
-      } catch {
-        // No saved signature — the admin draws one.
-      }
-    })();
+    const objectUrls: string[] = [];
+    for (const tool of [
+      { endpoint: "/api/admin/preparer-signature", setImage: setPreparerSig, setHasSaved: setHasSavedPreparerSig },
+      { endpoint: "/api/admin/preparer-signature?kind=name", setImage: setPreparerName, setHasSaved: setHasSavedPreparerName },
+    ]) {
+      void (async () => {
+        try {
+          const res = await fetch(tool.endpoint, { cache: "no-store" });
+          if (!res.ok || cancelled) return;
+          const blob = await res.blob();
+          if (cancelled) return;
+          const url = URL.createObjectURL(blob);
+          objectUrls.push(url);
+          tool.setHasSaved(true);
+          tool.setImage((cur) => cur ?? { url, source: "saved" });
+        } catch {
+          // No saved drawing — the admin can draw one.
+        }
+      })();
+    }
     return () => {
       cancelled = true;
+      objectUrls.forEach((url) => URL.revokeObjectURL(url));
     };
   }, [allowPreparerSignature]);
 
@@ -252,15 +259,21 @@ export function PlaceSignatureClient({
     // Signature mode needs the signature image loaded; date mode doesn't.
     if (mode === "signature" && !sigUrl) return;
     if (mode === "preparer" && !preparerSig) {
-      setShowPreparerPad(true);
+      setPadKind("preparer");
+      return;
+    }
+    if (mode === "preparerName" && !preparerName) {
+      setPadKind("preparerName");
       return;
     }
     const wrapper = e.currentTarget;
     const rect = wrapper.getBoundingClientRect();
     const id = `p_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
-    if (mode === "signature" || mode === "preparer") {
-      const cssX = e.clientX - rect.left - DEFAULT_SIG_CSS_WIDTH / 2;
-      const cssY = e.clientY - rect.top - DEFAULT_SIG_CSS_HEIGHT / 2;
+    if (mode === "signature" || mode === "preparer" || mode === "preparerName") {
+      const width = mode === "preparerName" ? DEFAULT_NAME_CSS_WIDTH : DEFAULT_SIG_CSS_WIDTH;
+      const height = mode === "preparerName" ? DEFAULT_NAME_CSS_HEIGHT : DEFAULT_SIG_CSS_HEIGHT;
+      const cssX = e.clientX - rect.left - width / 2;
+      const cssY = e.clientY - rect.top - height / 2;
       setPlacements((arr) => [
         ...arr,
         {
@@ -269,8 +282,8 @@ export function PlaceSignatureClient({
           pageIndex,
           cssX: Math.max(0, cssX),
           cssY: Math.max(0, cssY),
-          cssWidth: DEFAULT_SIG_CSS_WIDTH,
-          cssHeight: DEFAULT_SIG_CSS_HEIGHT,
+          cssWidth: width,
+          cssHeight: height,
         },
       ]);
     } else if (mode === "date") {
@@ -335,8 +348,8 @@ export function PlaceSignatureClient({
           // Resize. For signatures: preserve aspect ratio so the strokes
           // don't squish. For dates / text: scale the font size proportionally
           // to the width change so the text stays legible relative to handle drag.
-          if (p.kind === "signature" || p.kind === "preparer") {
-            const sStart = start as Extract<Placement, { kind: "signature" | "preparer" }>;
+          if (p.kind === "signature" || p.kind === "preparer" || p.kind === "preparerName") {
+            const sStart = start as Extract<Placement, { kind: "signature" | "preparer" | "preparerName" }>;
             const newW = Math.max(40, sStart.cssWidth + dx);
             const ratio = sStart.cssHeight / sStart.cssWidth;
             return { ...p, cssWidth: newW, cssHeight: newW * ratio };
@@ -373,6 +386,9 @@ export function PlaceSignatureClient({
       setSaveMsg({ kind: "err", text: "Place at least one signature first." });
       return;
     }
+    if (placements.some((p) => p.kind === "preparer") &&
+        !placements.some((p) => p.kind === "preparerName") &&
+        !confirm("No handwritten preparer name placed. Save anyway?")) return;
     setSaving(true);
     setSaveMsg(null);
     // Convert each placement from CSS (top-left, post-render scale) to PDF
@@ -385,9 +401,9 @@ export function PlaceSignatureClient({
       if (!size) throw new Error(`No size for page ${p.pageIndex + 1}`);
       const pdfX = p.cssX / RENDER_SCALE;
       const pdfYBottom = size.heightPts - (p.cssY + p.cssHeight) / RENDER_SCALE;
-      if (p.kind === "signature" || p.kind === "preparer") {
+      if (p.kind === "signature" || p.kind === "preparer" || p.kind === "preparerName") {
         return {
-          kind: p.kind === "preparer" ? ("preparerSignature" as const) : ("signature" as const),
+          kind: p.kind === "preparer" ? ("preparerSignature" as const) : p.kind,
           page: p.pageIndex + 1,
           x: pdfX,
           y: pdfYBottom,
@@ -426,6 +442,11 @@ export function PlaceSignatureClient({
               ? { preparerSignaturePng: preparerSig.url, rememberPreparerSignature: rememberPreparerSig }
               : { useSavedPreparerSignature: true }
             : {}),
+          ...(placements.some((p) => p.kind === "preparerName") && preparerName
+            ? preparerName.source === "drawn"
+              ? { preparerNamePng: preparerName.url, rememberPreparerName }
+              : { useSavedPreparerName: true }
+            : {}),
         }),
       });
       const body = await res.json();
@@ -444,6 +465,14 @@ export function PlaceSignatureClient({
 
   const label = llcName ?? `tax year ${taxYears.join(", ")}`;
   const pageCount = pageSizes.length;
+  const preparerTools = [
+    { kind: "preparer", label: "Preparer signature", noun: "signature", image: preparerSig, setImage: setPreparerSig,
+      hasSaved: hasSavedPreparerSig, remember: rememberPreparerSig, setRemember: setRememberPreparerSig },
+    { kind: "preparerName", label: "Preparer name", noun: "name", image: preparerName, setImage: setPreparerName,
+      hasSaved: hasSavedPreparerName, remember: rememberPreparerName, setRemember: setRememberPreparerName },
+  ] as const;
+  const activeTool = preparerTools.find((tool) => tool.kind === mode);
+  const padTool = preparerTools.find((tool) => tool.kind === padKind);
 
   // Preview mode — shown after Save succeeds. Lets the admin verify the
   // embedded signature lands where they intended before navigating away or
@@ -543,18 +572,21 @@ export function PlaceSignatureClient({
           >
             Signature
           </button>
-          {allowPreparerSignature && (
+          {allowPreparerSignature && preparerTools.map((tool) => (
             <button
+              key={tool.kind}
               type="button"
               onClick={() => {
-                setMode("preparer");
-                if (!preparerSig) setShowPreparerPad(true);
+                setMode(tool.kind);
+                setPadKind(tool.image ? null : tool.kind);
               }}
-              className={`px-3 py-1.5 font-medium border-l border-slate-300 ${mode === "preparer" ? "bg-violet-600 text-white" : "bg-white text-slate-600 hover:bg-slate-50"}`}
+              className={`px-3 py-1.5 font-medium border-l border-slate-300 ${mode === tool.kind
+                ? tool.kind === "preparerName" ? "bg-emerald-600 text-white" : "bg-violet-600 text-white"
+                : "bg-white text-slate-600 hover:bg-slate-50"}`}
             >
-              Preparer signature
+              {tool.label}
             </button>
-          )}
+          ))}
           <button
             type="button"
             onClick={() => setMode("date")}
@@ -570,19 +602,21 @@ export function PlaceSignatureClient({
             Text
           </button>
         </div>
-        {mode === "preparer" && (
+        {activeTool && (
           <span className="text-xs text-slate-600 inline-flex items-center gap-2">
-            {preparerSig ? (
+            {activeTool.image ? (
               <>
-                {/* eslint-disable-next-line @next/next/no-img-element -- internal admin tool: object/data URL of the preparer's own drawn signature. */}
-                <img src={preparerSig.url} alt="your preparer signature" className="h-6 w-auto border border-violet-200 bg-white" />
-                <span>{preparerSig.source === "saved" ? "Your saved signature" : "Drawn just now"}</span>
+                {/* eslint-disable-next-line @next/next/no-img-element -- internal admin drawing object/data URL. */}
+                <img src={activeTool.image.url} alt={`your preparer ${activeTool.noun}`} className="h-6 w-auto border border-slate-200 bg-white" />
+                <span>{activeTool.image.source === "saved" ? `Your saved ${activeTool.noun}` : "Drawn just now"}</span>
               </>
             ) : (
-              <span>No preparer signature yet</span>
+              <span>No preparer {activeTool.noun} yet</span>
             )}
-            <button type="button" onClick={() => setShowPreparerPad(true)} className="text-violet-700 hover:underline">
-              {preparerSig ? "Draw a new one" : "Draw your signature"}
+            <button type="button" onClick={() => setPadKind(activeTool.kind)} className="text-slate-700 hover:underline">
+              {activeTool.kind === "preparerName"
+                ? activeTool.image ? "Write a new one" : "Write your name"
+                : activeTool.image ? "Draw a new one" : "Draw your signature"}
             </button>
           </span>
         )}
@@ -616,7 +650,9 @@ export function PlaceSignatureClient({
           {" · "}
           {allowPreparerSignature && (
             <>
-              {placements.filter((p) => p.kind === "preparer").length} preparer
+              {placements.filter((p) => p.kind === "preparer").length} preparer sig
+              {" · "}
+              {placements.filter((p) => p.kind === "preparerName").length} preparer name
               {" · "}
             </>
           )}
@@ -657,17 +693,19 @@ export function PlaceSignatureClient({
         </button>
       </div>
 
-      {allowPreparerSignature && showPreparerPad && (
+      {allowPreparerSignature && padTool && (
         <PreparerSignaturePad
-          hasSaved={hasSavedPreparerSig}
+          key={padTool.kind}
+          kind={padTool.noun}
+          hasSaved={padTool.hasSaved}
           canSave={canSavePreparerSignature}
-          remember={rememberPreparerSig}
-          onRememberChange={setRememberPreparerSig}
-          onCancel={() => setShowPreparerPad(false)}
+          remember={padTool.remember}
+          onRememberChange={padTool.setRemember}
+          onCancel={() => setPadKind(null)}
           onUse={(dataUrl) => {
-            setPreparerSig({ url: dataUrl, source: "drawn" });
-            setShowPreparerPad(false);
-            setMode("preparer");
+            padTool.setImage({ url: dataUrl, source: "drawn" });
+            setPadKind(null);
+            setMode(padTool.kind);
           }}
         />
       )}
@@ -728,6 +766,20 @@ export function PlaceSignatureClient({
                           draggable={false}
                           className="w-full h-full object-contain ring-2 ring-violet-500/60 ring-dashed bg-white/0 pointer-events-none"
                         />
+                      )}
+                      {p.kind === "preparerName" && preparerName && (
+                        // eslint-disable-next-line @next/next/no-img-element -- internal admin handwritten name object/data URL.
+                        <img
+                          src={preparerName.url}
+                          alt="preparer name"
+                          draggable={false}
+                          className="w-full h-full object-contain ring-2 ring-emerald-500/60 ring-dashed bg-white/0 pointer-events-none"
+                        />
+                      )}
+                      {(p.kind === "preparer" || p.kind === "preparerName") && (
+                        <span className={`absolute -top-4 left-0 text-[10px] pointer-events-none ${p.kind === "preparerName" ? "text-emerald-700" : "text-violet-700"}`}>
+                          {p.kind === "preparerName" ? "Preparer name" : "Preparer signature"}
+                        </span>
                       )}
                       {p.kind === "date" && (
                         <input
@@ -791,9 +843,10 @@ export function PlaceSignatureClient({
   );
 }
 
-// Drawing pad for the PREPARER's own signature. White background so the
+// Shared drawing pad for the PREPARER's own signature or handwritten name. White background so the
 // server's chroma-key turns it transparent like the client signature.
 function PreparerSignaturePad({
+  kind,
   hasSaved,
   canSave,
   remember,
@@ -801,6 +854,7 @@ function PreparerSignaturePad({
   onCancel,
   onUse,
 }: {
+  kind: "signature" | "name";
   hasSaved: boolean;
   canSave: boolean;
   remember: boolean;
@@ -862,10 +916,12 @@ function PreparerSignaturePad({
   return (
     <div className="rounded-lg border border-violet-200 bg-violet-50/60 p-4 space-y-3">
       <div>
-        <p className="text-sm font-semibold text-violet-900">Preparer signature (your own)</p>
+        <p className="text-sm font-semibold text-violet-900">
+          {kind === "name" ? "Write the preparer's name (print it by hand)" : "Preparer signature (your own)"}
+        </p>
         <p className="text-xs text-violet-800">
-          For the Form 1120 &ldquo;Paid Preparer Use Only&rdquo; box. Sign as yourself, the paid preparer. This is
-          never the client&apos;s signature.
+          For the Form 1120 &ldquo;Paid Preparer Use Only&rdquo; box. {kind === "name" ? "Print your name by hand." : "Sign as yourself, the paid preparer."} This is
+          your own {kind}.
         </p>
       </div>
       <canvas
@@ -885,11 +941,11 @@ function PreparerSignaturePad({
         {canSave ? (
           <label className="inline-flex items-center gap-1.5 text-slate-700">
             <input type="checkbox" checked={remember} onChange={(e) => onRememberChange(e.target.checked)} />
-            {hasSaved ? "Replace my saved signature with this one" : "Save to my admin account for next time"}
+            {hasSaved ? `Replace my saved ${kind} with this one` : "Save to my admin account for next time"}
           </label>
         ) : (
           <span className="text-slate-500">
-            Signed in with the shared admin password, so this signature can&apos;t be saved for next time. Sign in
+            Signed in with the shared admin password, so this {kind} can&apos;t be saved for next time. Sign in
             with your own admin email to keep it.
           </span>
         )}
@@ -906,7 +962,7 @@ function PreparerSignaturePad({
           }}
           className="px-3 py-1.5 rounded bg-violet-600 text-white font-medium hover:bg-violet-700 disabled:opacity-50"
         >
-          Use this signature
+          Use this {kind}
         </button>
       </div>
     </div>

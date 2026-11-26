@@ -4,10 +4,11 @@ import sharp from "sharp";
 
 // "signature" = the CLIENT's own drawn signature (taxpayer line).
 // "preparerSignature" = the signing admin's OWN signature for the 1120
-// "Paid Preparer Use Only" box. Two different images; never interchangeable.
+// "Paid Preparer Use Only" box. "preparerName" is the handwritten name.
+// These three images are never interchangeable.
 export type Placement =
   | {
-      kind: "preparerSignature";
+      kind: "preparerSignature" | "preparerName";
       page: number;
       x: number;
       y: number;
@@ -57,16 +58,16 @@ export function parsePlacements(
       return { ok: false, error: "placement entry must be an object" };
     }
     const p = raw as Record<string, unknown>;
-    if (p.kind === "preparerSignature" && !opts.allowPreparerSignature) {
-      return { ok: false, error: "preparer signatures are not supported here" };
+    if ((p.kind === "preparerSignature" || p.kind === "preparerName") && !opts.allowPreparerSignature) {
+      return { ok: false, error: p.kind === "preparerName" ? "preparer names are not supported here" : "preparer signatures are not supported here" };
     }
-    const kind: "signature" | "preparerSignature" | "date" | "text" =
+    const kind: Placement["kind"] =
       p.kind === "date"
         ? "date"
         : p.kind === "text"
           ? "text"
-          : p.kind === "preparerSignature"
-            ? "preparerSignature"
+          : p.kind === "preparerSignature" || p.kind === "preparerName"
+            ? p.kind
             : "signature";
     const page = Number(p.page);
     const x = Number(p.x);
@@ -77,7 +78,7 @@ export function parsePlacements(
     if ([x, y].some((n) => !Number.isFinite(n))) {
       return { ok: false, error: "x/y must be numbers" };
     }
-    if (kind === "signature" || kind === "preparerSignature") {
+    if (kind === "signature" || kind === "preparerSignature" || kind === "preparerName") {
       const width = Number(p.width);
       const height = Number(p.height);
       if ([width, height].some((n) => !Number.isFinite(n))) {
@@ -140,15 +141,17 @@ export async function stampPlacements(
   signaturePngBytes: Uint8Array | null,
   placements: Placement[],
   preparerSignaturePngBytes: Uint8Array | null = null,
+  preparerNamePngBytes: Uint8Array | null = null,
 ): Promise<Uint8Array> {
   const pdf = await PDFDocument.load(pdfBytes, { updateMetadata: false });
-  const needsSignatureImage = placements.some((p) => p.kind === "signature");
-  const transparentPng = needsSignatureImage && signaturePngBytes ? await chromaKeySignaturePng(signaturePngBytes) : null;
-  const signatureImage = transparentPng ? await pdf.embedPng(transparentPng) : null;
-  const needsPreparerImage = placements.some((p) => p.kind === "preparerSignature");
-  const preparerPng =
-    needsPreparerImage && preparerSignaturePngBytes ? await chromaKeySignaturePng(preparerSignaturePngBytes) : null;
-  const preparerImage = preparerPng ? await pdf.embedPng(preparerPng) : null;
+  const imageBytes = { signature: signaturePngBytes, preparerSignature: preparerSignaturePngBytes, preparerName: preparerNamePngBytes };
+  const images = new Map<string, Awaited<ReturnType<PDFDocument["embedPng"]>>>();
+  for (const kind of ["signature", "preparerSignature", "preparerName"] as const) {
+    if (!placements.some((p) => p.kind === kind)) continue;
+    const bytes = imageBytes[kind];
+    if (!bytes) throw new Error(`Missing image for ${kind} placement`);
+    images.set(kind, await pdf.embedPng(await chromaKeySignaturePng(bytes)));
+  }
   const needsTextFont = placements.some((p) => p.kind === "date" || p.kind === "text");
   const textFont = needsTextFont ? await pdf.embedFont(StandardFonts.Helvetica) : null;
 
@@ -158,10 +161,8 @@ export async function stampPlacements(
       continue;
     }
     const page = pdf.getPage(idx);
-    if (p.kind === "signature" && signatureImage) {
-      page.drawImage(signatureImage, { x: p.x, y: p.y, width: p.width, height: p.height });
-    } else if (p.kind === "preparerSignature" && preparerImage) {
-      page.drawImage(preparerImage, { x: p.x, y: p.y, width: p.width, height: p.height });
+    if (p.kind === "signature" || p.kind === "preparerSignature" || p.kind === "preparerName") {
+      page.drawImage(images.get(p.kind)!, { x: p.x, y: p.y, width: p.width, height: p.height });
     } else if ((p.kind === "date" || p.kind === "text") && textFont) {
       page.drawText(toPdfSafe(p.text), {
         x: p.x,

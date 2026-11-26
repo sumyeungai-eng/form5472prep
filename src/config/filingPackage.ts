@@ -64,7 +64,9 @@ export const FAX_RENDER_DPI = 300;
 // box, no A35); HOUSE_PREPARER_FIRM_PHONE (falls back to HOUSE_PREPARER_PHONE);
 // HOUSE_PREPARER_IRS_DISCUSS fills the discuss boxes of an order that has no
 // answer of its own. PR 6 (W39) is pre-flight only.
-export const GENERATOR_VERSION = "2.5.1";
+// 2.5.2 (2026-11-27): leave the house preparer name blank for the admin
+// place-signature tool to stamp a separately drawn handwritten name.
+export const GENERATOR_VERSION = "2.5.2";
 // The IRS-required marking written across the top of the pro forma Form 1120
 // (Form 5472 instructions, "Foreign-owned U.S. DE"); also stamped on Form 5472.
 // House position: no "DIIRSP" suffix or other procedure label on the forms.

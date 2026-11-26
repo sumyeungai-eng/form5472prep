@@ -17,6 +17,7 @@ import {
   form1120_2023FieldMap,
   form1120_2024FieldMap,
   form1120_2025FieldMap,
+  form1120PaidPreparerFieldMaps,
 } from "./fieldMaps";
 import type { PackageRecord, PackageRecordYear } from "./generatePackage";
 import { isValidPbaCode } from "@/lib/irsCodes";
@@ -970,6 +971,8 @@ function checkA34(record: PackageRecord, result: MutableResult) {
 // A35: paid preparer block (spec item 8). A house preparer selected with an
 // incomplete config prints nothing, and a statement that says "I prepared"
 // contradicts the preparer shown on Form 1120.
+// The typed preparer name is intentionally blank (2.5.2): staff handwrite it
+// in place-signature, like the signature/date. A35 must not require that field.
 function checkA35(record: PackageRecord, result: MutableResult) {
   if (record.paidPreparerMode === "house" && record.housePreparer && !record.housePreparer.configComplete) {
     const parts = [
@@ -982,6 +985,15 @@ function checkA35(record: PackageRecord, result: MutableResult) {
       `Paid preparer is set to "House preparer" but the house preparer config is incomplete (${parts.join("; ")}), ` +
         `so the Paid Preparer block is blank. Complete the HOUSE_PREPARER_* settings or set Paid preparer to None.`,
     );
+  }
+  if (record.paidPreparerMode === "house") {
+    for (const year of record.taxYears) {
+      const map = form1120PaidPreparerFieldMaps[Number(year.form1120Revision) as keyof typeof form1120PaidPreparerFieldMaps];
+      if (map && year.form1120.fields.some((write) => write.field === map.preparerName && String(write.value).trim())) {
+        fail(result, "A35", `Tax year ${year.taxYear}: the typed preparer name must stay blank. ` +
+          "Handwrite it in place-signature so it does not overlap the name image.");
+      }
+    }
   }
   if (!record.taxYears.some((year) => year.paidPreparer?.shown)) return;
   for (const doc of record.authoredDocuments) {
