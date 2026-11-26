@@ -4,7 +4,7 @@ import { PDFDocument } from "pdf-lib";
 import { getAdminPrincipal } from "@/lib/admin/auth";
 import { logFilingChange } from "@/lib/admin/mutations";
 import { decodePngDataUrl, isReadablePng } from "@/lib/pdf/preparerSignature";
-import { LEGACY_PREPARER_NAME_MESSAGE, supportsHandwrittenPreparerName } from "@/lib/pdf/preparerSignatureVersion";
+import { LEGACY_PREPARER_NAME_MESSAGE, preparerNameStatus, readPdfGeneratorVersion } from "@/lib/pdf/preparerSignatureVersion";
 import { parsePlacements, stampPlacements } from "@/lib/pdf/stampPlacements";
 import { prisma } from "@/lib/prisma";
 import { get as getStorageObject, put, putPdf } from "@/lib/storage";
@@ -29,7 +29,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
 
   const filing = await prisma.filing.findUnique({
     where: { id: params.id },
-    select: { id: true, generatedPdfKey: true, signaturePngKey: true, generatorVersion: true },
+    select: { id: true, generatedPdfKey: true, signaturePngKey: true },
   });
   if (!filing) return NextResponse.json({ error: "filing not found" }, { status: 404 });
   if (!filing.generatedPdfKey) {
@@ -49,9 +49,6 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   const parsed = parsePlacements(body, { allowPreparerSignature: true });
   if (!parsed.ok) return NextResponse.json({ error: parsed.error }, { status: 400 });
   const placements = parsed.placements;
-  if (placements.some((p) => p.kind === "preparerName") && !supportsHandwrittenPreparerName(filing.generatorVersion)) {
-    return NextResponse.json({ error: LEGACY_PREPARER_NAME_MESSAGE }, { status: 409 });
-  }
 
   const needsSignatureImage = placements.some((p) => p.kind === "signature");
   if (needsSignatureImage && !filing.signaturePngKey) {
@@ -95,11 +92,17 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   }
 
   const [pdfBytes, pngBytes] = await Promise.all([
+    // Match the placement page and its default PDF preview, including reviewed uploads.
     getStorageObject(filing.generatedPdfKey),
     needsSignatureImage && filing.signaturePngKey
       ? getStorageObject(filing.signaturePngKey)
       : Promise.resolve(new Uint8Array()),
   ]);
+
+  if (placements.some((p) => p.kind === "preparerName") &&
+      preparerNameStatus(await readPdfGeneratorVersion(pdfBytes)) === "blocked") {
+    return NextResponse.json({ error: LEGACY_PREPARER_NAME_MESSAGE }, { status: 409 });
+  }
 
   if (needsSignatureImage && !(await isReadablePng(pngBytes))) {
     return NextResponse.json({ error: "The customer signature image is invalid. Draw it again." }, { status: 400 });

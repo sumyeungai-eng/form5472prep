@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
-import { LEGACY_PREPARER_NAME_MESSAGE } from "@/lib/pdf/preparerSignatureVersion";
+import { LEGACY_PREPARER_NAME_MESSAGE, UNKNOWN_PREPARER_NAME_MESSAGE } from "@/lib/pdf/preparerSignatureVersion";
 
 // Render the PDF at 1.5x for crisp display on retina. The display→PDF
 // coordinate conversion just divides by this factor.
@@ -90,6 +90,7 @@ export function PlaceSignatureClient({
   endpoints,
   allowPreparerSignature = false,
   allowPreparerName = false,
+  preparerNameVersionUnknown = false,
   canSavePreparerSignature = false,
 }: {
   filingId: string;
@@ -100,6 +101,7 @@ export function PlaceSignatureClient({
   // Form 5472 / 1120 filings only (not EIN/ITIN applications).
   allowPreparerSignature?: boolean;
   allowPreparerName?: boolean;
+  preparerNameVersionUnknown?: boolean;
   // False on the shared-password session: there is no personal account.
   canSavePreparerSignature?: boolean;
 }) {
@@ -610,6 +612,9 @@ export function PlaceSignatureClient({
         </div>
         {allowPreparerSignature && !allowPreparerName && (
           <p className="text-xs text-amber-700">{LEGACY_PREPARER_NAME_MESSAGE}</p>
+        )}
+        {allowPreparerSignature && allowPreparerName && preparerNameVersionUnknown && (
+          <p className="text-xs text-amber-700">{UNKNOWN_PREPARER_NAME_MESSAGE}</p>
         )}
         {activeTool && (
           <span className="text-xs text-slate-600 inline-flex items-center gap-2">

@@ -2,7 +2,8 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { getAdminPrincipal } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
-import { supportsHandwrittenPreparerName } from "@/lib/pdf/preparerSignatureVersion";
+import { preparerNameStatus, readPdfGeneratorVersion } from "@/lib/pdf/preparerSignatureVersion";
+import { get as getStorageObject } from "@/lib/storage";
 import { PlaceSignatureClient } from "./PlaceSignatureClient";
 
 export const dynamic = "force-dynamic";
@@ -23,7 +24,6 @@ export default async function PlaceSignaturePage({ params }: { params: { id: str
       llcName: true,
       taxYears: true,
       generatedPdfKey: true,
-      generatorVersion: true,
       signaturePngKey: true,
       signedPdfKey: true,
     },
@@ -45,6 +45,11 @@ export default async function PlaceSignaturePage({ params }: { params: { id: str
     );
   }
 
+  // The stamping route and the canvas's default /pdf endpoint both use
+  // generatedPdfKey, including when it points to a reviewed upload, not a draft.
+  const pdfVersion = await readPdfGeneratorVersion(await getStorageObject(filing.generatedPdfKey));
+  const nameStatus = preparerNameStatus(pdfVersion);
+
   return (
     <PlaceSignatureClient
       filingId={filing.id}
@@ -52,7 +57,8 @@ export default async function PlaceSignaturePage({ params }: { params: { id: str
       taxYears={filing.taxYears}
       hasExistingSignedPdf={!!filing.signedPdfKey}
       allowPreparerSignature
-      allowPreparerName={supportsHandwrittenPreparerName(filing.generatorVersion)}
+      allowPreparerName={nameStatus !== "blocked"}
+      preparerNameVersionUnknown={nameStatus === "unknown"}
       // Only a personal admin login has an account to keep a signature on.
       canSavePreparerSignature={!!principal.adminId}
     />

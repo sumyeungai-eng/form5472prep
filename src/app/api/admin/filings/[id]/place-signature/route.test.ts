@@ -40,6 +40,19 @@ const clientPlacement = { kind: "signature", page: 1, x: 100, y: 80, width: 90, 
 let pngDataUrl = "";
 let savedPng: Uint8Array;
 let clientPng: Uint8Array;
+let unsignedPdf: Uint8Array;
+
+async function makePdf(version: string | null) {
+  const doc = await PDFDocument.create();
+  doc.addPage([612, 792]);
+  doc.addPage([612, 792]);
+  if (version !== null) {
+    doc.setProducer(`generator ${version}`);
+    doc.setCreator(`generator ${version}`);
+    doc.setKeywords([`version=${version}`, "commit=test", "generatedAt=2026-11-27T00:00:00.000Z"]);
+  }
+  return doc.save();
+}
 
 function post(body: Record<string, unknown>) {
   return POST(new Request("https://x.test", { method: "POST", body: JSON.stringify(body) }), params);
@@ -55,12 +68,9 @@ describe("place-signature with a preparer signature", () => {
     savedPng = new Uint8Array(png);
     clientPng = new Uint8Array(await sharp({ create: { width: 4, height: 4, channels: 4, background: "#000" } }).png().toBuffer());
     pngDataUrl = `data:image/png;base64,${png.toString("base64")}`;
-    const doc = await PDFDocument.create();
-    doc.addPage([612, 792]);
-    doc.addPage([612, 792]);
-    const unsigned = await doc.save();
+    unsignedPdf = await makePdf("2.5.2");
     storage.get.mockImplementation(async (key: string) =>
-      key === "unsigned.pdf" ? unsigned : key === "client.png" ? clientPng : savedPng,
+      key === "unsigned.pdf" ? unsignedPdf : key === "client.png" ? clientPng : savedPng,
     );
   });
 
@@ -205,24 +215,52 @@ describe("place-signature with a preparer signature", () => {
 
   it.each([
     ["2.5.1", 409], ["2.5.2", 200], ["2.5.10", 200], ["2.10.0", 200],
-    [null, 409], [undefined, 409], ["unknown", 409], ["2.5", 409],
-  ])("handles a name placement on generator %s with status %s", async (generatorVersion, status) => {
-    db.filingFind.mockResolvedValue({ id: "filing_1", generatedPdfKey: "unsigned.pdf", signaturePngKey: "client.png", generatorVersion });
+    [null, 200], ["unknown", 200], ["2.5", 200],
+  ])("uses the stamped PDF's generator metadata %s for status %s", async (version, status) => {
+    unsignedPdf = await makePdf(version);
     const response = await post({ placements: [namePlacement], preparerNamePng: pngDataUrl });
     expect(response.status).toBe(status);
-    expect(db.filingFind).toHaveBeenCalledWith(expect.objectContaining({ select: expect.objectContaining({ generatorVersion: true }) }));
+    expect(db.filingFind).toHaveBeenCalledWith({
+      where: { id: "filing_1" }, select: { id: true, generatedPdfKey: true, signaturePngKey: true },
+    });
     if (status === 409) {
-      expect(await response.json()).toEqual({ error: "This package was generated before handwritten preparer names and already has the typed name. Regenerate the PDF first, or leave the name as typed." });
+      expect(await response.json()).toEqual({ error: "This PDF still has the typed preparer name, so a handwritten name would overlap it. Regenerate the PDF, or leave the name as typed." });
       expect(stamp.stampPlacements).not.toHaveBeenCalled();
       expect(storage.putPdf).not.toHaveBeenCalled();
       expect(db.filingUpdate).not.toHaveBeenCalled();
     } else {
       expect(stamp.stampPlacements).toHaveBeenCalledOnce();
+      expect((stamp.stampPlacements.mock.calls[0] as unknown as unknown[])[0]).toEqual(unsignedPdf);
     }
   });
 
-  it("still stamps a preparer signature on a 2.5.1 package", async () => {
-    db.filingFind.mockResolvedValue({ id: "filing_1", generatedPdfKey: "unsigned.pdf", signaturePngKey: "client.png", generatorVersion: "2.5.1" });
+  it.each([
+    ["2.5.1", "2.5.2", 200],
+    ["2.5.2", "2.5.1", 409],
+  ])("judges a reviewed upload's bytes, not filing version %s (PDF %s -> %s)", async (generatorVersion, pdfVersion, status) => {
+    const reviewedKey = "filing_1_reviewed_123.pdf";
+    const reviewedPdf = await makePdf(pdfVersion);
+    db.filingFind.mockResolvedValue({ id: "filing_1", generatedPdfKey: reviewedKey,
+      signaturePngKey: "client.png", generatorVersion });
+    storage.get.mockImplementation(async (key: string) =>
+      key === reviewedKey ? reviewedPdf : key === "unsigned.pdf" ? unsignedPdf : clientPng,
+    );
+    const response = await post({ placements: [namePlacement], preparerNamePng: pngDataUrl });
+    expect(response.status).toBe(status);
+    expect(storage.get).toHaveBeenCalledWith(reviewedKey);
+    expect(storage.get).not.toHaveBeenCalledWith("unsigned.pdf");
+    if (status === 200) {
+      expect((stamp.stampPlacements.mock.calls[0] as unknown as unknown[])[0]).toEqual(reviewedPdf);
+    } else {
+      expect(await response.json()).toEqual({ error: "This PDF still has the typed preparer name, so a handwritten name would overlap it. Regenerate the PDF, or leave the name as typed." });
+      expect(stamp.stampPlacements).not.toHaveBeenCalled();
+      expect(storage.putPdf).not.toHaveBeenCalled();
+      expect(storage.put).not.toHaveBeenCalled();
+    }
+  });
+
+  it("still stamps a preparer signature on a 2.5.1 PDF", async () => {
+    unsignedPdf = await makePdf("2.5.1");
     expect((await post({ placements: [preparerPlacement], preparerSignaturePng: pngDataUrl })).status).toBe(200);
     expect(stamp.stampPlacements).toHaveBeenCalledOnce();
   });
