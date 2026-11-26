@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
+import { LEGACY_PREPARER_NAME_MESSAGE } from "@/lib/pdf/preparerSignatureVersion";
 
 // Render the PDF at 1.5x for crisp display on retina. The display→PDF
 // coordinate conversion just divides by this factor.
@@ -88,6 +89,7 @@ export function PlaceSignatureClient({
   hasExistingSignedPdf,
   endpoints,
   allowPreparerSignature = false,
+  allowPreparerName = false,
   canSavePreparerSignature = false,
 }: {
   filingId: string;
@@ -97,6 +99,7 @@ export function PlaceSignatureClient({
   endpoints?: PlaceSignatureEndpoints;
   // Form 5472 / 1120 filings only (not EIN/ITIN applications).
   allowPreparerSignature?: boolean;
+  allowPreparerName?: boolean;
   // False on the shared-password session: there is no personal account.
   canSavePreparerSignature?: boolean;
 }) {
@@ -256,6 +259,7 @@ export function PlaceSignatureClient({
 
   // ─── Click-to-place ─────────────────────────────────────────────────────
   function handlePageClick(pageIndex: number, e: React.MouseEvent<HTMLDivElement>) {
+    if (mode === "preparerName" && !allowPreparerName) return;
     // Signature mode needs the signature image loaded; date mode doesn't.
     if (mode === "signature" && !sigUrl) return;
     if (mode === "preparer" && !preparerSig) {
@@ -386,7 +390,7 @@ export function PlaceSignatureClient({
       setSaveMsg({ kind: "err", text: "Place at least one signature first." });
       return;
     }
-    if (placements.some((p) => p.kind === "preparer") &&
+    if (allowPreparerName && placements.some((p) => p.kind === "preparer") &&
         !placements.some((p) => p.kind === "preparerName") &&
         !confirm("No handwritten preparer name placed. Save anyway?")) return;
     setSaving(true);
@@ -576,11 +580,13 @@ export function PlaceSignatureClient({
             <button
               key={tool.kind}
               type="button"
+              disabled={tool.kind === "preparerName" && !allowPreparerName}
+              title={tool.kind === "preparerName" && !allowPreparerName ? LEGACY_PREPARER_NAME_MESSAGE : undefined}
               onClick={() => {
                 setMode(tool.kind);
                 setPadKind(tool.image ? null : tool.kind);
               }}
-              className={`px-3 py-1.5 font-medium border-l border-slate-300 ${mode === tool.kind
+              className={`px-3 py-1.5 font-medium border-l border-slate-300 disabled:opacity-50 disabled:cursor-not-allowed ${mode === tool.kind
                 ? tool.kind === "preparerName" ? "bg-emerald-600 text-white" : "bg-violet-600 text-white"
                 : "bg-white text-slate-600 hover:bg-slate-50"}`}
             >
@@ -602,6 +608,9 @@ export function PlaceSignatureClient({
             Text
           </button>
         </div>
+        {allowPreparerSignature && !allowPreparerName && (
+          <p className="text-xs text-amber-700">{LEGACY_PREPARER_NAME_MESSAGE}</p>
+        )}
         {activeTool && (
           <span className="text-xs text-slate-600 inline-flex items-center gap-2">
             {activeTool.image ? (

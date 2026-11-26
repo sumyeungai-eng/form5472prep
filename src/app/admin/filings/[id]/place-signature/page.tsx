@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { getAdminPrincipal } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
+import { supportsHandwrittenPreparerName } from "@/lib/pdf/preparerSignatureVersion";
 import { PlaceSignatureClient } from "./PlaceSignatureClient";
 
 export const dynamic = "force-dynamic";
@@ -22,6 +23,7 @@ export default async function PlaceSignaturePage({ params }: { params: { id: str
       llcName: true,
       taxYears: true,
       generatedPdfKey: true,
+      generatorVersion: true,
       signaturePngKey: true,
       signedPdfKey: true,
     },
@@ -50,6 +52,7 @@ export default async function PlaceSignaturePage({ params }: { params: { id: str
       taxYears={filing.taxYears}
       hasExistingSignedPdf={!!filing.signedPdfKey}
       allowPreparerSignature
+      allowPreparerName={supportsHandwrittenPreparerName(filing.generatorVersion)}
       // Only a personal admin login has an account to keep a signature on.
       canSavePreparerSignature={!!principal.adminId}
     />

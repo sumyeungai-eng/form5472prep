@@ -50,6 +50,21 @@ describe.each([
     expect(storage.get).not.toHaveBeenCalled();
   });
 
+  it("returns 404 when the saved key's blob is missing", async () => {
+    storage.get.mockRejectedValueOnce(Object.assign(new Error("missing blob"), { code: "ENOENT" }));
+    expect((await GET(request())).status).toBe(404);
+    expect(storage.get).toHaveBeenCalledExactlyOnceWith(saved);
+  });
+
+  it.each(["typo", "preparerName", ""])("rejects unknown kind=%s without reading or deleting the signature", async (kind) => {
+    const unknownRequest = () => new Request(`https://x.test/api/admin/preparer-signature?kind=${kind}`);
+    expect((await GET(unknownRequest())).status).toBe(400);
+    expect((await DELETE(unknownRequest())).status).toBe(400);
+    expect(db.findUnique).not.toHaveBeenCalled();
+    expect(db.update).not.toHaveBeenCalled();
+    expect(storage.get).not.toHaveBeenCalled();
+  });
+
   it("shared-password sessions have nothing to reuse or forget", async () => {
     auth.getAdminPrincipal.mockResolvedValue({ adminId: null });
     expect((await GET(request())).status).toBe(404);

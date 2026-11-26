@@ -17,13 +17,16 @@ export function decodePngDataUrl(input: unknown): Uint8Array | null {
 }
 
 // The magic-byte check above can be fooled by a corrupt file; confirm sharp can
-// actually read it (and that it's a sane size) so a bad upload is a 400, not a
-// stamping crash.
+// actually decode all its pixels (and that it's a sane size) so a bad upload
+// returns 400 instead of crashing during stamping.
 export async function isReadablePng(bytes: Uint8Array): Promise<boolean> {
   if (bytes.length > MAX_PREPARER_SIGNATURE_BYTES) return false;
   try {
-    const meta = await sharp(Buffer.from(bytes)).metadata();
-    return meta.format === "png" && !!meta.width && !!meta.height && meta.width <= 4000 && meta.height <= 2000;
+    const image = sharp(Buffer.from(bytes));
+    const meta = await image.metadata();
+    if (meta.format !== "png" || !meta.width || !meta.height || meta.width > 4000 || meta.height > 2000) return false;
+    await image.raw().toBuffer();
+    return true;
   } catch {
     return false;
   }

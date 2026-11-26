@@ -39,6 +39,7 @@ const namePlacement = { ...preparerPlacement, kind: "preparerName", width: 200, 
 const clientPlacement = { kind: "signature", page: 1, x: 100, y: 80, width: 90, height: 30 };
 let pngDataUrl = "";
 let savedPng: Uint8Array;
+let clientPng: Uint8Array;
 
 function post(body: Record<string, unknown>) {
   return POST(new Request("https://x.test", { method: "POST", body: JSON.stringify(body) }), params);
@@ -48,17 +49,18 @@ describe("place-signature with a preparer signature", () => {
   beforeEach(async () => {
     vi.clearAllMocks();
     auth.getAdminPrincipal.mockResolvedValue({ adminId: "admin_1", email: "preparer@example.test", via: "cookie" });
-    db.filingFind.mockResolvedValue({ id: "filing_1", generatedPdfKey: "unsigned.pdf", signaturePngKey: "client.png" });
+    db.filingFind.mockResolvedValue({ id: "filing_1", generatedPdfKey: "unsigned.pdf", signaturePngKey: "client.png", generatorVersion: "2.5.2" });
     db.adminFind.mockResolvedValue({ preparerSignatureKey: "admin_admin_1_saved.png", preparerNameKey: "admin_admin_1_name.png" });
     const png = await sharp({ create: { width: 3, height: 3, channels: 4, background: "#fff" } }).png().toBuffer();
     savedPng = new Uint8Array(png);
+    clientPng = new Uint8Array(await sharp({ create: { width: 4, height: 4, channels: 4, background: "#000" } }).png().toBuffer());
     pngDataUrl = `data:image/png;base64,${png.toString("base64")}`;
     const doc = await PDFDocument.create();
     doc.addPage([612, 792]);
     doc.addPage([612, 792]);
     const unsigned = await doc.save();
     storage.get.mockImplementation(async (key: string) =>
-      key === "unsigned.pdf" ? unsigned : key.startsWith("admin_") ? savedPng : new TextEncoder().encode(`bytes:${key}`),
+      key === "unsigned.pdf" ? unsigned : key === "client.png" ? clientPng : savedPng,
     );
   });
 
@@ -80,8 +82,9 @@ describe("place-signature with a preparer signature", () => {
       rememberPreparerSignature: true,
     });
     expect(res.status).toBe(200);
-    const [, clientPng, , preparerPng] = stamp.stampPlacements.mock.calls[0] as unknown as [unknown, Uint8Array, unknown, Uint8Array];
-    expect(new TextDecoder().decode(clientPng)).toBe("bytes:client.png");
+    const [, stampedClientPng, , preparerPng] = stamp.stampPlacements.mock.calls[0] as unknown as [unknown, Uint8Array, unknown, Uint8Array];
+    expect(stampedClientPng).toEqual(clientPng);
+    expect(preparerPng).not.toEqual(clientPng);
     expect(preparerPng[0]).toBe(0x89); // the drawn PNG, not the client's
     const putKeys = storage.put.mock.calls.map((c) => (c as unknown as [string])[0]);
     expect(putKeys.some((k) => /^filing_1_preparer_signature_\d+_[0-9a-f]{8}\.png$/.test(k))).toBe(true);
@@ -183,7 +186,7 @@ describe("place-signature with a preparer signature", () => {
   });
 
   it("allows a name-only placement without a client signature on file", async () => {
-    db.filingFind.mockResolvedValue({ id: "filing_1", generatedPdfKey: "unsigned.pdf", signaturePngKey: null });
+    db.filingFind.mockResolvedValue({ id: "filing_1", generatedPdfKey: "unsigned.pdf", signaturePngKey: null, generatorVersion: "2.5.2" });
     expect((await post({ placements: [namePlacement], preparerNamePng: pngDataUrl })).status).toBe(200);
     const args = stamp.stampPlacements.mock.calls[0] as unknown as unknown[];
     expect(args[1]).toBeNull();
@@ -198,6 +201,59 @@ describe("place-signature with a preparer signature", () => {
     expect((await post({ placements: [namePlacement], useSavedPreparerName: true })).status).toBe(400);
     expect(stamp.stampPlacements).not.toHaveBeenCalled();
     expect(storage.putPdf).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["2.5.1", 409], ["2.5.2", 200], ["2.5.10", 200], ["2.10.0", 200],
+    [null, 409], [undefined, 409], ["unknown", 409], ["2.5", 409],
+  ])("handles a name placement on generator %s with status %s", async (generatorVersion, status) => {
+    db.filingFind.mockResolvedValue({ id: "filing_1", generatedPdfKey: "unsigned.pdf", signaturePngKey: "client.png", generatorVersion });
+    const response = await post({ placements: [namePlacement], preparerNamePng: pngDataUrl });
+    expect(response.status).toBe(status);
+    expect(db.filingFind).toHaveBeenCalledWith(expect.objectContaining({ select: expect.objectContaining({ generatorVersion: true }) }));
+    if (status === 409) {
+      expect(await response.json()).toEqual({ error: "This package was generated before handwritten preparer names and already has the typed name. Regenerate the PDF first, or leave the name as typed." });
+      expect(stamp.stampPlacements).not.toHaveBeenCalled();
+      expect(storage.putPdf).not.toHaveBeenCalled();
+      expect(db.filingUpdate).not.toHaveBeenCalled();
+    } else {
+      expect(stamp.stampPlacements).toHaveBeenCalledOnce();
+    }
+  });
+
+  it("still stamps a preparer signature on a 2.5.1 package", async () => {
+    db.filingFind.mockResolvedValue({ id: "filing_1", generatedPdfKey: "unsigned.pdf", signaturePngKey: "client.png", generatorVersion: "2.5.1" });
+    expect((await post({ placements: [preparerPlacement], preparerSignaturePng: pngDataUrl })).status).toBe(200);
+    expect(stamp.stampPlacements).toHaveBeenCalledOnce();
+  });
+
+  it.each([
+    { kind: "client", saved: true },
+    { kind: "preparerSignature", saved: false },
+    { kind: "preparerSignature", saved: true },
+    { kind: "preparerName", saved: false },
+    { kind: "preparerName", saved: true },
+  ])("returns 400 before stamping a truncated $kind PNG (saved=$saved)", async ({ kind, saved }) => {
+    const png = await sharp({ create: { width: 600, height: 160, channels: 4, background: "#fff" } }).png().toBuffer();
+    const truncated = png.subarray(0, 80);
+    expect(truncated).toHaveLength(80);
+    const dataUrl = `data:image/png;base64,${truncated.toString("base64")}`;
+    const body: Record<string, unknown> = {
+      placements: [kind === "client" ? clientPlacement : kind === "preparerSignature" ? preparerPlacement : namePlacement],
+    };
+    if (kind === "client") clientPng = truncated;
+    else if (saved) {
+      savedPng = truncated;
+      body[kind === "preparerName" ? "useSavedPreparerName" : "useSavedPreparerSignature"] = true;
+    } else {
+      body[kind === "preparerName" ? "preparerNamePng" : "preparerSignaturePng"] = dataUrl;
+    }
+    expect((await post(body)).status).toBe(400);
+    expect(stamp.stampPlacements).not.toHaveBeenCalled();
+    expect(storage.put).not.toHaveBeenCalled();
+    expect(storage.putPdf).not.toHaveBeenCalled();
+    expect(db.filingUpdate).not.toHaveBeenCalled();
+    expect(db.adminUpdate).not.toHaveBeenCalled();
   });
 
 });
