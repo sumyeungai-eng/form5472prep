@@ -1,3 +1,4 @@
+import { effectiveLocale } from "@/i18n/locales";
 import { catalogText } from "./translation";
 import { getMarketingTranslator } from "@/i18n/marketing";
 import { localizedPath, MARKETING_LOCALES_INDEXABLE, type MarketingLocale } from "@/i18n/marketing/config";
@@ -16,6 +17,7 @@ import { CONTACT_EMAIL } from "@/lib/contactEmail";
 // so the whole marketing shell can be statically generated and edge-cached.
 
 export function MarketingChrome({ children, locale = "en" }: { children: React.ReactNode; locale?: "en" | MarketingLocale }) {
+  locale = effectiveLocale(locale) as "en" | MarketingLocale;
   const t = getMarketingTranslator(locale);
   return (
     <div className="min-h-screen flex flex-col">

@@ -4,14 +4,14 @@ import { useLocale, useMessages } from "next-intl";
 import { useMemo } from "react";
 import { createWizardText } from "./text";
 import type { Messages } from "@/i18n/merge";
-import { normalizeLocale } from "@/i18n/locales";
+import { effectiveLocale } from "@/i18n/locales";
 
 export function useWizardLocale() {
   try {
     // This always reads one context, including when its missing-provider
     // error is caught. No hook is skipped when the provider comes or goes.
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    return normalizeLocale(useLocale());
+    return effectiveLocale(useLocale());
   }
   catch { return "en" as const; }
 }

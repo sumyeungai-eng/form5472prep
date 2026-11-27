@@ -1,7 +1,8 @@
 import { createTranslator } from "next-intl";
+import { I18N_ENABLED } from "@/config/i18n-switch.mjs";
 import english from "../../../messages/en/wizard.json";
 import { deepMerge, type Messages } from "@/i18n/merge";
-import { normalizeLocale } from "@/i18n/locales";
+import { effectiveLocale } from "@/i18n/locales";
 
 type Values = Record<string, string | number | Date>;
 function flatten(messages: Messages, prefix = ""): Record<string, string> {
@@ -36,11 +37,11 @@ function interpolate(source: string, values?: Values): string {
 
 /** Display copy only. Never call this on input values or data being saved. */
 export function createWizardText(messages?: Messages, locale?: string) {
-  const merged = deepMerge(english, messages ?? {});
+  const merged = deepMerge(english, I18N_ENABLED ? messages ?? {} : {});
   restoreEmpty(english, merged);
   let failed = false;
   const translate = createTranslator({
-    locale: normalizeLocale(locale), messages: merged, timeZone: "UTC",
+    locale: effectiveLocale(locale), messages: merged, timeZone: "UTC",
     onError() { failed = true; },
     getMessageFallback({ key }) { return base[key] ?? key; },
   });

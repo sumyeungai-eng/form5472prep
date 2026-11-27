@@ -1,3 +1,4 @@
+import { effectiveLocale } from "@/i18n/locales";
 import { createTranslator } from "next-intl";
 import en from "./en.json";
 import de from "./de.json";
@@ -6,6 +7,7 @@ import { deepMerge, type Messages } from "@/i18n/merge";
 import type { MarketingLocale } from "./config";
 const catalogs = { en, de, "zh-Hans": zh };
 export function getMarketingMessages(locale: MarketingLocale | "en") {
+  locale = effectiveLocale(locale) as MarketingLocale | "en";
   const messages = deepMerge(en, catalogs[locale] ?? en);
   if (locale === "en") return messages as typeof en;
   let failed = false;
@@ -44,6 +46,7 @@ export function getCalculatorMessages(locale: MarketingLocale | "en") {
   return { penalty: { calculator } };
 }
 export function getMarketingTranslator(locale: MarketingLocale | "en") {
+  locale = effectiveLocale(locale) as MarketingLocale | "en";
   const messages: Messages = getMarketingMessages(locale);
   let failed = false;
   const translated = createTranslator({ locale, messages, onError: () => { failed = true; } });

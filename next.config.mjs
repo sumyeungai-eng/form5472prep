@@ -1,3 +1,4 @@
+import { buildI18nRedirects } from "./src/config/i18n-switch.mjs";
 import createNextIntlPlugin from "next-intl/plugin";
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
@@ -25,6 +26,7 @@ const nextConfig = {
   },
   async redirects() {
     return [
+      ...buildI18nRedirects(),
       // 2026-11-03: November blog slugs shortened to the 75-char URL limit (blog-slug-length.test.ts).
       { source: "/blog/form-1120x-foreign-owned-llc-amended-return", destination: "/blog/form-1120x-foreign-owned-llc", permanent: true },
       { source: "/blog/delaware-llc-annual-tax-2027-foreign-owner", destination: "/blog/delaware-llc-annual-tax-2027", permanent: true },

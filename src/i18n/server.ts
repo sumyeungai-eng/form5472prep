@@ -5,7 +5,7 @@ import hant from "../../messages/zh-Hant/email.json";
 import de from "../../messages/de/email.json";
 import fr from "../../messages/fr/email.json";
 import es from "../../messages/es/email.json";
-import { LOCALES, type Locale } from "./locales";
+import { effectiveLocale, LOCALES, type Locale } from "./locales";
 import { deepMerge, type Messages } from "./merge";
 
 export type EmailTranslator = (key: string, values?: Record<string, string | number | Date>) => string;
@@ -13,7 +13,7 @@ const catalogs = { en, "zh-Hans": hans, "zh-Hant": hant, de, fr, es };
 
 // User.locale is a catalog identifier, not an Accept-Language header.
 export function emailLocale(locale?: string | null): Locale {
-  return LOCALES.includes(locale as Locale) ? locale as Locale : "en";
+  return effectiveLocale(LOCALES.includes(locale as Locale) ? locale : "en");
 }
 
 // Independent of the formatter: even a formatter initialization failure must

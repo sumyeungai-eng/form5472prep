@@ -144,3 +144,8 @@ describe("language action", () => {
     warning.mockRestore();
   });
 });
+
+// Keep preference selection and writes covered for the enabled feature.
+vi.mock("@/config/i18n-switch.mjs", async original => ({
+  ...await original<typeof import("@/config/i18n-switch.mjs")>(), I18N_ENABLED: true,
+}));

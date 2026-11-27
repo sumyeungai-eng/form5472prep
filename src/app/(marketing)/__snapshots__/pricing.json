@@ -5,12 +5,6 @@
     "canonical": "http://localhost:3000/pricing",
     "types": {
       "application/rss+xml": "http://localhost:3000/feed.xml"
-    },
-    "languages": {
-      "en": "http://localhost:3000/pricing",
-      "zh-Hans": "http://localhost:3000/zh-hans/pricing",
-      "de": "http://localhost:3000/de/pricing",
-      "x-default": "http://localhost:3000/pricing"
     }
   },
   "openGraph": {

@@ -7,12 +7,6 @@
     "canonical": "http://localhost:3000/services",
     "types": {
       "application/rss+xml": "http://localhost:3000/feed.xml"
-    },
-    "languages": {
-      "en": "http://localhost:3000/services",
-      "zh-Hans": "http://localhost:3000/zh-hans/services",
-      "de": "http://localhost:3000/de/services",
-      "x-default": "http://localhost:3000/services"
     }
   },
   "openGraph": {

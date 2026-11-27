@@ -58,3 +58,8 @@ describe.each(["de", "zh-Hans"] as const)("%s public marketing routes", locale =
     expect(html).toContain(locale === "de" ? "Maßgeblich ist die englische Fassung" : "以英文版本为准");
   });
 });
+
+// Keep translated behavior covered while the production switch is disabled.
+vi.mock("@/config/i18n-switch.mjs", async original => ({
+  ...await original<typeof import("@/config/i18n-switch.mjs")>(), I18N_ENABLED: true,
+}));

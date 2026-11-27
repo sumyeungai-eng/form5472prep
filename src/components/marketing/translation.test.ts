@@ -17,3 +17,8 @@ describe("catalogText recovery", () => {
     expect(catalogText("de", t, "broken.key", "Source")).toBe("Source");
   });
 });
+
+// Keep translated behavior covered while the production switch is disabled.
+vi.mock("@/config/i18n-switch.mjs", async original => ({
+  ...await original<typeof import("@/config/i18n-switch.mjs")>(), I18N_ENABLED: true,
+}));

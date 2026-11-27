@@ -1,6 +1,6 @@
 "use client";
 import { NextIntlClientProvider, useTranslations } from "next-intl";
-import { localeFromAcceptLanguage, normalizeLocale, type Locale } from "@/i18n/locales";
+import { effectiveLocale, localeFromAcceptLanguage, type Locale } from "@/i18n/locales";
 import common from "../../../messages/en/common.json";
 import domain from "../../../messages/en/domain.json";
 import portal from "../../../messages/en/portal.json";
@@ -67,7 +67,7 @@ export default function CustomerError(props: { error: Error & { digest?: string 
   useEffect(() => {
     let active = true;
     const cookie = document.cookie.split(";").find((part) => part.trim().startsWith("NEXT_LOCALE="));
-    const locale = cookie ? normalizeLocale(cookie.trim().slice("NEXT_LOCALE=".length)) : localeFromAcceptLanguage(navigator.languages.join(","));
+    const locale = effectiveLocale(cookie ? cookie.trim().slice("NEXT_LOCALE=".length) : localeFromAcceptLanguage(navigator.languages.join(",")));
     if (locale === "en") return;
     Promise.all([
       import(`../../../messages/${locale}/common.json`),

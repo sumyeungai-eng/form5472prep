@@ -1,10 +1,12 @@
 "use client";
+import { I18N_ENABLED } from "@/config/i18n-switch.mjs";
 import { useEffect, useId, useRef, useState } from "react";
 import { ChevronDown, Globe } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { LOCALIZED_MARKETING_PATHS, localizedPath, type MarketingLocale } from "@/i18n/marketing/config";
 
 export function chooseLocale(locale: "en" | MarketingLocale) {
+  if (!I18N_ENABLED) return;
   try {
     document.cookie = `NEXT_LOCALE=${locale}; path=/; max-age=31536000; SameSite=Lax`;
   } catch {
@@ -12,7 +14,11 @@ export function chooseLocale(locale: "en" | MarketingLocale) {
   }
 }
 // Layouts have no pathname prop; this small island preserves the current page.
-export function LanguageMenu({ label = "Language" }: { label?: string }) {
+export function LanguageMenu(props: { label?: string }) {
+  return I18N_ENABLED ? <EnabledLanguageMenu {...props} /> : null;
+}
+
+function EnabledLanguageMenu({ label = "Language" }: { label?: string }) {
   const pathname = usePathname() ?? "/";
   const path = pathname.replace(/^\/(de|zh-hans)(?=\/|$)/, "") || "/";
   const locale = /^\/de(?=\/|$)/.test(pathname) ? "de"

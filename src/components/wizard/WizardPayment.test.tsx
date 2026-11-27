@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { NextIntlClientProvider } from "next-intl";
 import { ReviewStep, type ReviewStepFiling } from "./review/ReviewStep";
@@ -45,3 +45,8 @@ describe("wizard translations preserve the pay path and customer values", () => 
     expect(html).toContain(`>${raw}</textarea>`);
   });
 });
+
+// Keep translated behavior covered while the production switch is disabled.
+vi.mock("@/config/i18n-switch.mjs", async original => ({
+  ...await original<typeof import("@/config/i18n-switch.mjs")>(), I18N_ENABLED: true,
+}));

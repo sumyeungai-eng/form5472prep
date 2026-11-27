@@ -1,3 +1,5 @@
+import { I18N_ENABLED } from "@/config/i18n-switch.mjs";
+
 // Shared by portal, future email/wizard namespaces, and server actions. Keep pure.
 export const LOCALES = ["en", "zh-Hans", "zh-Hant", "de", "fr", "es"] as const;
 export type Locale = (typeof LOCALES)[number];
@@ -16,6 +18,11 @@ export function normalizeLocale(input?: string | null): Locale {
     if (value === language || value.startsWith(`${language}-`)) return language;
   }
   return DEFAULT_LOCALE;
+}
+
+// Normalize preferences separately so disabling output never overwrites stored data.
+export function effectiveLocale(requested?: string | null): Locale {
+  return I18N_ENABLED ? normalizeLocale(requested) : DEFAULT_LOCALE;
 }
 
 export function localeFromAcceptLanguage(h?: string | null): Locale {

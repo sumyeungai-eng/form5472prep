@@ -5,12 +5,6 @@
     "canonical": "http://localhost:3000/faq",
     "types": {
       "application/rss+xml": "http://localhost:3000/feed.xml"
-    },
-    "languages": {
-      "en": "http://localhost:3000/faq",
-      "zh-Hans": "http://localhost:3000/zh-hans/faq",
-      "de": "http://localhost:3000/de/faq",
-      "x-default": "http://localhost:3000/faq"
     }
   },
   "openGraph": {

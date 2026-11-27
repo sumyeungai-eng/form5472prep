@@ -2,10 +2,17 @@ import { createHash } from "node:crypto";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import * as mail from "./email";
 import * as i18n from "@/i18n/server";
 import englishHashes from "./__fixtures__/email-english-sha256.json";
+
+const languageSwitch = vi.hoisted(() => ({ enabled: true }));
+vi.mock("@/config/i18n-switch.mjs", async original => ({
+  ...await original<typeof import("@/config/i18n-switch.mjs")>(),
+  get I18N_ENABLED() { return languageSwitch.enabled; },
+}));
+beforeEach(() => { languageSwitch.enabled = true; });
 
 vi.mock("@/lib/prisma", () => ({ prisma: {
   emailLog: { create: vi.fn(async () => ({ id: "log" })) },
@@ -118,5 +125,23 @@ describe("customer email languages", () => {
     expect(payload.subject).toBe("Your Partner & Co filing — access link");
     expect(payload.text).toContain("Use this secure link to open your filing");
     expect(payload.html).toContain("Open your filing");
+  });
+});
+
+describe("disabled customer email languages", () => {
+  it.each(["de", "zh-Hans", "zh-Hant", "fr", "es"])("keeps every English fixture byte for a %s user", async locale => {
+    languageSwitch.enabled = false;
+    directory = await mkdtemp(join(tmpdir(), "email-i18n-off-"));
+    process.env.EMAIL_PREVIEW_DIR = directory;
+    const user = { locale };
+    const hashes: Record<string, string> = {};
+    for (const [name, send] of Object.entries(cases(user.locale))) {
+      const result = await send() as { htmlPath: string; textPath: string };
+      const html = await readFile(result.htmlPath, "utf8");
+      const text = await readFile(result.textPath, "utf8");
+      expect(html).toContain('<html lang="en">');
+      hashes[name] = createHash("sha256").update(html + "\0" + text).digest("hex");
+    }
+    expect(hashes).toEqual(englishHashes);
   });
 });

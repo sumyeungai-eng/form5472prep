@@ -1,6 +1,6 @@
 import { getRequestConfig } from "next-intl/server";
 import { cookies, headers } from "next/headers";
-import { localeFromAcceptLanguage, normalizeLocale } from "./locales";
+import { effectiveLocale, localeFromAcceptLanguage } from "./locales";
 import { deepMerge, type Messages } from "./merge";
 export { deepMerge } from "./merge";
 
@@ -9,7 +9,7 @@ export const MESSAGE_NAMESPACES = ["common", "domain", "portal", "wizard"] as co
 
 export default getRequestConfig(async () => {
   const cookie = cookies().get("NEXT_LOCALE");
-  const locale = cookie ? normalizeLocale(cookie.value) : localeFromAcceptLanguage(headers().get("accept-language"));
+  const locale = effectiveLocale(cookie ? cookie.value : localeFromAcceptLanguage(headers().get("accept-language")));
   const english: Messages = {};
   const messages: Messages = {};
   await Promise.all(MESSAGE_NAMESPACES.map(async (namespace) => {

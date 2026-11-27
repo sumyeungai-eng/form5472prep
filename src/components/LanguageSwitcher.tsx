@@ -1,5 +1,6 @@
 "use client";
 
+import { I18N_ENABLED } from "@/config/i18n-switch.mjs";
 import { useState, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
@@ -7,6 +8,10 @@ import { LOCALES, LOCALE_LABELS } from "@/i18n/locales";
 import { setLocale } from "@/i18n/actions";
 
 export function LanguageSwitcher() {
+  return I18N_ENABLED ? <EnabledLanguageSwitcher /> : null;
+}
+
+function EnabledLanguageSwitcher() {
   const locale = useLocale();
   const t = useTranslations("common");
   const router = useRouter();

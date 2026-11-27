@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { NextIntlClientProvider } from "next-intl";
 import { createWizardText } from "./text";
@@ -51,3 +51,8 @@ describe("wizard display copy never blocks the form", () => {
     }
   });
 });
+
+// Keep translated behavior covered while the production switch is disabled.
+vi.mock("@/config/i18n-switch.mjs", async original => ({
+  ...await original<typeof import("@/config/i18n-switch.mjs")>(), I18N_ENABLED: true,
+}));
