@@ -1,5 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+const languageSwitch = vi.hoisted(() => ({ enabled: true }));
+vi.mock("@/config/i18n-switch.mjs", () => ({
+  get I18N_ENABLED() { return languageSwitch.enabled; },
+}));
+
 // Magic-link ?next= handling (release gate PR 1 relies on the EXISTING rule:
 // same-origin relative paths only, no new whitelist).
 vi.mock("@/lib/magicLink", () => ({ verifyMagicLinkToken: vi.fn(() => "user_1") }));
@@ -12,6 +17,7 @@ vi.mock("@/lib/prisma", () => ({
   },
 }));
 beforeEach(() => {
+  languageSwitch.enabled = true;
   state.locale = "en";
   state.update.mockReset();
   state.filing.mockReset().mockResolvedValue({ ownerCountryTaxResidence: "China" });
@@ -48,6 +54,25 @@ describe("magic link ?next=", () => {
 
 describe("magic-link language preference", () => {
   const login = (headers?: HeadersInit) => GET(new Request("https://app.example.test/auth/tok", { headers }), { params: { token: "tok" } });
+  it.each([null, "de", "zh-Hant"])("leaves the stored locale %s and browser preference untouched when disabled", async locale => {
+    languageSwitch.enabled = false;
+    state.locale = locale;
+    const headerCases: HeadersInit[] = [
+      { "accept-language": "fr-FR,en;q=0.5" },
+      { "accept-language": "en-US" },
+      { cookie: "fs_user=old; NEXT_LOCALE=es" },
+    ];
+    for (const headers of headerCases) {
+      const response = await login(headers);
+      expect(response.status).toBe(303);
+      expect(response.headers.get("location")).toBe("https://app.example.test/dashboard");
+      expect(response.cookies.get("fs_user")?.value).toBe("signed-token");
+      expect(response.cookies.get("NEXT_LOCALE")).toBeUndefined();
+      expect(state.update).not.toHaveBeenCalled();
+      expect(state.filing).not.toHaveBeenCalled();
+      expect(state.locale).toBe(locale);
+    }
+  });
   it("restores a stored language when the browser cookie is absent", async () => {
     state.locale = "zh-TW";
     const response = await login();

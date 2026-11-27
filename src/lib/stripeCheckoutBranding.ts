@@ -1,5 +1,6 @@
 import Stripe from "stripe";
 import { env } from "@/lib/env";
+import { I18N_ENABLED } from "@/config/i18n-switch.mjs";
 
 type SessionCreateParams = NonNullable<Parameters<Stripe["checkout"]["sessions"]["create"]>[0]>;
 type BrandingSettings = NonNullable<SessionCreateParams["branding_settings"]>;
@@ -64,7 +65,7 @@ export async function createBrandedSession(
     branding_settings: brandingSettings(env.appUrl),
     // A caller-supplied note wins (the EIN/ITIN checkout has its own wording).
     custom_text: params.custom_text ?? checkoutCustomText(),
-    locale: "auto",
+    locale: I18N_ENABLED ? "auto" : "en",
   };
 
   try {
@@ -81,7 +82,10 @@ export async function createBrandedSession(
       const retryOptions = options?.idempotencyKey
         ? { ...options, idempotencyKey: `${options.idempotencyKey}_plain` }
         : options;
-      return create(usdParams, retryOptions);
+      const retryParams: SessionCreateParams = I18N_ENABLED
+        ? usdParams
+        : { ...usdParams, locale: "en" };
+      return create(retryParams, retryOptions);
     }
     throw error;
   }

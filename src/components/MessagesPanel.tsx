@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FileText, Loader2, Paperclip, Send, X } from "lucide-react";
+import { browserFormattingLocale } from "@/lib/browserFormattingLocale";
 
 type Message = {
   id: string;
@@ -27,8 +28,8 @@ function formatWhen(iso: string): string {
   const d = new Date(iso);
   const sameDay = d.toDateString() === new Date().toDateString();
   return sameDay
-    ? d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })
-    : d.toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+    ? d.toLocaleTimeString(browserFormattingLocale(), { hour: "numeric", minute: "2-digit" })
+    : d.toLocaleString(browserFormattingLocale(), { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
 }
 
 function fileToBase64(file: File): Promise<string> {

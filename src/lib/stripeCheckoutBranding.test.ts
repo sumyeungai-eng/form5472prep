@@ -1,5 +1,5 @@
 import Stripe from "stripe";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   CHECKOUT_BRAND,
   brandingSettings,
@@ -9,6 +9,11 @@ import {
 
 type SessionCreateParams = NonNullable<Parameters<Stripe["checkout"]["sessions"]["create"]>[0]>;
 type CheckoutSession = Awaited<ReturnType<Stripe["checkout"]["sessions"]["create"]>>;
+
+const languageSwitch = vi.hoisted(() => ({ enabled: true }));
+vi.mock("@/config/i18n-switch.mjs", () => ({
+  get I18N_ENABLED() { return languageSwitch.enabled; },
+}));
 
 describe("brandingSettings", () => {
   it("returns the Stripe Checkout branding shape", () => {
@@ -45,7 +50,9 @@ describe("checkoutCustomText", () => {
   });
 });
 
-describe("createBrandedSession", () => {
+describe.each([true, false])("createBrandedSession (I18N_ENABLED=%s)", enabled => {
+  beforeEach(() => { languageSwitch.enabled = enabled; });
+  const locale = enabled ? "auto" : "en";
   const params: SessionCreateParams = {
     mode: "payment",
     payment_method_types: ["card"],
@@ -82,7 +89,7 @@ describe("createBrandedSession", () => {
         adaptive_pricing: { enabled: false },
         branding_settings: brandingSettings("http://localhost:3000"),
         custom_text: checkoutCustomText(),
-        locale: "auto",
+        locale,
       },
       { idempotencyKey: "checkout_123" },
     );
@@ -119,15 +126,30 @@ describe("createBrandedSession", () => {
         adaptive_pricing: { enabled: false },
         branding_settings: brandingSettings("http://localhost:3000"),
         custom_text: checkoutCustomText(),
-        locale: "auto",
+        locale,
       },
       { idempotencyKey: "checkout_123" },
     );
     expect(create).toHaveBeenNthCalledWith(
       2,
-      { ...params, adaptive_pricing: { enabled: false } },
+      { ...params, adaptive_pricing: { enabled: false }, ...(enabled ? {} : { locale }) },
       { idempotencyKey: "checkout_123_plain" },
     );
+  });
+
+  it("only preserves a caller's retry locale while translations are enabled", async () => {
+    const brandedError = new Stripe.errors.StripeInvalidRequestError({
+      message: "Received unknown parameter: branding_settings",
+      param: "branding_settings",
+    });
+    const session = { id: "cs_test_locale", object: "checkout.session" } as CheckoutSession;
+    const create = vi.fn().mockRejectedValueOnce(brandedError).mockResolvedValueOnce(session);
+
+    await expect(createBrandedSession({ ...params, locale: "de" }, undefined, create)).resolves.toBe(session);
+
+    expect(create).toHaveBeenCalledTimes(2);
+    expect(create.mock.calls[0][0].locale).toBe(locale);
+    expect(create.mock.calls[1][0].locale).toBe(enabled ? "de" : "en");
   });
 
   it("rethrows non-branding errors without retrying", async () => {
