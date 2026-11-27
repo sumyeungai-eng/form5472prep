@@ -9,6 +9,7 @@ import { releasedPdfKey } from "@/lib/pdf/packageKeys";
 import { env } from "@/lib/env";
 import { sendFilingSignedAdminEmail } from "@/lib/email";
 import { sendAdminTelegram } from "@/lib/telegram";
+import { notifyAdminBestEffort } from "@/lib/adminNotify";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -172,34 +173,29 @@ export async function POST(req: Request, { params }: { params: { id: string } })
 
   const reSign = Boolean(filing.signedAt || filing.signaturePngKey);
   const adminLink = `${env.appUrl}/admin/filings/${filing.id}`;
-  try {
-    const partner = filing.partnerId
-      ? await prisma.partner.findUnique({ where: { id: filing.partnerId }, select: { name: true } })
-      : null;
-    await sendFilingSignedAdminEmail({
-      filingId: filing.id,
-      llcName: filing.llcName,
-      taxYears: filing.taxYears,
-      signerName,
-      reSign,
-      partnerName: partner?.name,
-      adminLink,
-      placeSignatureLink: `${adminLink}/place-signature`,
-    });
-  } catch {
-    console.error("[filing sign] admin email failed");
-  }
-
-  try {
-    await sendAdminTelegram([
+  await notifyAdminBestEffort([
+    async () => {
+      const partner = filing.partnerId
+        ? await prisma.partner.findUnique({ where: { id: filing.partnerId }, select: { name: true } })
+        : null;
+      await sendFilingSignedAdminEmail({
+        filingId: filing.id,
+        llcName: filing.llcName,
+        taxYears: filing.taxYears,
+        signerName,
+        reSign,
+        partnerName: partner?.name,
+        adminLink,
+        placeSignatureLink: `${adminLink}/place-signature`,
+      });
+    },
+    () => sendAdminTelegram([
       `✍️ Form 5472 ${reSign ? "re-signed" : "signed"}`,
-      `LLC name: ${filing.llcName || "(no LLC name)"}`,
       `Tax years: ${filing.taxYears.join(", ")}`,
+      `Ref: ${filing.id.slice(0, 8)}`,
       adminLink,
-    ]);
-  } catch {
-    console.error("[filing sign] admin Telegram failed");
-  }
+    ]),
+  ], 4000);
 
   return NextResponse.json({ ok: true, signatureKey });
 }

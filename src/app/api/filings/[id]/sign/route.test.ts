@@ -59,7 +59,7 @@ function request(extra: Record<string, unknown> = VALID, headers: Record<string,
 
 const baseFiling = {
   id: "filing_1",
-  llcName: "Example Holdings LLC",
+  llcName: "Pat Personal pat.personal@example.test",
   taxYears: [2024, 2025],
   partnerId: null,
   signedAt: null,
@@ -80,7 +80,10 @@ beforeEach(() => {
   notifications.telegram.mockReset().mockResolvedValue(true);
   db.partnerFindUnique.mockReset();
 });
-afterEach(() => vi.restoreAllMocks());
+afterEach(() => {
+  vi.useRealTimers();
+  vi.restoreAllMocks();
+});
 
 describe("POST /api/filings/[id]/sign review gate", () => {
   beforeEach(() => {
@@ -234,7 +237,7 @@ describe("POST /api/filings/[id]/sign signing record", () => {
     expect(res.status).toBe(200);
     expect(notifications.email).toHaveBeenCalledExactlyOnceWith({
       filingId: "filing_1",
-      llcName: "Example Holdings LLC",
+      llcName: baseFiling.llcName,
       taxYears: [2024, 2025],
       signerName: "Jane Q. Owner",
       reSign: false,
@@ -245,12 +248,12 @@ describe("POST /api/filings/[id]/sign signing record", () => {
     expect(db.partnerFindUnique).toHaveBeenCalledWith({ where: { id: "partner_1" }, select: { name: true } });
     expect(notifications.telegram).toHaveBeenCalledExactlyOnceWith([
       "✍️ Form 5472 signed",
-      "LLC name: Example Holdings LLC",
       "Tax years: 2024, 2025",
+      "Ref: filing_1",
       "https://example.test/admin/filings/filing_1",
     ]);
     const telegram = JSON.stringify(notifications.telegram.mock.calls);
-    for (const privateValue of ["Jane Q. Owner", "203.0.113.9", "owner@example.test", "Private UA", "data:image", "_signature_"]) {
+    for (const privateValue of [baseFiling.llcName, "Pat Personal", "pat.personal@example.test", "Jane Q. Owner", "203.0.113.9", "owner@example.test", "Private UA", "data:image", "_signature_"]) {
       expect(telegram).not.toContain(privateValue);
     }
     expect(notifications.email.mock.invocationCallOrder[0]).toBeGreaterThan(db.update.mock.invocationCallOrder[0]);
@@ -269,8 +272,8 @@ describe("POST /api/filings/[id]/sign signing record", () => {
     expect(notifications.email).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ reSign: true }));
     expect(notifications.telegram).toHaveBeenCalledExactlyOnceWith([
       "✍️ Form 5472 re-signed",
-      "LLC name: Example Holdings LLC",
       "Tax years: 2024, 2025",
+      "Ref: filing_1",
       "https://example.test/admin/filings/filing_1",
     ]);
   });
@@ -291,9 +294,33 @@ describe("POST /api/filings/[id]/sign signing record", () => {
     expect(await res.json()).toEqual({ ok: true, signatureKey: expect.any(String) });
     expect(notifications.telegram).toHaveBeenCalledTimes(1);
     expect(notifications.email).toHaveBeenCalledTimes(failure === "partner" ? 0 : 1);
-    expect(errorLog).toHaveBeenCalledExactlyOnceWith(
-      failure === "telegram" ? "[filing sign] admin Telegram failed" : "[filing sign] admin email failed",
-    );
+    expect(errorLog).toHaveBeenCalledExactlyOnceWith("[admin notify] task failed");
+  });
+
+  it.each(["email", "telegram", "partner"] as const)("returns success within 4000 ms when %s never resolves", async (pending) => {
+    vi.useFakeTimers();
+    const errorLog = vi.spyOn(console, "error").mockImplementation(() => {});
+    if (pending === "partner") {
+      db.findUnique.mockResolvedValue({ ...baseFiling, partnerId: "partner_1", reviewApprovedAt: new Date() });
+      db.partnerFindUnique.mockImplementation(() => new Promise(() => {}));
+    } else {
+      notifications[pending].mockImplementation(() => new Promise(() => {}));
+    }
+    const response = POST(request(), { params: { id: "filing_1" } });
+    const returned = vi.fn();
+    void response.then(returned);
+
+    await vi.advanceTimersByTimeAsync(3999);
+    expect(returned).not.toHaveBeenCalled();
+    expect(notifications.telegram).toHaveBeenCalledTimes(1);
+    expect(notifications.email).toHaveBeenCalledTimes(pending === "partner" ? 0 : 1);
+    await vi.advanceTimersByTimeAsync(1);
+
+    const res = await response;
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ ok: true, signatureKey: expect.any(String) });
+    expect(errorLog).toHaveBeenCalledExactlyOnceWith("[admin notify] timed out");
+    expect(vi.getTimerCount()).toBe(0);
   });
 
   it("stores the five evidence fields and kills the invite link in the same update", async () => {

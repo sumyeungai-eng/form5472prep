@@ -150,6 +150,7 @@ describe("handleSign admin notifications", () => {
   const app = {
     id: "application_1",
     fullName: "Alex Chen",
+    llcName: "Pat Personal pat.personal@example.test",
     email: "private@example.test",
     responsiblePartyTin: "123-45-6789",
     paidAt: new Date("2026-10-01T10:00:00Z"),
@@ -174,7 +175,7 @@ describe("handleSign admin notifications", () => {
   beforeEach(() => {
     Object.values(mocks).forEach((mock) => mock.mockReset());
     mocks.getCurrentUser.mockResolvedValue({ id: "user_1" });
-    mocks.einFindFirst.mockResolvedValue({ ...app, llcName: "Example Holdings LLC" });
+    mocks.einFindFirst.mockResolvedValue(app);
     mocks.itinFindFirst.mockResolvedValue(app);
     mocks.einUpdateMany.mockResolvedValue({ count: 1 });
     mocks.itinUpdateMany.mockResolvedValue({ count: 1 });
@@ -183,7 +184,10 @@ describe("handleSign admin notifications", () => {
     mocks.email.mockResolvedValue(undefined);
     mocks.telegram.mockResolvedValue(true);
   });
-  afterEach(() => vi.restoreAllMocks());
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+  });
 
   it.each(["ein", "itin"] as const)("alerts on %s signing without personal data", async (type) => {
     const res = await handleSign(type, app.id, signRequest());
@@ -198,11 +202,11 @@ describe("handleSign admin notifications", () => {
     });
     expect(mocks.telegram).toHaveBeenCalledExactlyOnceWith([
       `✍️ ${type.toUpperCase()} application signed`,
-      ...(type === "ein" ? ["LLC name: Example Holdings LLC"] : []),
+      "Ref: applicat",
       `https://example.test/admin/applications/${type}/${app.id}`,
     ]);
     const telegram = JSON.stringify(mocks.telegram.mock.calls);
-    for (const privateValue of [app.fullName, app.email, app.responsiblePartyTin, "203.0.113.9", "Private UA", "data:image", SHA]) {
+    for (const privateValue of [app.llcName, "Pat Personal", "pat.personal@example.test", app.fullName, app.email, app.responsiblePartyTin, "203.0.113.9", "Private UA", "data:image", SHA]) {
       expect(telegram).not.toContain(privateValue);
     }
     const find = type === "ein" ? mocks.einFindFirst : mocks.itinFindFirst;
@@ -212,14 +216,14 @@ describe("handleSign admin notifications", () => {
 
   it.each(["ein", "itin"] as const)("uses pre-write signaturePngKey for %s re-sign alerts", async (type) => {
     const find = type === "ein" ? mocks.einFindFirst : mocks.itinFindFirst;
-    find.mockResolvedValue({ ...app, ...(type === "ein" ? { llcName: "Example Holdings LLC" } : {}), signaturePngKey: "earlier.png" });
+    find.mockResolvedValue({ ...app, signaturePngKey: "earlier.png" });
 
     const res = await handleSign(type, app.id, signRequest());
 
     expect(res.status).toBe(200);
     expect(mocks.telegram).toHaveBeenCalledExactlyOnceWith([
       `✍️ ${type.toUpperCase()} application re-signed`,
-      ...(type === "ein" ? ["LLC name: Example Holdings LLC"] : []),
+      "Ref: applicat",
       `https://example.test/admin/applications/${type}/${app.id}`,
     ]);
   });
@@ -230,6 +234,7 @@ describe("handleSign admin notifications", () => {
     expect(res.status).toBe(200);
     expect(mocks.telegram).toHaveBeenCalledExactlyOnceWith([
       "✍️ EIN application signed",
+      "Ref: applicat",
       "https://example.test/admin/applications/ein/application_1",
     ]);
   });
@@ -248,16 +253,42 @@ describe("handleSign admin notifications", () => {
       fullName: app.fullName,
       adminLink: `https://example.test/admin/applications/${type}/${app.id}`,
     });
-    expect(errorLog).toHaveBeenCalledExactlyOnceWith("[application sign] admin Telegram failed");
+    expect(errorLog).toHaveBeenCalledExactlyOnceWith("[admin notify] task failed");
   });
 
-  it("still sends Telegram when the existing email call throws", async () => {
-    vi.spyOn(console, "error").mockImplementation(() => {});
-    mocks.email.mockRejectedValue(new Error("Email failed"));
-    const res = await handleSign("ein", app.id, signRequest());
+  it.each(["ein", "itin"] as const)("still sends Telegram when %s email throws", async (type) => {
+    const errorLog = vi.spyOn(console, "error").mockImplementation(() => {});
+    mocks.email.mockRejectedValue(new Error("private@example.test 123-45-6789"));
+    const res = await handleSign(type, app.id, signRequest());
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ ok: true });
     expect(mocks.telegram).toHaveBeenCalledTimes(1);
+    expect(mocks.email).toHaveBeenCalledTimes(1);
+    expect(errorLog).toHaveBeenCalledExactlyOnceWith("[admin notify] task failed");
+  });
+
+  it.each([
+    ["ein", "email"], ["ein", "telegram"],
+    ["itin", "email"], ["itin", "telegram"],
+  ] as const)("returns %s success within 4000 ms when %s never resolves", async (type, pending) => {
+    vi.useFakeTimers();
+    const errorLog = vi.spyOn(console, "error").mockImplementation(() => {});
+    mocks[pending].mockImplementation(() => new Promise(() => {}));
+    const response = handleSign(type, app.id, signRequest());
+    const returned = vi.fn();
+    void response.then(returned);
+
+    await vi.advanceTimersByTimeAsync(3999);
+    expect(returned).not.toHaveBeenCalled();
+    expect(mocks.email).toHaveBeenCalledTimes(1);
+    expect(mocks.telegram).toHaveBeenCalledTimes(1);
+    await vi.advanceTimersByTimeAsync(1);
+
+    const res = await response;
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ ok: true });
+    expect(errorLog).toHaveBeenCalledExactlyOnceWith("[admin notify] timed out");
+    expect(vi.getTimerCount()).toBe(0);
   });
 
   it.each(["ein", "itin"] as const)("sends no notifications when the %s conditional write loses", async (type) => {
