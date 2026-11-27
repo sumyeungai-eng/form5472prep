@@ -2,7 +2,9 @@ import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { ORDER_CONFIRMATION_INTRO, sendMagicLinkEmail, sendOrderConfirmationEmail } from "@/lib/email";
+import { ORDER_CONFIRMATION_INTRO, sendFilingSignedAdminEmail, sendMagicLinkEmail, sendOrderConfirmationEmail } from "@/lib/email";
+import { env } from "@/lib/env";
+import { prisma } from "@/lib/prisma";
 
 vi.mock("@/lib/prisma", () => ({
   prisma: {
@@ -326,5 +328,53 @@ describe("fax delivered customer attachment", () => {
     });
     const payload = JSON.parse((fetchMock.mock.calls[0] as unknown as [string, RequestInit])[1].body as string);
     expect(payload.attachments).toHaveLength(size === 20 * 1024 * 1024 ? 2 : 1);
+  });
+});
+
+describe("filing signed admin email", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
+  });
+
+  it.each([false, true])("sends the admin alert and links (re-sign: %s)", async (reSign) => {
+    vi.stubEnv("EMAIL_PREVIEW_DIR", "");
+    vi.stubEnv("RESEND_API_KEY", "synthetic-key");
+    vi.mocked(prisma.emailLog.create).mockClear();
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify({ id: "synthetic-email" }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    const adminLink = "https://example.test/admin/filings/filing_1";
+    const placeSignatureLink = `${adminLink}/place-signature`;
+
+    await sendFilingSignedAdminEmail({
+      filingId: "filing_1",
+      llcName: "Example Holdings LLC",
+      taxYears: [2024, 2025],
+      signerName: "Jane Q. Owner",
+      reSign,
+      partnerName: "Example Agency",
+      adminLink,
+      placeSignatureLink,
+    });
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const payload = JSON.parse((fetchMock.mock.calls[0] as unknown as [string, RequestInit])[1].body as string);
+    expect(payload.to).toBe(env.adminEmail);
+    expect(payload.subject).toBe(`[Filing ${reSign ? "re-signed" : "signed"}] Example Holdings LLC — 2024, 2025`);
+    for (const body of [payload.text, payload.html]) {
+      for (const value of ["Example Holdings LLC", "2024, 2025", "Jane Q. Owner", "Example Agency", adminLink, placeSignatureLink, "Place the preparer signature and fax."]) {
+        expect(body).toContain(value);
+      }
+    }
+    expect(payload.text).toContain(`Re-sign: ${reSign ? "Yes" : "No"}`);
+    expect(payload.html).toContain("Internal notification");
+    expect(payload.html).toContain(`href="${adminLink}"`);
+    expect(payload.html).toContain(`href="${placeSignatureLink}"`);
+    expect(prisma.emailLog.create).toHaveBeenCalledExactlyOnceWith({
+      data: expect.objectContaining({ kind: "admin_filing_signed", filingId: "filing_1", to: env.adminEmail, status: "sent" }),
+      select: { id: true },
+    });
+    const log = vi.mocked(prisma.emailLog.create).mock.calls[0][0]!;
+    expect(log.data.kind).toMatch(/^admin_/);
   });
 });

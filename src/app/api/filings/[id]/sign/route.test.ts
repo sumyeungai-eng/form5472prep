@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const session = vi.hoisted(() => ({
   getOwnedFiling: vi.fn(),
@@ -10,7 +10,13 @@ const session = vi.hoisted(() => ({
 const db = vi.hoisted(() => ({
   findUnique: vi.fn(),
   update: vi.fn(),
+  partnerFindUnique: vi.fn(),
 }));
+
+const notifications = vi.hoisted(() => ({ email: vi.fn(), telegram: vi.fn() }));
+vi.mock("@/lib/email", () => ({ sendFilingSignedAdminEmail: notifications.email, sendApplicationSignedAdminEmail: vi.fn() }));
+vi.mock("@/lib/telegram", () => ({ sendAdminTelegram: notifications.telegram }));
+vi.mock("@/lib/env", () => ({ env: { appUrl: "https://example.test" } }));
 
 const storage = vi.hoisted(() => ({
   put: vi.fn(),
@@ -29,6 +35,7 @@ vi.mock("@/lib/prisma", () => ({
       findUnique: db.findUnique,
       updateMany: db.update,
     },
+    partner: { findUnique: db.partnerFindUnique },
   },
 }));
 vi.mock("@/lib/storage", () => ({ put: storage.put, get: storage.get }));
@@ -52,6 +59,10 @@ function request(extra: Record<string, unknown> = VALID, headers: Record<string,
 
 const baseFiling = {
   id: "filing_1",
+  llcName: "Example Holdings LLC",
+  taxYears: [2024, 2025],
+  partnerId: null,
+  signedAt: null,
   userId: "user_1",
   status: "PDF_GENERATED",
   generatedPdfKey: "unsigned.pdf",
@@ -63,6 +74,13 @@ const baseFiling = {
   user: { id: "user_1", email: "owner@example.test" },
   yearData: [],
 };
+
+beforeEach(() => {
+  notifications.email.mockReset().mockResolvedValue(undefined);
+  notifications.telegram.mockReset().mockResolvedValue(true);
+  db.partnerFindUnique.mockReset();
+});
+afterEach(() => vi.restoreAllMocks());
 
 describe("POST /api/filings/[id]/sign review gate", () => {
   beforeEach(() => {
@@ -90,6 +108,8 @@ describe("POST /api/filings/[id]/sign review gate", () => {
 
     expect(res.status).toBe(409);
     expect(body).toEqual({ error: REVIEW_PENDING_MESSAGE });
+    expect(notifications.email).not.toHaveBeenCalled();
+    expect(notifications.telegram).not.toHaveBeenCalled();
     expect(storage.put).not.toHaveBeenCalled();
     expect(db.update).not.toHaveBeenCalled();
   });
@@ -171,6 +191,8 @@ describe("POST /api/filings/[id]/sign check confirmation", () => {
     expect(db.update).toHaveBeenCalledWith(expect.objectContaining({
       where: expect.objectContaining({ generatedPdfKey: "unsigned.pdf" }),
     }));
+    expect(notifications.email).not.toHaveBeenCalled();
+    expect(notifications.telegram).not.toHaveBeenCalled();
   });
 
   it("refuses to sign unless the client confirmed everything is correct", async () => {
@@ -195,6 +217,83 @@ describe("POST /api/filings/[id]/sign signing record", () => {
     storage.get.mockResolvedValue(new Uint8Array([1, 2, 3]));
     db.update.mockResolvedValue({ count: 1 });
     db.findUnique.mockResolvedValue({ ...baseFiling, reviewApprovedAt: new Date("2026-10-05T10:00:00Z") });
+  });
+
+  it("notifies admin with filing details after the successful conditional write", async () => {
+    db.findUnique.mockResolvedValue({
+      ...baseFiling,
+      partnerId: "partner_1",
+      reviewApprovedAt: new Date("2026-10-05T10:00:00Z"),
+    });
+    db.partnerFindUnique.mockResolvedValue({ name: "Example Agency" });
+    const res = await POST(
+      request(VALID, { "x-forwarded-for": "203.0.113.9", "user-agent": "Private UA" }),
+      { params: { id: "filing_1" } },
+    );
+
+    expect(res.status).toBe(200);
+    expect(notifications.email).toHaveBeenCalledExactlyOnceWith({
+      filingId: "filing_1",
+      llcName: "Example Holdings LLC",
+      taxYears: [2024, 2025],
+      signerName: "Jane Q. Owner",
+      reSign: false,
+      partnerName: "Example Agency",
+      adminLink: "https://example.test/admin/filings/filing_1",
+      placeSignatureLink: "https://example.test/admin/filings/filing_1/place-signature",
+    });
+    expect(db.partnerFindUnique).toHaveBeenCalledWith({ where: { id: "partner_1" }, select: { name: true } });
+    expect(notifications.telegram).toHaveBeenCalledExactlyOnceWith([
+      "✍️ Form 5472 signed",
+      "LLC name: Example Holdings LLC",
+      "Tax years: 2024, 2025",
+      "https://example.test/admin/filings/filing_1",
+    ]);
+    const telegram = JSON.stringify(notifications.telegram.mock.calls);
+    for (const privateValue of ["Jane Q. Owner", "203.0.113.9", "owner@example.test", "Private UA", "data:image", "_signature_"]) {
+      expect(telegram).not.toContain(privateValue);
+    }
+    expect(notifications.email.mock.invocationCallOrder[0]).toBeGreaterThan(db.update.mock.invocationCallOrder[0]);
+    expect(notifications.telegram.mock.invocationCallOrder[0]).toBeGreaterThan(db.update.mock.invocationCallOrder[0]);
+  });
+
+  it.each([
+    { signedAt: new Date("2026-10-04T10:00:00Z"), signaturePngKey: null },
+    { signedAt: null, signaturePngKey: "earlier-signature.png" },
+  ])("uses the pre-write signature evidence for re-sign alerts (%j)", async (previous) => {
+    db.findUnique.mockResolvedValue({ ...baseFiling, ...previous, reviewApprovedAt: new Date(), status: "SIGNATURE_PENDING" });
+
+    const res = await POST(request(), { params: { id: "filing_1" } });
+
+    expect(res.status).toBe(200);
+    expect(notifications.email).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ reSign: true }));
+    expect(notifications.telegram).toHaveBeenCalledExactlyOnceWith([
+      "✍️ Form 5472 re-signed",
+      "LLC name: Example Holdings LLC",
+      "Tax years: 2024, 2025",
+      "https://example.test/admin/filings/filing_1",
+    ]);
+  });
+
+  it.each(["email", "telegram", "partner"] as const)("keeps signing successful when %s throws", async (failure) => {
+    const errorLog = vi.spyOn(console, "error").mockImplementation(() => {});
+    const privateError = new Error("Private signer owner@example.test 203.0.113.9");
+    if (failure === "partner") {
+      db.findUnique.mockResolvedValue({ ...baseFiling, partnerId: "partner_1", reviewApprovedAt: new Date() });
+      db.partnerFindUnique.mockRejectedValue(privateError);
+    } else {
+      notifications[failure].mockRejectedValue(privateError);
+    }
+
+    const res = await POST(request(), { params: { id: "filing_1" } });
+
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ ok: true, signatureKey: expect.any(String) });
+    expect(notifications.telegram).toHaveBeenCalledTimes(1);
+    expect(notifications.email).toHaveBeenCalledTimes(failure === "partner" ? 0 : 1);
+    expect(errorLog).toHaveBeenCalledExactlyOnceWith(
+      failure === "telegram" ? "[filing sign] admin Telegram failed" : "[filing sign] admin email failed",
+    );
   });
 
   it("stores the five evidence fields and kills the invite link in the same update", async () => {

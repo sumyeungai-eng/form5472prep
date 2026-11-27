@@ -2310,6 +2310,44 @@ export async function sendApplicationSignatureRequestEmail(args: {
   });
 }
 
+export async function sendFilingSignedAdminEmail(args: {
+  filingId: string;
+  llcName: string | null;
+  taxYears: number[];
+  signerName: string;
+  reSign: boolean;
+  partnerName?: string;
+  adminLink: string;
+  placeSignatureLink: string;
+}) {
+  const heading = args.reSign ? "Filing re-signed" : "Filing signed";
+  const llcName = args.llcName || "(no LLC name)";
+  const years = args.taxYears.join(", ");
+  const rows: Array<[string, string]> = [
+    ["LLC name", llcName],
+    ["Tax years", years],
+    ["Signer name", args.signerName],
+    ["Re-sign", args.reSign ? "Yes" : "No"],
+    ...(args.partnerName ? [["Partner name", args.partnerName] as [string, string]] : []),
+    ["Admin link", args.adminLink],
+    ["Place signature link", args.placeSignatureLink],
+    ["Next step", "Place the preparer signature and fax."],
+  ];
+
+  return sendEmail({
+    log: { kind: "admin_filing_signed", filingId: args.filingId },
+    to: env.adminEmail,
+    subject: `[${heading}] ${llcName} — ${years}`,
+    text: [heading, "", ...rows.map(([label, value]) => `${label}: ${value}`)].join("\n"),
+    html: adminShell({
+      tag: heading,
+      heading,
+      rows,
+      extraHtml: `<p><a href="${escapeHtml(args.adminLink)}">Open filing</a> · <a href="${escapeHtml(args.placeSignatureLink)}">Place signature</a></p>`,
+    }),
+  });
+}
+
 export async function sendApplicationSignedAdminEmail(args: {
   type: "ein" | "itin";
   applicationId: string;

@@ -11,11 +11,13 @@ import { sendApplicationSignedAdminEmail } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
 import { del, get as getStorageObject, put } from "@/lib/storage";
+import { sendAdminTelegram } from "@/lib/telegram";
 
 export type SignableApplication = {
   id: string;
   type: ApplicationType;
   fullName: string;
+  llcName?: string;
   paidAt: Date | null;
   preparedPdfKey: string | null;
   preparedPdfSha256: string | null;
@@ -59,7 +61,7 @@ export async function loadOwnedApplication(
   if (type === "ein") {
     const app = await prisma.einApplication.findFirst({
       where: { id, userId },
-      select,
+      select: { ...select, llcName: true },
     });
     return app ? { ...app, type } : null;
   }
@@ -232,6 +234,16 @@ export async function handleSign(type: ApplicationType, id: string, req: Request
     });
   } catch (err) {
     console.error("[application sign] admin email failed", { type, id, err });
+  }
+
+  try {
+    await sendAdminTelegram([
+      `✍️ ${type.toUpperCase()} application ${app.signaturePngKey ? "re-signed" : "signed"}`,
+      ...(type === "ein" && app.llcName ? [`LLC name: ${app.llcName}`] : []),
+      `${env.appUrl}/admin/applications/${type}/${id}`,
+    ]);
+  } catch {
+    console.error("[application sign] admin Telegram failed");
   }
 
   return NextResponse.json({ ok: true });
