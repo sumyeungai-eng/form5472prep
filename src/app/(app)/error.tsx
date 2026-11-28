@@ -36,7 +36,7 @@ function ErrorContent({
 
   return (
     <div className="max-w-3xl mx-auto px-6 py-10">
-      <section className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm" aria-labelledby="error-heading">
+      <section data-smoke="app-error" className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm" aria-labelledby="error-heading">
         <h1 id="error-heading" className="text-xl font-semibold text-slate-900">{t("portal.layout.somethingWentWrongLoadingThisPage")}</h1>
         <p className="mt-3 text-sm text-slate-600">{t("portal.layout.yourFilingAndDocumentsAreSafe")}</p>
         {portalHost ? (

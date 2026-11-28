@@ -7,7 +7,7 @@ export function FilingLocked({ ownerEmail }: { ownerEmail: string | null }) {
   const masked = ownerEmail ? maskEmail(ownerEmail) : null;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4 py-12">
+    <div data-smoke="filing-locked" className="min-h-screen flex items-center justify-center bg-slate-50 px-4 py-12">
       <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
         <div className="flex justify-center">
           <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center">

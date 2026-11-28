@@ -20,12 +20,21 @@ vi.mock("next/headers", () => ({
 // check authenticates using the same signed cookie the customer portal reads.
 import { getCurrentUserId, getSessionId } from "@/lib/session";
 import { GET } from "./route";
+import { renderFailureReason } from "./renderFailure";
 
 const statuses = ["PDF_GENERATED", "SIGNATURE_PENDING", "SIGNED_UPLOADED", "FAXED", "CONFIRMED", "FAILED"];
 const request = (authorization = "Bearer cron-secret") => new Request(
   "https://www.form5472prep.com/api/cron/portal-smoke", { headers: { authorization } },
 );
 const filing = { id: "filing-one", userId: "user-one", sessionId: "existing-anonymous-session" };
+const renderFailures = [
+  ['<html id="__next_error__"></html>', "__next_error__"],
+  ['<html><script>self.__next_f.push([1,"9:E{\\"digest\\":\\"123\\"}\\n"])</script></html>', "rsc-error"],
+  ['<html><div data-smoke="filing-locked"></div></html>', "filing-locked"],
+  ['<html><section data-smoke="app-error"></section></html>', "app-error"],
+  ["<html>truncated stream", "truncated"],
+] as const;
+const healthyRscHtml = String.raw`<html><body>ok</body><script>self.__next_f.push([1,"{\"locked\":{\"heading\":\"Sign in to continue your filing\"},\"x\":\"Something went wrong loading this page.\",\"p\":{\"data-smoke\":\"filing-locked\"}}"])</script></html>`;
 
 beforeEach(() => {
   vi.resetAllMocks();
@@ -36,7 +45,31 @@ beforeEach(() => {
   mocks.alertServerError.mockResolvedValue(undefined);
   vi.stubGlobal("fetch", vi.fn().mockImplementation(async () => new Response("<html><body>Filing page</body></html>")));
 });
-afterEach(() => { vi.unstubAllEnvs(); vi.unstubAllGlobals(); });
+afterEach(() => { vi.restoreAllMocks(); vi.unstubAllEnvs(); vi.unstubAllGlobals(); });
+
+describe("renderFailureReason", () => {
+  it.each(renderFailures)("identifies the render failure in %s", (html, reason) => {
+    expect(renderFailureReason(html)).toBe(reason);
+  });
+
+  it.each([
+    ['<html>__next_error__:E{<div data-smoke="filing-locked"><section data-smoke="app-error">', "__next_error__"],
+    ['<html>:E{<div data-smoke="filing-locked"><section data-smoke="app-error">', "rsc-error"],
+    ['<html><div data-smoke="filing-locked"><section data-smoke="app-error">', "filing-locked"],
+    ['<html><section data-smoke="app-error">', "app-error"],
+  ])("prioritizes error markers over later checks in %s", (html, reason) => {
+    expect(renderFailureReason(html)).toBe(reason);
+  });
+
+  it.each([
+    "<html><body>ok</body></html>",
+    healthyRscHtml,
+    '<html><script>{"data-smoke":"filing-locked","other":{"data-smoke":"app-error"}}</script></html>',
+    String.raw`<html><script>{\"data-smoke\":\"filing-locked\",\"other\":{\"data-smoke\":\"app-error\"}}</script></html>`,
+  ])("accepts healthy HTML and ignores serialized marker properties: %s", (html) => {
+    expect(renderFailureReason(html)).toBeNull();
+  });
+});
 
 describe("GET /api/cron/portal-smoke", () => {
   it("returns 401 without a configured secret or matching bearer token", async () => {
@@ -91,17 +124,29 @@ describe("GET /api/cron/portal-smoke", () => {
     expect(JSON.stringify(mocks.alertServerError.mock.calls)).not.toMatch(/private|Customer|fs_user|fs_session|user-one/);
   });
 
-  it.each([
-    '<html id="__next_error__"></html>',
-    '<html><script>self.__next_f.push([1,"9:E{\\"digest\\":\\"123\\"}\\n"])</script></html>',
-    "<html>Something went wrong loading this page.</html>",
-    "<html>Sign in to continue your filing</html>",
-    "<html>truncated stream",
-  ])("alerts when HTTP 200 contains a failed or locked render: %s", async (html) => {
+  it.each(renderFailures)("alerts when HTTP 200 contains a failed or locked render: %s", async (html, reason) => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
     mocks.findFirst.mockResolvedValueOnce(filing);
     vi.mocked(fetch).mockResolvedValueOnce(new Response(html));
-    expect((await GET(request())).status).toBe(500);
-    expect(mocks.alertServerError).toHaveBeenCalledOnce();
+    const response = await GET(request());
+    const message = `Customer page did not finish rendering successfully (marker: ${reason})`;
+    expect(response.status).toBe(500);
+    expect(await response.json()).toEqual({ checked: 1, failures: [{ status: "PDF_GENERATED", reason: message }] });
+    expect(mocks.alertServerError).toHaveBeenCalledExactlyOnceWith({
+      path: "/filings/filing-one", message: `Portal smoke PDF_GENERATED: ${message}`,
+    });
+    expect(warn).toHaveBeenCalledExactlyOnceWith(`[portal-smoke] PDF_GENERATED: ${reason}`);
+  });
+
+  it("does not alert on translations or serialized marker properties in a healthy RSC payload", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    mocks.findFirst.mockResolvedValueOnce(filing);
+    vi.mocked(fetch).mockResolvedValueOnce(new Response(healthyRscHtml));
+    const response = await GET(request());
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({ checked: 1, failures: [] });
+    expect(mocks.alertServerError).not.toHaveBeenCalled();
+    expect(warn).not.toHaveBeenCalled();
   });
 
   it("alerts on network errors with a fixed diagnostic and continues other checks", async () => {

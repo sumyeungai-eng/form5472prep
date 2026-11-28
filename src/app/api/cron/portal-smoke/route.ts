@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { env } from "@/lib/env";
 import { makeUserToken } from "@/lib/session";
 import { alertServerError } from "@/lib/errorAlert";
+import { renderFailureReason } from "./renderFailure";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -69,11 +70,10 @@ export async function GET(req: Request) {
       // A streamed App Router render can fail AFTER sending HTTP 200. Consume
       // the full stream and reject its error markers or a locked-account page.
       const html = await response.text();
-      if (html.includes("__next_error__") || /:E\{/.test(html) ||
-          html.includes("Something went wrong loading this page.") ||
-          html.includes("Sign in to continue your filing") ||
-          !html.includes("</html>")) {
-        return fail("Customer page did not finish rendering successfully");
+      const reason = renderFailureReason(html);
+      if (reason) {
+        console.warn(`[portal-smoke] ${status}: ${reason}`);
+        return fail(`Customer page did not finish rendering successfully (marker: ${reason})`);
       }
       return { checked, failure: null };
     } catch {

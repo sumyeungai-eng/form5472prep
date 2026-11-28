@@ -16,6 +16,7 @@ describe("FilingLocked", () => {
     );
     it(`renders translated sign-in instructions in ${locale} and preserves masking`, () => {
       const html = render("alex@example.com");
+      expect(html).toContain('data-smoke="filing-locked"');
       expect(html).toContain(portal.locked.heading);
       expect(html).toContain(portal.locked.signIn);
       expect(html).toContain("al••@example.com");
